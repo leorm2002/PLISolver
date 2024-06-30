@@ -1,27 +1,36 @@
 package it.naddeil.ro.dualsimplexsolver;
 
-import it.naddeil.ro.api.PLSolver;
-import it.naddeil.ro.api.Parameters;
-import it.naddeil.ro.api.Problem;
-import it.naddeil.ro.api.Result;
+import it.naddeil.ro.common.Parameters;
+import it.naddeil.ro.common.Problema;
+import it.naddeil.ro.common.Result;
 
-public class DualSimplexSolver implements PLSolver {
+import org.ejml.simple.SimpleMatrix;
 
-    public DualSimplexSolver() {
-    }
+import it.naddeil.ro.common.MatrixProblem;
+import it.naddeil.ro.common.PLSolver;
 
-    // Prende in input un problema in forma standard
-    // Lo converte nel duale
+
+public class DualSimplexSolver implements PLSolver{
 
     @Override
-    public Result solve(Problem problem, Parameters parameters) {
+    public Result solve(Problema problem, Parameters parameters) {
+        MatrixProblem matrixProblem = problem.toMatrixProblem();
+        SimplessoDuale dualSimplex = SimplessoDuale.createFromCanonical(matrixProblem.getA(), matrixProblem.getB(), matrixProblem.getC());
+        SimpleMatrix solution = dualSimplex.solve();
 
-        // Algoritmo del simplesso duale
-        // 1. Cotruiamo il duale
-        // 2. Scelta della Variabile da Uscire dalla Base (scegliamo x_b negativa)
-        // 3. Scelta della Variabile da Entrare nella Base
-        // Calcoliamo i costi ridotti
+        return new DualSimplexResult(null, solution);
 
-        throw new UnsupportedOperationException("Unimplemented method 'solve'");
+        
+
     }
+
+    @Override
+    public Result reOptimize(Problema problem, Parameters parameters, Result result) {
+        MatrixProblem matrixProblem = problem.toMatrixProblem();
+        SimplessoDuale dualSimplex = SimplessoDuale.createFromTableau(matrixProblem.getA(), matrixProblem.getB(), matrixProblem.getC());
+        SimpleMatrix solution = dualSimplex.solve();
+
+        return new DualSimplexResult(null, solution);
+    }
+    
 }

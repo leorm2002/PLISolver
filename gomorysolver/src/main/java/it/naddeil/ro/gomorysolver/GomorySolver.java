@@ -1,11 +1,8 @@
 package it.naddeil.ro.gomorysolver;
 
-import it.naddeil.ro.api.GaussianSolver;
-import it.naddeil.ro.api.PLISolver;
-import it.naddeil.ro.api.PLSolver;
-import it.naddeil.ro.api.Parameters;
-import it.naddeil.ro.api.Problem;
-import it.naddeil.ro.api.Result;
+import it.naddeil.ro.common.*;
+
+
 
 public class GomorySolver implements PLISolver {
     private final PLSolver plSolver;
@@ -17,7 +14,7 @@ public class GomorySolver implements PLISolver {
 
     }
 
-    boolean isSolved(Problem p, Result r) {
+    boolean isSolved(Problema p, Result r) {
         return false;
     }
 
@@ -53,23 +50,23 @@ public class GomorySolver implements PLISolver {
         return null;
     }
 
-    Problem aggiungiTaglio(Problem p) {
+    Problema aggiungiTaglio(Problema p) {
         // 1. trova riga su cui aggiungere taglio (riga con coefficiente frazionario più grande)
-        int rigaTaglio = trovaRigaConValoreFrazionario(p.getA());
+        //int rigaTaglio = trovaRigaConValoreFrazionario(p.getA());
         // 2. calcola taglio
-        double[] taglio = creaTaglio(p.getA()[rigaTaglio]);
+        //double[] taglio = creaTaglio(p.getA()[rigaTaglio]);
         // 3. esprimi calcolo rispetto a base
-        double[][] sistema = costruisciSistema(p.getA(), taglio);
-        double[] vincolo = GaussianSolver.gaussianElimination(sistema, 10);
+        //double[][] sistema = costruisciSistema(p.getA(), taglio);
+        double[] vincolo = null;// GaussianSolver.gaussianElimination(sistema, 10);
         // 4. aggiungi vincolo
-        p.addConstraint(vincolo);
+        //p.addConstraint(vincolo);
 
         return p;
 
     }
 
     @Override
-    public Result solve(Problem problem, Parameters parameters) {
+    public Result solve(Problema problem, Parameters parameters) {
         int maxIter = 10;
         for (int i = 0; i < maxIter; i++) {
             final Result r = plSolver.solve(problem, parameters);

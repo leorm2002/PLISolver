@@ -1,120 +1,259 @@
 package it.naddeil.ro.dualsimplexsolver;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-import it.naddeil.ro.api.MatrixUtils;
+import org.ejml.simple.SimpleMatrix;
+
 
 public class SimplessoDuale {
-    private double[][] A; // Matrice dei coefficienti
-    private double[] b; // Vettore dei termini noti
-    private double[] c; // Vettore dei coefficienti della funzione obiettivo
-    private int m, n; // m = numero di vincoli, n = numero di variabili
 
-    public SimplessoDuale(double[][] A, double[] b, double[] c) {
+    SimpleMatrix A; // Matrice dei coefficienti
+    SimpleMatrix Acurrent; // Matrice dei coefficienti
+    SimpleMatrix b; // Vettore dei termini noti
+    SimpleMatrix c; // Vettore dei coefficienti della funzione obiettivo
+    List<Integer> basis; // Indici delle variabili di base
+
+    private SimplessoDuale(SimpleMatrix A, SimpleMatrix b, SimpleMatrix c) {
         this.A = A;
         this.b = b;
         this.c = c;
-        this.m = A.length;
-        this.n = A[0].length;
+        this.basis = new ArrayList<>();
+        initializeBasis();
     }
 
-    public double[] risolvi() {
-        double[] x = new double[n];
-        int[] base = new int[m];
-        for (int i = 0; i < m; i++) {
-            base[i] = n + i; // Inizializza la base con le variabili di slack
-        }
+    public static SimplessoDuale createFromTableau(SimpleMatrix A, SimpleMatrix b, SimpleMatrix c) {
+        return new SimplessoDuale(A, b, c);
+    }
 
+    /**
+     * Prende un problema del tipo:
+     * min c^T x
+     * s.t. Ax <= b
+     * @param A
+     * @param b
+     * @param c
+     * @return
+     */
+    public static SimplessoDuale createFromCanonical(SimpleMatrix A, SimpleMatrix b, SimpleMatrix c) {
+        c = c.negative();
+        c = aggiungiSlack(c, A.numRows());
+       
+        A = A.negative();
+        A = aggiungiSlack(A);
+        
+        b = b.negative();
+
+        return new SimplessoDuale(A, b, c);
+    }
+
+
+
+    private void initializeBasis() {
+        // Inizializza la base con le ultime m variabili (assumendo che siano le variabili di slack)
+        for (int i = A.numCols() - A.numRows(); i < A.numCols(); i++) {
+            basis.add(i);
+        }
+    }
+
+    public SimpleMatrix solve() {
+        SimpleMatrix updatedA = A.copy();
         while (true) {
-            // Trova la riga con la violazione primale più grande
-            int rigaUscita = -1;
-            double maxViolazione = 0;
-            for (int i = 0; i < m; i++) {
-                if (b[i] < maxViolazione) {
-                    maxViolazione = b[i];
-                    rigaUscita = i;
-                }
+            SimpleMatrix B = estraiBase(); // Matrice delle variabili di base
+            SimpleMatrix b_bar = B.solve(b); // calcolo b = B^-1 * b
+
+            if (isNonNegative(b_bar)) {
+                // Se b_bar è non negativo, allora la soluzione è ottima
+                return reconstructSolution(b_bar);
             }
 
-            if (rigaUscita == -1) {
-                // Soluzione ottimale trovata
-                return x;
-            }
+            // Calcola i costi ridotti
+            SimpleMatrix y = B.transpose().solve(extractCB());
+            SimpleMatrix Ay = A.transpose().mult(y);
+            SimpleMatrix cBar = c.minus(Ay.transpose()); // Costi ridotti
 
-            // Trova la colonna di entrata
-            int colonnaEntrata = -1;
-            double minRapporto = Double.POSITIVE_INFINITY;
-            for (int j = 0; j < n; j++) {
-                if (A[rigaUscita][j] > 0) {
-                    double rapporto = c[j] / A[rigaUscita][j];
-                    if (rapporto < minRapporto) {
-                        minRapporto = rapporto;
-                        colonnaEntrata = j;
-                    }
-                }
-            }
+            // Trova riga r su cui fare pivot r = min(r in b bar)
+            int r = findMostNegativeIndex(b_bar); 
+            // Estraggo d = updatedA[r]
+            SimpleMatrix d = updatedA.extractVector(true, r);
 
-            if (colonnaEntrata == -1) {
-                // Problema inammissibile
-                throw new RuntimeException("Problema inammissibile");
-            }
+            // Ricerca la variabile entrante che minimizzi il rapport otra costo ridotto e il valore negativo della riga pivot
+            // Se non esiste il duale è illimitato e il primale è inammissibile
+            int s = findEnteringVariable(cBar, d);
+            updateBasis(r, s);
+            updatedA = updateMatrixA(B, updatedA, r, s);
+        }
+    }
 
-            // Esegui l'operazione di pivot
-            double pivotElement = A[rigaUscita][colonnaEntrata];
-            for (int j = 0; j < n; j++) {
-                A[rigaUscita][j] /= pivotElement;
-            }
-            b[rigaUscita] /= pivotElement;
+    private SimpleMatrix updateMatrixA(SimpleMatrix B, SimpleMatrix A, int r, int s) {
+        SimpleMatrix entering = A.extractVector(true, s);
+        double scale = entering.get(r);
 
-            for (int i = 0; i < m; i++) {
-                if (i != rigaUscita) {
-                    double factor = A[i][colonnaEntrata];
-                    for (int j = 0; j < n; j++) {
-                        A[i][j] -= factor * A[rigaUscita][j];
-                    }
-                    b[i] -= factor * b[rigaUscita];
-                }
-            }
-
-            // Aggiorna la base
-            base[rigaUscita] = colonnaEntrata;
-
-            // Aggiorna la soluzione
-            Arrays.fill(x, 0);
-            for (int i = 0; i < m; i++) {
-                if (base[i] < n) {
-                    x[base[i]] = b[i];
+        // A[r] = A[r] / scale
+        for (int i = 0; i < A.numCols(); i++) {
+            A.set(r, i, A.get(r, i) / scale);
+        }
+        // Per ogni riga i != r fai A[i] = A[i] - A[r] * A[i][s]
+        for (int i = 0; i < A.numRows(); i++) {
+            if (i != r) {
+                SimpleMatrix row = A.extractVector(true, i);
+                double factor = A.get(i, s);
+                for (int j = 0; j < A.numCols(); j++) {
+                    A.set(i, j, row.get(j) - factor * A.get(r, j));
                 }
             }
         }
+        
+        return A;
     }
+
+    private boolean isNonNegative(SimpleMatrix x) {
+        // Se è un vettore
+        if (x.numCols() == 1) {
+            for (int i = 0; i < x.numRows(); i++) {
+                if (x.get(i) < 0) {
+                    return false;
+                }
+            }
+            return true;
+        }else{
+
+            // Se è una matrice
+            for (int i = 0; i < x.numRows(); i++) {
+                for (int j = 0; j < x.numCols(); j++) {
+                    if (x.get(i, j) < 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Estrae una sottromanice di A composta dalle colonne indicate dagli indici della base.
+     * @return
+     */
+    private SimpleMatrix estraiBase() {
+        if (basis.size() != A.numRows()) {
+            throw new IllegalStateException("La dimensione della base non corrisponde al numero di righe di A.");
+        }
+        
+        SimpleMatrix B = new SimpleMatrix(A.numRows(), A.numRows());
+        for (int i = 0; i < basis.size(); i++) {
+            SimpleMatrix column = A.extractVector(false, basis.get(i));
+            for (int j = 0; j < A.numRows(); j++) {
+                B.set(j, i, column.get(j,0));
+            }
+        }
+        return B;
+    }
+
+    private SimpleMatrix extractCB() {
+        SimpleMatrix cB = new SimpleMatrix(A.numRows(), 1);
+        for (int i = 0; i < basis.size(); i++) {
+            cB.set(i, c.get(basis.get(i)));
+        }
+        return cB;
+    }
+
+    private int findMostNegativeIndex(SimpleMatrix x) {
+        int index = 0;
+        double minValue = Double.MAX_VALUE;
+        for (int i = 0; i < x.numRows(); i++) {
+            if (x.get(i) < minValue) {
+                minValue = x.get(i);
+                index = i;
+            }
+        }
+        return index;
+    }
+    
+    private int findEnteringVariable(SimpleMatrix cBar, SimpleMatrix y) {
+        // Valori non zero della riga / valore negativo delle riga pivot
+        int index = -1;
+        double minRatio = Double.MAX_VALUE;
+        for (int j = 0; j < cBar.numCols(); j++) {
+            if (y.get(j) < 0){
+                double ratio = cBar.get(j) / (y.get(j));
+                if (ratio < minRatio) {
+                    minRatio = ratio;
+                    index = j;
+                }
+            }
+        }
+        if (index == -1) {
+            throw new IllegalStateException("Non è possibile trovare una variabile entrante.");
+        }
+        return index;
+    }
+
+    private void updateBasis(int r, int s) {
+        basis.set(r, s);
+    }
+
+    private SimpleMatrix reconstructSolution(SimpleMatrix xB) {
+        SimpleMatrix x = new SimpleMatrix(A.numCols(), 1);
+        for (int i = 0; i < basis.size(); i++) {
+            x.set(basis.get(i), xB.get(i));
+        }
+        return x;
+    }
+
+    private static SimpleMatrix aggiungiSlack(SimpleMatrix A){
+        int n = A.numRows();
+        SimpleMatrix I = SimpleMatrix.identity(n);
+        return A.combine(0, A.numCols(), I);
+    }
+
+    private static SimpleMatrix aggiungiSlack(SimpleMatrix d, int n){
+        // Creo un vettore di lunghezza n con tutti zeri
+        SimpleMatrix zero = new SimpleMatrix( 1, n);
+        // Lo combino con il vettore d
+        return d.combine(0, d.numCols(), zero);
+    }
+
 
     public static void main(String[] args) {
-        // Problema primale in forma
-        // min cTx
-        // Ax >= b
-        double[] c = {-3, -2 };
-        double[][] A = { { 1, 2 }, { 4, 3 } };
-        double[] b = { 12, 4 };
+        // Esempio di utilizzo
+        // Problema iniziale:
 
-        // Costruiamo il duale
-        double[][] A_t = MatrixUtils.transpose(A);
-        double[] c_t = b;
-        double[] b_t = c;
+        // min 3x +4y
+        // s.t.
+        // 2x + y <= 600
+        // x + y <= 225
+        // 5x + 4y <= 1000
+        // x + x2 >= 150
 
-        // Aggiungiamo slack
-        double[] r0 = { 1, 4, 1, 0 };
-        double[] r1 = { 2, 3, 0, 1 };
-        //A_t = new double[][] { r0, r1 };
 
-        //c_t = new double[] { c_t[0], c_t[1], 0, 0 };
+        SimpleMatrix A = new SimpleMatrix(new double[][] {
+            {2, 1},
+            {1, 1},
+            {5, 4},
+            {-1, -2},
+        });
+        SimpleMatrix b = new SimpleMatrix(new double[][] {{600}, {225}, {1000}, {-150}});
+        SimpleMatrix c = new SimpleMatrix(new double[][] {{-3,-4}});
 
-        SimplessoDuale sd = new SimplessoDuale(A, b, c);
-        double[] soluzione = sd.risolvi();
+        c = aggiungiSlack(c, A.numRows());
+        A = aggiungiSlack(A);   
 
-        System.out.println("Soluzione ottimale:");
-        for (int i = 0; i < soluzione.length; i++) {
-            System.out.printf("x%d = %.2f%n", i + 1, soluzione[i]);
-        }
+        
+          
+          A = new SimpleMatrix(new double[][] {
+            {1, 2, 1},
+            {2, -1, 3},
+        });
+
+            c = new SimpleMatrix(new double[][] {{2, 3, 4}});
+            b = new SimpleMatrix(new double[][] {{3}, {4}});
+
+        
+        
+        SimplessoDuale dualSimplex = SimplessoDuale.createFromCanonical(A, b, c);
+        SimpleMatrix solution = dualSimplex.solve();
+
+        System.out.println("Soluzione ottima:");
+        System.out.println(solution);
     }
 }

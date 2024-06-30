@@ -1,5 +1,5 @@
-package it.naddeil.ro.api;
+package it.naddeil.ro.common;
 
 public interface PLISolver {
-    public Result solve(Problem problem, Parameters parameters);
+    public Result solve(Problema problem, Parameters parameters);
 }

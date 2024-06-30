@@ -1,4 +1,4 @@
-package it.naddeil.ro.api;
+package it.naddeil.ro.common;
 
 public class Pair {
     private final int i;
