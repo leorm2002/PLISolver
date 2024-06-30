@@ -6,6 +6,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "SimplessoDuale",
+            "request": "launch",
+            "mainClass": "it.naddeil.ro.dualsimplexsolver.SimplessoDuale",
+            "projectName": "DualSimplexSolver"
+        },
+        {
+            "type": "java",
+            "name": "GomorySolver",
+            "request": "launch",
+            "mainClass": "it.naddeil.ro.gomorysolver.GomorySolver",
+            "projectName": "GomorySolver"
+        },
+        {
             "preLaunchTask": "quarkus:dev (service)",
             "type": "java",
             "request": "attach",

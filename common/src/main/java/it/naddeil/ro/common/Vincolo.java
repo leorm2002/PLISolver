@@ -8,7 +8,13 @@ public class Vincolo {
     private Verso verso;
 
     
-    Vincolo copy(){
+    public Vincolo(List<Double> vincolo, Verso verso) {
+		this.vincolo = vincolo;
+		this.verso = verso;
+	}
+
+
+	Vincolo copy(){
         return null;
     
     }

@@ -2,6 +2,8 @@ package it.naddeil.ro.common;
 
 import org.ejml.simple.SimpleMatrix;
 
+import it.naddeil.ro.common.pub.PublicStdFormProblem;
+
 /**
  * Problema in forma standard del tipo:
  * min c^T x
@@ -13,11 +15,12 @@ public class StdProblem {
     SimpleMatrix A;
     SimpleMatrix b;
     SimpleMatrix c;
+    
 	public StdProblem() {
 	}
-    public StdProblem(StdProblemPublic p) {
-        	A = new SimpleMatrix(p.getA().size(), p.getA().get(0).size());
-        	for(int i = 0; i < p.getA().size(); i++) {
+    public StdProblem(PublicStdFormProblem p) {
+        A = new SimpleMatrix(p.getA().size(), p.getA().get(0).size());
+            for(int i = 0; i < p.getA().size(); i++) {
         		for(int j = 0; j < p.getA().get(0).size(); j++) {
         			A.set(i, j, p.getA().get(i).get(j));
         		}

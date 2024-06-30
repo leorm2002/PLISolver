@@ -1,4 +1,4 @@
-package it.naddeil.ro.common;
+package it.naddeil.ro.common.pub;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  * Ax = b
  * che dato n = numero di righe ha come ultime n variabili una base ammissibile
  */
-public class StdProblemPublic {
+public class PublicStdFormProblem {
     private List<List<Double>> a;
     private List<Double> b;
     private List<Double> c;

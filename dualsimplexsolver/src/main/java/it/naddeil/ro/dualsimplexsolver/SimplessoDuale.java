@@ -1,18 +1,27 @@
 package it.naddeil.ro.dualsimplexsolver;
 
+import java.security.DrbgParameters.Reseed;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.ejml.simple.SimpleMatrix;
+
+import it.naddeil.ro.common.Result;
 
 
 public class SimplessoDuale {
 
     SimpleMatrix A; // Matrice dei coefficienti
-    SimpleMatrix Acurrent; // Matrice dei coefficienti
+    SimpleMatrix updatedA; // Matrice dei coefficienti
     SimpleMatrix b; // Vettore dei termini noti
     SimpleMatrix c; // Vettore dei coefficienti della funzione obiettivo
     List<Integer> basis; // Indici delle variabili di base
+    
+
+	SimpleMatrix solution;
+    SimpleMatrix cout;
+    SimpleMatrix bout;
 
     private SimplessoDuale(SimpleMatrix A, SimpleMatrix b, SimpleMatrix c) {
         this.A = A;
@@ -22,14 +31,38 @@ public class SimplessoDuale {
         initializeBasis();
     }
 
-    public static SimplessoDuale createFromTableau(SimpleMatrix A, SimpleMatrix b, SimpleMatrix c) {
-        return new SimplessoDuale(A, b, c);
+    public Result buildResult(SimpleMatrix solution) {
+        SimpleMatrix out = new SimpleMatrix(A.numRows()+ 1, A.numCols() + 1);
+        // Se first row to c
+        for (int i = 0; i < c.numCols(); i++) {
+            out.set(0, i, cout.get(i));
+        }
+        // Set last column to b
+        for (int i = 0; i < b.numRows(); i++) {
+            out.set(i + 1, A.numCols(), bout.get(i));
+        }
+        // Set the rest to A
+        for (int i = 0; i < A.numRows(); i++) {
+            for (int j = 0; j < A.numCols(); j++) {
+                out.set(i + 1, j, updatedA.get(i, j));
+            }
+        }
+        
+        return new DualSimplexResult( out, solution, basis);
+    }
+
+    public static SimplessoDuale createFromTableau(SimpleMatrix A, SimpleMatrix b, SimpleMatrix c, List<Integer> basis) {
+        SimplessoDuale s = new SimplessoDuale(A, b, c);
+        if(basis != null && !basis.isEmpty()){
+            s.basis = basis;
+        }
+        return s;
     }
 
     /**
      * Prende un problema del tipo:
      * min c^T x
-     * s.t. Ax <= b
+     * s.t. Ax >= b
      * @param A
      * @param b
      * @param c
@@ -57,20 +90,22 @@ public class SimplessoDuale {
     }
 
     public SimpleMatrix solve() {
-        SimpleMatrix updatedA = A.copy();
+        updatedA = A.copy();
         while (true) {
             SimpleMatrix B = estraiBase(); // Matrice delle variabili di base
             SimpleMatrix b_bar = B.solve(b); // calcolo b = B^-1 * b
-
-            if (isNonNegative(b_bar)) {
-                // Se b_bar è non negativo, allora la soluzione è ottima
-                return reconstructSolution(b_bar);
-            }
+            bout = b_bar;
 
             // Calcola i costi ridotti
             SimpleMatrix y = B.transpose().solve(extractCB());
             SimpleMatrix Ay = A.transpose().mult(y);
             SimpleMatrix cBar = c.minus(Ay.transpose()); // Costi ridotti
+            cout = cBar;
+
+            if (isNonNegative(b_bar)) {
+                // Se b_bar è non negativo, allora la soluzione è ottima
+                return reconstructSolution(b_bar);
+            }
 
             // Trova riga r su cui fare pivot r = min(r in b bar)
             int r = findMostNegativeIndex(b_bar); 
@@ -86,8 +121,8 @@ public class SimplessoDuale {
     }
 
     private SimpleMatrix updateMatrixA(SimpleMatrix B, SimpleMatrix A, int r, int s) {
-        SimpleMatrix entering = A.extractVector(true, s);
-        double scale = entering.get(r);
+        SimpleMatrix entering = A.extractVector(true, r);
+        double scale = entering.get(s);
 
         // A[r] = A[r] / scale
         for (int i = 0; i < A.numCols(); i++) {
@@ -197,6 +232,7 @@ public class SimplessoDuale {
         for (int i = 0; i < basis.size(); i++) {
             x.set(basis.get(i), xB.get(i));
         }
+        this.solution = x;
         return x;
     }
 
@@ -237,24 +273,25 @@ public class SimplessoDuale {
         SimpleMatrix c = new SimpleMatrix(new double[][] {{-3,-4}});
 
         c = aggiungiSlack(c, A.numRows());
-        A = aggiungiSlack(A);   
+        A = aggiungiSlack(A);
 
-        
-          
-          A = new SimpleMatrix(new double[][] {
+        A = new SimpleMatrix(new double[][] {
             {1, 2, 1},
             {2, -1, 3},
         });
 
-            c = new SimpleMatrix(new double[][] {{2, 3, 4}});
-            b = new SimpleMatrix(new double[][] {{3}, {4}});
+        c = new SimpleMatrix(new double[][] {{2, 3, 4}});
+        b = new SimpleMatrix(new double[][] {{3}, {4}});
 
-        
-        
+
         SimplessoDuale dualSimplex = SimplessoDuale.createFromCanonical(A, b, c);
         SimpleMatrix solution = dualSimplex.solve();
 
         System.out.println("Soluzione ottima:");
         System.out.println(solution);
+
+        Result result = dualSimplex.buildResult(solution);
+        System.out.println("Tableau ottimo:");
+        System.out.println(result.getTableauOttimo());
     }
 }
