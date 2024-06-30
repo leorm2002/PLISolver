@@ -3,14 +3,33 @@ package it.naddeil.ro.common;
 import java.util.List;
 
 
-public interface Vincolo {
-    List<Double> getVincolo();
+public class Vincolo {
+    private List<Double> vincolo;
+    private Verso verso;
 
-    void setVincolo(List<Double> vincolo);
+    
+    Vincolo copy(){
+        return null;
+    
+    }
 
-    Verso getVerso();
 
-    void setVerso(Verso verso);
+	public List<Double> getVincolo() {
+		return vincolo;
+	}
 
-    Vincolo copy();
+
+	public void setVincolo(List<Double> vincolo) {
+		this.vincolo = vincolo;
+	}
+
+
+	public Verso getVerso() {
+		return verso;
+	}
+
+
+	public void setVerso(Verso verso) {
+		this.verso = verso;
+	}
 }

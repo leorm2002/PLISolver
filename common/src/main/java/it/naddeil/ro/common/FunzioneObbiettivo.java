@@ -1,17 +1,30 @@
 package it.naddeil.ro.common;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public interface FunzioneObbiettivo {
+public class FunzioneObbiettivo implements Serializable {
+    Tipo tipo;
+    List<Double> c;
 
-    Tipo getTipo();
+    FunzioneObbiettivo copy(){
+        return null;
+    }
 
-    void setTipo(Tipo tipo);
+	public Tipo getTipo() {
+		return tipo;
+	}
 
-    List<Double> getC();
+	public void setTipo(Tipo tipo) {
+		this.tipo = tipo;
+	}
 
-    void setC(List<Double> c);
+	public List<Double> getC() {
+		return c;
+	}
 
-    FunzioneObbiettivo copy();
+	public void setC(List<Double> c) {
+		this.c = c;
+	}
 } 

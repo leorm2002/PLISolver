@@ -1,21 +1,40 @@
 package it.naddeil.ro.common;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Rappresenta un problema di ottimizzazione ovvero min F s.t. Ax=d dove ogni riga della matrice rappresenta un vincolo di tipo =
  */
-public interface Problema {
-    FunzioneObbiettivo getFunzioneObbiettivo();
+public class Problema implements Serializable {
+    private FunzioneObbiettivo funzioneObbiettivo;
+    private List<Vincolo> vincoli;
 
-    void setFunzioneObbiettivo(FunzioneObbiettivo funzioneObbiettivo);
 
-    List<Vincolo> getVincoli();
+    Problema copy(){
+        return null;
+    }
 
-    void setVincoli(List<Vincolo> vincoli);
+    @JsonIgnore
+    public StdProblem toMatrixProblem(){
+        return null;
+    }
 
-    Problema copy();
+	public FunzioneObbiettivo getFunzioneObbiettivo() {
+		return funzioneObbiettivo;
+	}
 
-    // TODO jsonignore
-    MatrixProblem toMatrixProblem();
+	public void setFunzioneObbiettivo(FunzioneObbiettivo funzioneObbiettivo) {
+		this.funzioneObbiettivo = funzioneObbiettivo;
+	}
+
+	public List<Vincolo> getVincoli() {
+		return vincoli;
+	}
+
+	public void setVincoli(List<Vincolo> vincoli) {
+		this.vincoli = vincoli;
+	}
 }

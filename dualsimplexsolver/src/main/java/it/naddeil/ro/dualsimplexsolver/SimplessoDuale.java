@@ -200,6 +200,7 @@ public class SimplessoDuale {
         return x;
     }
 
+
     private static SimpleMatrix aggiungiSlack(SimpleMatrix A){
         int n = A.numRows();
         SimpleMatrix I = SimpleMatrix.identity(n);

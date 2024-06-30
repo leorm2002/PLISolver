@@ -2,9 +2,8 @@ package it.naddeil.ro.dualsimplexsolver;
 
 import org.ejml.simple.SimpleMatrix;
 
-import it.naddeil.ro.common.Result;
 
-public class DualSimplexResult implements Result{
+public class DualSimplexResult {
     private SimpleMatrix tableauOttimo;
     private SimpleMatrix soluzione;
 
@@ -13,12 +12,10 @@ public class DualSimplexResult implements Result{
         this.soluzione = soluzione;
     }
 
-    @Override
     public SimpleMatrix getSoluzione() {
         return soluzione;
     }
 
-    @Override
     public SimpleMatrix getTableauOttimo() {
         return tableauOttimo;
     }
