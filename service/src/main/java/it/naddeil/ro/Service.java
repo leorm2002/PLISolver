@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.ejml.simple.SimpleMatrix;
 
+import it.naddeil.ro.common.FracResult;
 import it.naddeil.ro.common.Parameters;
 import it.naddeil.ro.common.ProblemTransformer;
 import it.naddeil.ro.common.Problema;
@@ -42,8 +43,8 @@ public class Service {
     @Path("/solveLinearInteger")
     public String solveLI(PublicProblem problema){
         long startTime = System.currentTimeMillis();
-        GomorySolver gomory = new GomorySolver(new DualSimplexSolver());
-        Result r = gomory.solve(problema, new Parameters());
+        GomorySolver gomory = new GomorySolver(null,new DualSimplexSolver());
+        FracResult r = gomory.solve(problema, new Parameters());
         System.out.println(r.getSoluzione());
         System.out.println("Tempo impiegato: " + (System.currentTimeMillis() - startTime) + "ms");
         return "";

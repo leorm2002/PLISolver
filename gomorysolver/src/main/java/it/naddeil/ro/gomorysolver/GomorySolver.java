@@ -1,153 +1,146 @@
 package it.naddeil.ro.gomorysolver;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-import org.ejml.simple.SimpleMatrix;
 
 
 import it.naddeil.ro.common.*;
 import it.naddeil.ro.common.pub.PublicProblem;
+import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
+import it.naddeil.ro.simplexsolver.SimplexSolver;
 
 
 
 public class GomorySolver implements PLISolver {
-    private final PLSolver plSolver;
-
+    private final SimplexSolver simplexSolver;
+    private final DualSimplexSolver dualSimplexSolver;
     // Vincoli:
     // Tutti i segni della funzione obbiettivo positivi
-    public GomorySolver(PLSolver plsolver) {
-        this.plSolver = plsolver;
-
+    public GomorySolver(SimplexSolver simplexSolver, DualSimplexSolver dualSimplexSolver) {
+        this.simplexSolver = simplexSolver;
+        this.dualSimplexSolver = dualSimplexSolver;
     }
 
-
-    boolean isInteger(double x) {
-        double tollleranza = new Parameters().getTollleranza();
-        return ConfrontationUtils.areEqual(x % 1, 0, tollleranza) || ConfrontationUtils.areEqual(x % 1, 1, tollleranza);
-    }
-
-    boolean isSolved(Result r) {
-        SimpleMatrix s = r.getSoluzione();
-        for (int i= 0; i < s.numRows(); i++){
-            Double valore = s.get(i);
-            if(!isInteger(valore)){
+    boolean isSolved(FracResult r) {
+        Fraction[] s = r.getSoluzione();
+        for (int i= 0; i < s.length; i++){
+            if(!s[i].isInteger()){
                 return false;
             }
         }
         return true;
     }
 
-    double f(double x) {
-        return x - Math.floor(x);
+    static Fraction f(Fraction x) {
+        return x.subtract(x.floor());
     }
 
-    SimpleMatrix creaTaglio(SimpleMatrix riga, SimpleMatrix b) {
+    public static Fraction[] creaTaglio(Fraction[] riga) {
         // Un taglio è del tipo f(c[1])x_1 + f(c[2])x_2 + ... + f(c[n])x_n >= f(c[0])
         // Dove f(x) è definita come x -> x - floor(x)
-        SimpleMatrix taglio = new SimpleMatrix(1, riga.numCols() );
-        for (int i = 0; i < riga.numCols() ; i++) {
-            taglio.set(i, f(riga.get(i)));
+        Fraction[] taglio = new Fraction[riga.length];
+        for (int i = 0; i < riga.length ; i++) {
+            taglio[i] =  f(riga[i]);
         }
-
         return taglio;
     }
 
-    int trovaRigaConValoreFrazionario(SimpleMatrix matrice) {
+    public static int trovaRigaConValoreFrazionario(Fraction[] matrice) {
         int riga = -1;
-        for (int i = 0; i < matrice.numRows(); i++) {
-            if (!isInteger(matrice.get(i))) {
-                riga = i;
+        for (int i = 0; i < matrice.length; i++) {
+            if (!matrice[i].isInteger()) {
+                riga = i + 1;
                 break;
             }
         }
         return riga;
     }
 
-    SimpleMatrix aggiungiVincolo(SimpleMatrix matrice, SimpleMatrix taglio) {
-        int nRighe = matrice.numRows();
-        int nColonne = matrice.numCols();
-        SimpleMatrix nuovaMatrice = new SimpleMatrix(nRighe + 1, nColonne + 1);
+    Fraction[][] aggiungiVincolo(Fraction[][] tableau, Fraction[] taglio, Fraction[] b, Fraction z) {
+        int nRighe = tableau.length;
+        int nColonne = tableau[0].length;
+        Fraction[][] nuovaMatrice = new Fraction[nRighe + 1][nColonne + 1];
 
         // Ricopio la matrice settando 0 alla fine di ogni riga
         for (int i = 0; i < nRighe; i++) {
-            for (int j = 0; j < nColonne; j++) {
-                nuovaMatrice.set(i, j, matrice.get(i, j));
+            for (int j = 0; j < nColonne - 1; j++) {
+                nuovaMatrice[i][j] = tableau[i][j];
             }
-            nuovaMatrice.set(i, nColonne,0d);  // Aggiungi 0 alla fine
+            nuovaMatrice[i][nColonne - 1] = Fraction.ZERO;  // Aggiungi 0 alla fine
         }
 
         // Aggiungo il taglio alla fine
-        for (int j = 0; j < nColonne; j++) {
-            nuovaMatrice.set(nRighe, j, taglio.get(j));
+        for (int i = 0; i < nColonne -1; i++) {
+            nuovaMatrice[nRighe][i] = taglio[i];
         }
         // Variabile di slack per il taglio
-        nuovaMatrice.set(nRighe, nColonne, 1d);
+        nuovaMatrice[nRighe][nColonne - 1] = Fraction.ONE;
+        // Riporto il valore di b per il taglio
+        nuovaMatrice[nRighe][nColonne] = taglio[taglio.length - 1];
+        // Riporto soluzione
+        nuovaMatrice[0][nColonne] =z;
 
+        // Riporto il vettore b
+        for (int i = 1; i < nRighe; i++) {
+            nuovaMatrice[i][nColonne] = b[i - 1];
+        }
         return nuovaMatrice;
     }
 
-    SimpleMatrix creaTaglio(SimpleMatrix tableau) {
+    Fraction[] creaTaglio(Fraction[] b, Fraction[][] tableau) {
         // 0. Estraggo l'ultima colonna ovvero i valori di b
-        SimpleMatrix b = tableau.extractVector(false, tableau.numCols()-1);
         // 1. trova riga su cui aggiungere taglio (riga con coefficiente frazionario più grande)
         int rigaTaglio = trovaRigaConValoreFrazionario(b);
-        SimpleMatrix riga = tableau.extractVector(true, rigaTaglio);
+        Fraction[] riga = tableau[rigaTaglio];
 
         // 2. calcola taglio
-        return creaTaglio(riga, b);
+        return  Arrays.stream(creaTaglio(riga)).map(Fraction::negate).toArray(Fraction[]::new);
+        
     }
-
-    SimpleMatrix createNewC(SimpleMatrix tableau){
-        SimpleMatrix c = tableau.extractVector(true, tableau.numRows()-1);
-        SimpleMatrix newC = new SimpleMatrix(1, c.numCols());
-        for (int i = 0; i < c.numCols(); i++) {
-            newC.set(i, f(c.get(i)));
+    
+    public void printTableau(Fraction[][] tableau) {
+        for (Fraction[] row : tableau) {
+            for (Fraction val : row) {
+                System.out.print(val + "\t");
+            }
+            System.out.println();
         }
-        newC.set(c.numCols() - 1,0);
-        return newC;
+        System.out.println();
     }
 
-    SimpleMatrix createNewB(SimpleMatrix tableau, SimpleMatrix taglio){
-        SimpleMatrix b = tableau.extractVector(false, tableau.numCols()-1);
-        SimpleMatrix newB = new SimpleMatrix(b.numRows(), 1);
-        for (int i = 1; i < b.numRows(); i++) {
-            newB.set(i -1, b.get(i));
+    public void printTableauD(Fraction[][] tableau) {
+        for (Fraction[] row : tableau) {
+            for (Fraction val : row) {
+                System.out.print(val.doubleValue() + "\t");
+            }
+            System.out.println();
         }
-        newB.set(b.numRows() -1,taglio.get(taglio.numCols()-1));
-        return newB;
+        System.out.println();
     }
-
     @Override
-    public Result solve(PublicProblem problem, Parameters parameters) {
+    public FracResult solve(PublicProblem problem, Parameters parameters) {
         int maxIter = 300;
         long startTime = System.nanoTime();
 
-        Result r = plSolver.solve(problem, parameters);
+        FracResult rs = simplexSolver.solve(problem, parameters);
+        printTableau(rs.getTableau());
+        System.out.println("Z: " + rs.getZ());
+        printTableauD(rs.getTableau());
         long endTime = System.nanoTime();
         System.out.println("Tempo: " + (endTime - startTime) / 1000000);
 
         int i = 0;
         while (i < maxIter) {
-            
-        if (!isSolved(r)) {
-                // Estraggo la matrice A dal tableau rimuovendo la prima riga e l'ultima colonna
-                SimpleMatrix tableau = r.getTableauOttimo();
-                SimpleMatrix a = tableau.extractMatrix(1, tableau.numRows(), 0, tableau.numCols()-1);
 
+        if (!isSolved(rs)) {
                 // Calcolo il taglio
-                SimpleMatrix taglio = creaTaglio(tableau).negative();
-                SimpleMatrix newA = aggiungiVincolo(a, taglio);
+                Fraction[] taglio = creaTaglio(rs.getSoluzione(), rs.getTableau());
+                Fraction[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
 
-                // Definisco le basi del nuovo problema come le vecchie pià la variabile di slack del taglio
-                List<Integer> basis = new ArrayList<>(r.getBasis());
-                basis.add(newA.numCols()-1);
+                rs = dualSimplexSolver.riottimizza(newA);
 
-                r = plSolver.reOptimize(new Problema(newA,createNewB(tableau, taglio),createNewC(tableau).negative(), basis ), parameters);
-                System.out.println(r.getSoluzione());
-                System.out.println(i);
-                if(isSolved(r)){
-                    return r;
+                if(isSolved(rs)){
+                    return rs;
                 }
                 i++;
                 if(i > maxIter){
@@ -159,76 +152,4 @@ public class GomorySolver implements PLISolver {
         // Todo return solution
         return null;
     }
-/*
- * 
-    public static void main(String[] args) {
-        PublicProblem p = new PublicProblem();
-        FunzioneObbiettivo f = new FunzioneObbiettivo();
-        f.setTipo(Tipo.MAX);
-        f.setC(List.of(1d,2d));
-        p.setFunzioneObbiettivo(f);
-        p.setVincoli(List.of(
-            new Vincolo(List.of(4d, 6d,30d), Verso.LE),
-            new Vincolo(List.of(1d, -1d,1d), Verso.GE),
-            new Vincolo(List.of(1d, 1d,0d), Verso.GE)
-        ));
-
-
-         *
-          
-          A = new SimpleMatrix(new double[][] {
-            {1, 2, 1},
-            {2, -1, 3},
-        });
-
-            c = new SimpleMatrix(new double[][] {{2, 3, 4}});
-            b = new SimpleMatrix(new double[][] {{3}, {4}});
-
-
-        p.setVincoli(List.of(
-            new Vincolo(List.of(1d,2d, 1d,3d), Verso.GE),
-            new Vincolo(List.of(2d, -1d,3d, 4d), Verso.GE)
-        ));
-        f.setTipo(Tipo.MIN);
-        f.setC(List.of(2d, 3d, 4d));
-
-     A = new SimpleMatrix(new double[][] {
-            {1, 2, 1},
-            {2, -1, 3},
-        });
-
-        c = new SimpleMatrix(new double[][] {{2, 3, 4}});
-        b = new SimpleMatrix(new double[][] {{3}, {4}});
-
-        p.setVincoli(
-            List.of(
-                new Vincolo(List.of(1d, 2d,  3d), Verso.GE),
-                new Vincolo(List.of(2d, -1d,  4d), Verso.GE)
-            )
-        );
-
-        f.setTipo(Tipo.MIN);
-        f.setC(List.of(2d, 3d));
-
-        Problema p2 = Problema.fromPublic(ProblemTransformer.portaInFormaStandard(p));
-        p2.init();
-        Loader.loadNativeLibraries();
-
-
-        SimplessoDuale s = SimplessoDuale.createFromCanonical(p2.getA(), p2.getB(), p2.getC());
-
-        var sol = s.solve();
-        long startTime = System.nanoTime();
-
-
-        GomorySolver g = new GomorySolver(new GenericSolver());
-        long endTime = System.nanoTime();
-        System.out.println("Tempo: " + (endTime - startTime) / 1000000);
-        System.out.println(sol);
-
-        g.solve(ProblemTransformer.portaInFormaStandard(p),null);
-
-    }
- */
-
 }

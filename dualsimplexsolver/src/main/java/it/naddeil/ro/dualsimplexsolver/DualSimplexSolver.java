@@ -5,17 +5,18 @@ import it.naddeil.ro.common.ProblemTransformer;
 import it.naddeil.ro.common.Problema;
 import it.naddeil.ro.common.Result;
 import java.util.Collections;
+import java.util.Arrays;
 
 import org.ejml.simple.SimpleMatrix;
 
 import it.naddeil.ro.common.StdProblem;
 import it.naddeil.ro.common.pub.PublicProblem;
-import it.naddeil.ro.common.PLSolver;
+import it.naddeil.ro.common.FracResult;
+import it.naddeil.ro.common.Fraction;
 
 
-public class DualSimplexSolver implements PLSolver{
+public class DualSimplexSolver {
 
-    @Override
     public Result solve(PublicProblem problema, Parameters parameters) {
 
         StdProblem problem = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problema)).toMatrixProblem();
@@ -27,7 +28,6 @@ public class DualSimplexSolver implements PLSolver{
         return dualSimplex.buildResult(sol);
     }
 
-    @Override
     public Result reOptimize(Problema matrixProblem, Parameters parameters) {
         //Aggiungi due righe che formano base
         SimplessoDuale dualSimplex = SimplessoDuale.createFromStd(matrixProblem.getA(), matrixProblem.getB(), matrixProblem.getC(), matrixProblem.getBasis());
@@ -35,6 +35,15 @@ public class DualSimplexSolver implements PLSolver{
         SimpleMatrix solution = dualSimplex.solve(messageBuilder);
 
         return dualSimplex.buildResult(solution);
+    }
+
+    public FracResult riottimizza(Fraction[][] tableau){
+        SimplessoDualeFrazionario dualSimplex = new SimplessoDualeFrazionario(tableau);
+        // Neghiamo la funzione obbiettivo
+        //tableau[0] = Arrays.stream(tableau[0]).map(Fraction::negate).toArray(Fraction[]::new);
+        dualSimplex.solve();
+        var tableauResult = dualSimplex.getTableau();
+        return FracResult.fromTableau(tableauResult);
     }
     
 }

@@ -7,6 +7,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Fraction",
+            "request": "launch",
+            "mainClass": "it.naddeil.ro.common.Fraction",
+            "projectName": "Common"
+        },
+        {
+            "type": "java",
+            "name": "SimplessoDualeFrazionario",
+            "request": "launch",
+            "mainClass": "it.naddeil.ro.dualsimplexsolver.SimplessoDualeFrazionario",
+            "projectName": "DualSimplexSolver"
+        },
+        {
+            "type": "java",
             "name": "SimplexTwoPhase",
             "request": "launch",
             "mainClass": "it.naddeil.ro.simplexsolver.SimplexTwoPhase",

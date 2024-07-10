@@ -1,3 +1,4 @@
+/Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/Fraction.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/pub/PublicProblem.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/StdProblem.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/pub/PublicStdFormProblem.java
@@ -5,9 +6,11 @@
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/PLSolver.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/Pair.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/Verso.java
+/Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/SolvingExecption.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/Parameters.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/ProblemTransformer.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/Result.java
+/Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/FracResult.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/Vincolo.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/Problema.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/Tipo.java

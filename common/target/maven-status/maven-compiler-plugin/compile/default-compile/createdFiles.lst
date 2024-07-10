@@ -1,10 +1,13 @@
+it/naddeil/ro/common/FracResult.class
 it/naddeil/ro/common/Result.class
 it/naddeil/ro/common/Pair.class
 it/naddeil/ro/common/ProblemTransformer.class
 it/naddeil/ro/common/Problema.class
 it/naddeil/ro/common/pub/PublicStdFormProblem.class
+it/naddeil/ro/common/Fraction.class
 it/naddeil/ro/common/PLISolver.class
 it/naddeil/ro/common/PLSolver.class
+it/naddeil/ro/common/SolvingExecption.class
 it/naddeil/ro/common/Verso.class
 it/naddeil/ro/common/FunzioneObbiettivo.class
 it/naddeil/ro/common/pub/PublicProblem.class
