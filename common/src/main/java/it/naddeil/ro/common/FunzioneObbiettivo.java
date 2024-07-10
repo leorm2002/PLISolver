@@ -27,4 +27,9 @@ public class FunzioneObbiettivo implements Serializable {
 	public void setC(List<Double> c) {
 		this.c = c;
 	}
+
+    @Override
+    public String toString() {
+        return "FunzioneObbiettivo [tipo=" + tipo + ", c=" + c + "]";
+    }
 } 

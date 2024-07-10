@@ -13,6 +13,7 @@ import it.naddeil.ro.common.Vincolo;
 public class PublicProblem implements Serializable {
     private FunzioneObbiettivo funzioneObbiettivo;
     private List<Vincolo> vincoli;
+    
 
 	public FunzioneObbiettivo getFunzioneObbiettivo() {
 		return funzioneObbiettivo;
@@ -26,6 +27,10 @@ public class PublicProblem implements Serializable {
 	public void setVincoli(List<Vincolo> vincoli) {
 		this.vincoli = vincoli;
 	}
+    @Override
+    public String toString() {
+        return "PublicProblem [funzioneObbiettivo=" + funzioneObbiettivo + ", vincoli=" + vincoli + "]";
+    }
 
    
 }

@@ -11,6 +11,7 @@ public class DualSimplexResult implements Result {
     private SimpleMatrix tableauOttimo;
     private SimpleMatrix soluzione;
     private  List<Integer> basis;
+    private SimpleMatrix cBar;
 
     public DualSimplexResult(SimpleMatrix tableauOttimo, SimpleMatrix soluzione, List<Integer> basis) {
         this.tableauOttimo = tableauOttimo;
@@ -30,5 +31,26 @@ public class DualSimplexResult implements Result {
 	public List<Integer> getBasis() {
         return basis;
 	}
+
+    public void setTableauOttimo(SimpleMatrix tableauOttimo) {
+        this.tableauOttimo = tableauOttimo;
+    }
+
+    public void setSoluzione(SimpleMatrix soluzione) {
+        this.soluzione = soluzione;
+    }
+
+    public void setBasis(List<Integer> basis) {
+        this.basis = basis;
+    }
+
+    public SimpleMatrix getcBar() {
+        return cBar;
+    }
+
+    public DualSimplexResult setcBar(SimpleMatrix cBar) {
+        this.cBar = cBar;
+        return this;
+    }
     
 }

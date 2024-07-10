@@ -4,6 +4,7 @@ import it.naddeil.ro.common.Parameters;
 import it.naddeil.ro.common.ProblemTransformer;
 import it.naddeil.ro.common.Problema;
 import it.naddeil.ro.common.Result;
+import java.util.Collections;
 
 import org.ejml.simple.SimpleMatrix;
 
@@ -14,24 +15,24 @@ import it.naddeil.ro.common.PLSolver;
 
 public class DualSimplexSolver implements PLSolver{
 
-    // TODO: Metodo per verificare se la base di partenza è ottima o meno (se non lo è, si può fare fase 1 + fase 2)
-
     @Override
-    public Result solve(PublicProblem problem, Parameters parameters) {
-        StdProblem matrixProblem = Problema
-            .fromPublic(ProblemTransformer.portaInFormaStandard(problem))
-            .toMatrixProblem();
+    public Result solve(PublicProblem problema, Parameters parameters) {
 
-        SimplessoDuale dualSimplex = SimplessoDuale.createFromCanonical(matrixProblem.getA(), matrixProblem.getB(), matrixProblem.getC());
-        SimpleMatrix solution = dualSimplex.solve();
+        StdProblem problem = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problema)).toMatrixProblem();
+        problem.setC(problem.getC().negative());
+        SimplessoDuale dualSimplex = SimplessoDuale.createFromStd(problem.getA(), problem.getB(), problem.getC(), Collections.emptyList());
+        DualSimplexMessageBuilder msg = new DualSimplexMessageBuilder();
+        SimpleMatrix sol = dualSimplex.solve(msg);
 
-        return dualSimplex.buildResult(solution);
+        return dualSimplex.buildResult(sol);
     }
 
     @Override
     public Result reOptimize(Problema matrixProblem, Parameters parameters) {
-        SimplessoDuale dualSimplex = SimplessoDuale.createFromTableau(matrixProblem.getA(), matrixProblem.getB(), matrixProblem.getC(), matrixProblem.getBasis());
-        SimpleMatrix solution = dualSimplex.solve();
+        //Aggiungi due righe che formano base
+        SimplessoDuale dualSimplex = SimplessoDuale.createFromStd(matrixProblem.getA(), matrixProblem.getB(), matrixProblem.getC(), matrixProblem.getBasis());
+        DualSimplexMessageBuilder messageBuilder = new DualSimplexMessageBuilder();
+        SimpleMatrix solution = dualSimplex.solve(messageBuilder);
 
         return dualSimplex.buildResult(solution);
     }

@@ -5,10 +5,9 @@ import java.util.List;
 
 import org.ejml.simple.SimpleMatrix;
 
+
 import it.naddeil.ro.common.*;
 import it.naddeil.ro.common.pub.PublicProblem;
-import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
-import it.naddeil.ro.dualsimplexsolver.SimplessoDuale;
 
 
 
@@ -122,9 +121,16 @@ public class GomorySolver implements PLISolver {
     @Override
     public Result solve(PublicProblem problem, Parameters parameters) {
         int maxIter = 300;
+        long startTime = System.nanoTime();
+
         Result r = plSolver.solve(problem, parameters);
+        long endTime = System.nanoTime();
+        System.out.println("Tempo: " + (endTime - startTime) / 1000000);
+
+        int i = 0;
+        while (i < maxIter) {
+            
         if (!isSolved(r)) {
-            for (int i = 0; i < maxIter; i++) {
                 // Estraggo la matrice A dal tableau rimuovendo la prima riga e l'ultima colonna
                 SimpleMatrix tableau = r.getTableauOttimo();
                 SimpleMatrix a = tableau.extractMatrix(1, tableau.numRows(), 0, tableau.numCols()-1);
@@ -137,19 +143,24 @@ public class GomorySolver implements PLISolver {
                 List<Integer> basis = new ArrayList<>(r.getBasis());
                 basis.add(newA.numCols()-1);
 
-                r = plSolver.reOptimize(new Problema(newA,createNewB(tableau, taglio),createNewC(tableau), basis ), parameters);
+                r = plSolver.reOptimize(new Problema(newA,createNewB(tableau, taglio),createNewC(tableau).negative(), basis ), parameters);
                 System.out.println(r.getSoluzione());
                 System.out.println(i);
                 if(isSolved(r)){
-                    break;
+                    return r;
                 }
-            }
+                i++;
+                if(i > maxIter){
+                    throw new RuntimeException("Numero massimo di iterazioni raggiunto");
+                }
         }
+    }
 
         // Todo return solution
         return null;
     }
-
+/*
+ * 
     public static void main(String[] args) {
         PublicProblem p = new PublicProblem();
         FunzioneObbiettivo f = new FunzioneObbiettivo();
@@ -163,7 +174,6 @@ public class GomorySolver implements PLISolver {
         ));
 
 
-        /*
          *
           
           A = new SimpleMatrix(new double[][] {
@@ -174,7 +184,6 @@ public class GomorySolver implements PLISolver {
             c = new SimpleMatrix(new double[][] {{2, 3, 4}});
             b = new SimpleMatrix(new double[][] {{3}, {4}});
 
-         */
 
         p.setVincoli(List.of(
             new Vincolo(List.of(1d,2d, 1d,3d), Verso.GE),
@@ -183,7 +192,6 @@ public class GomorySolver implements PLISolver {
         f.setTipo(Tipo.MIN);
         f.setC(List.of(2d, 3d, 4d));
 
-        /*
      A = new SimpleMatrix(new double[][] {
             {1, 2, 1},
             {2, -1, 3},
@@ -191,7 +199,6 @@ public class GomorySolver implements PLISolver {
 
         c = new SimpleMatrix(new double[][] {{2, 3, 4}});
         b = new SimpleMatrix(new double[][] {{3}, {4}});
-         */
 
         p.setVincoli(
             List.of(
@@ -205,14 +212,23 @@ public class GomorySolver implements PLISolver {
 
         Problema p2 = Problema.fromPublic(ProblemTransformer.portaInFormaStandard(p));
         p2.init();
+        Loader.loadNativeLibraries();
+
 
         SimplessoDuale s = SimplessoDuale.createFromCanonical(p2.getA(), p2.getB(), p2.getC());
 
         var sol = s.solve();
+        long startTime = System.nanoTime();
+
+
+        GomorySolver g = new GomorySolver(new GenericSolver());
+        long endTime = System.nanoTime();
+        System.out.println("Tempo: " + (endTime - startTime) / 1000000);
         System.out.println(sol);
 
-        GomorySolver g = new GomorySolver(new DualSimplexSolver());
         g.solve(ProblemTransformer.portaInFormaStandard(p),null);
 
     }
+ */
+
 }

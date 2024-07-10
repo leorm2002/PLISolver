@@ -7,6 +7,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SimplexTwoPhase",
+            "request": "launch",
+            "mainClass": "it.naddeil.ro.simplexsolver.SimplexTwoPhase",
+            "projectName": "SimplexSolver"
+        },
+        {
+            "type": "java",
+            "name": "DualSimplex",
+            "request": "launch",
+            "mainClass": "it.naddeil.ro.dualsimplexsolver.DualSimplex",
+            "projectName": "DualSimplexSolver"
+        },
+        {
+            "type": "java",
+            "name": "GlopBridge",
+            "request": "launch",
+            "mainClass": "it.naddeil.ro.genericsolver.GlopBridge",
+            "projectName": "GenericSolver"
+        },
+        {
+            "type": "java",
             "name": "SimplessoDuale",
             "request": "launch",
             "mainClass": "it.naddeil.ro.dualsimplexsolver.SimplessoDuale",
@@ -18,6 +39,18 @@
             "request": "launch",
             "mainClass": "it.naddeil.ro.gomorysolver.GomorySolver",
             "projectName": "GomorySolver"
+        },
+        {
+            "type": "java",
+            "name": "Attach",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": "5005",
+            "stepFilters": {
+                "skipClasses": [
+                    "*.class"
+                ]
+            }
         },
         {
             "preLaunchTask": "quarkus:dev (service)",

@@ -1,4 +1,5 @@
-it/naddeil/ro/dualsimplexsolver/PLISolver.class
+it/naddeil/ro/dualsimplexsolver/DualSimplexMessageBuilder.class
 it/naddeil/ro/dualsimplexsolver/DualSimplexResult.class
+it/naddeil/ro/dualsimplexsolver/InitialBasisFinder.class
 it/naddeil/ro/dualsimplexsolver/DualSimplexSolver.class
 it/naddeil/ro/dualsimplexsolver/SimplessoDuale.class
