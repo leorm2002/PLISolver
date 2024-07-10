@@ -2,7 +2,11 @@ package it.naddeil.ro.simplexsolver;
 
 import it.naddeil.ro.common.Fraction;
 import it.naddeil.ro.common.Pair;
+import pabeles.concurrency.IntObjectConsumer;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 public class SimplexTableau {
     private Fraction[][] tableau;
@@ -46,20 +50,94 @@ public class SimplexTableau {
             tableau[i +1] = constraintRow;
         }
     }
-
     public void solve() {
-        while (canImprove()) {
-            int pivotColumn = findPivotColumn();
-            int pivotRow = findPivotRow(pivotColumn);
-            pivot(pivotRow, pivotColumn);
+        solve(new ArrayList<>(), false);
+
+    }
+
+    Pair<Integer, Integer> degenere(List<Integer> artificialBasis){
+        // Ritornerà true se esiste una base che è una variabile artificiale
+        for (Integer col : artificialBasis) {
+            if(isBasis(col, tableau)){
+                return Pair.of(col, IntStream.range(0, tableau.length).filter(i -> tableau[i][col].equals(Fraction.ONE)).findFirst().getAsInt());
+            }
         }
-        
+        return Pair.of(-1, -1);
+    }
+
+    static void verificaW(Fraction w){
+        if(w.compareTo(Fraction.ZERO) != 0){
+            throw new RuntimeException("Il valore di W non è 0");
+        }
+    }
+
+    void gestisciDegenerazione(int colonna, int riga, int numeroVariabiliOrig){
+        // Due casi: tutti i coefficienti della riga pivot sono 0 => possiamo eliminare la riga
+        Fraction[] rigaTableau = tableau[riga];
+        boolean tuttiZero = true;   
+        for (int i = 0; i < numeroVariabiliOrig; i++) {
+            if(!rigaTableau[i].equals(Fraction.ZERO)){
+                tuttiZero = false;
+                break;
+            }
+        }
+        if(tuttiZero){
+            // Possiamo eliminare vincolo
+            Fraction[][] nuovoTableau = new Fraction[tableau.length - 1][tableau[0].length];
+            for (int i = 0; i < riga; i++) {
+                nuovoTableau[i] = tableau[i];
+            }
+            for (int i = riga + 1; i < tableau.length; i++) {
+                nuovoTableau[i - 1] = tableau[i];
+            }
+        }
+        // Almeno un coefficiente è diverso da 0 => possiamo pivotare su quello
+        else{
+            int colonnaPivot = -1;
+            for (int i = 0; i < numeroVariabiliOrig; i++) {
+                if(!rigaTableau[i].equals(Fraction.ZERO) && !isBasis(i, tableau)){
+                    colonnaPivot = i;
+                    break;
+                }
+            }
+            pivot(riga, colonnaPivot);
+        }
+    }
+    void portaInCanonica(){
         // Potrebbe essere necessario portare in forma canonica
-            var basis = getCostoRidottoDaAggiornare();
-            while(basis.getFirst() != -1){
+        var basis = getCostoRidottoDaAggiornare();
+        while(basis.getFirst() != -1){
             pivot(basis.getFirst(), basis.getSecond());
             basis = getCostoRidottoDaAggiornare();
         }
+    }
+
+    public void solve(List<Integer> artificialBasis, boolean fase1) {
+        if(!fase1){
+            portaInCanonica();
+        }
+        while (canImprove()) {
+            printTableau();
+            int pivotColumn = findPivotColumn();
+            int pivotRow = findPivotRow(pivotColumn);
+            pivot(pivotRow, pivotColumn);
+
+        }
+        // Studio W
+        if(fase1){
+            verificaW(tableau[0][tableau[0].length - 1]);
+    
+            var deg = degenere(artificialBasis);
+            while (deg.getFirst() != -1) {
+                gestisciDegenerazione(deg.getFirst(), deg.getSecond(), tableau[0].length - 1 - artificialBasis.size());
+                deg = degenere(artificialBasis);
+            }
+            
+            printTableau();
+            // Verifica base degenere
+            
+        }
+        portaInCanonica();
         
     }
 
@@ -133,6 +211,55 @@ public class SimplexTableau {
 
     public Fraction getObjectiveValue() {
         return tableau[0][0];
+    }
+
+    public static boolean isBasis(int column, Fraction[][] tableau){
+        boolean basicVariable = true;
+        int basicRow = -1;
+        for (int row = 1; row < tableau.length; row++) {
+            if (tableau[row][column].equals(Fraction.ONE)) {
+                if (basicRow == -1) {
+                    basicRow = row;
+                } else {
+                    basicVariable = false;
+                    break;
+                }
+            } else if (!tableau[row][column].equals(Fraction.ZERO)) {
+                basicVariable = false;
+                break;
+            }
+        }
+        return basicVariable;
+    }
+
+    public static List<Fraction[]> getBasis(Fraction[][] tableau, int numVariables, int numConstraints){
+        List<Fraction[]> basis = new ArrayList<>();
+        for (int column = 0; column < numVariables; column++) {
+            boolean basicVariable = true;
+            int basicRow = -1;
+            for (int row = 1; row < tableau.length; row++) {
+                if (tableau[row][column].equals(Fraction.ONE)) {
+                    if (basicRow == -1) {
+                        basicRow = row;
+                    } else {
+                        basicVariable = false;
+                        break;
+                    }
+                } else if (!tableau[row][column].equals(Fraction.ZERO)) {
+                    basicVariable = false;
+                    break;
+                }
+            }
+            if(basicVariable){
+                // Ricostruisco la colonna
+                Fraction[] basisColumn = new Fraction[numConstraints];
+                for (int i = 0; i < numConstraints; i++) {
+                    basisColumn[i] = i == basicRow - 1 ? Fraction.ONE : Fraction.ZERO;
+                }
+                basis.add(basisColumn);
+            }
+        }
+        return basis;
     }
 
     public Pair<Integer,Integer> getCostoRidottoDaAggiornare() {

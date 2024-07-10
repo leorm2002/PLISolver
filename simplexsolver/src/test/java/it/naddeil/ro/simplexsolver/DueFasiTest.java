@@ -1,6 +1,8 @@
 package it.naddeil.ro.simplexsolver;
 
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
 import it.naddeil.ro.common.Fraction;
@@ -38,12 +40,27 @@ public class DueFasiTest {
             {Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ZERO},
             {Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ZERO}
         };
-
-        Fraction[][] nuovoTableau = DueFasi.aggiungiVariabiliSintetiche(tableau);
+        Fraction[][] nuovoTableau = DueFasi.aggiungiVariabiliSintetiche(tableau).tableau();
         Fraction[][] tableauExp = new Fraction[][]{
             {Fraction.ZERO,Fraction.ZERO,Fraction.ZERO,Fraction.ONE,Fraction.ONE,Fraction.ZERO},
             {Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ZERO,Fraction.ZERO},
             {Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ZERO,Fraction.ONE,Fraction.ZERO}
+        };
+
+        assertEqualsT(tableauExp, nuovoTableau);
+    }
+    @Test
+    void testAggiuntaVariabiliSintetiche2(){
+        Fraction[][] tableau = new Fraction[][]{
+            {Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ZERO},
+            {Fraction.ZERO,Fraction.ONE,Fraction.ONE,Fraction.ZERO},
+            {Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ZERO}
+        };
+        Fraction[][] nuovoTableau = DueFasi.aggiungiVariabiliSintetiche(tableau).tableau();
+        Fraction[][] tableauExp = new Fraction[][]{
+            {Fraction.ZERO,Fraction.ZERO,Fraction.ZERO,Fraction.ONE,Fraction.ZERO},
+            {Fraction.ZERO,Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ZERO},
+            {Fraction.ONE,Fraction.ONE,Fraction.ONE,Fraction.ZERO,Fraction.ZERO}
         };
 
         assertEqualsT(tableauExp, nuovoTableau);
@@ -79,5 +96,35 @@ public class DueFasiTest {
 
         var out = DueFasi.applicaMetodoDueFasi(tableau);
 
+        Fraction[][] tableauExp = new Fraction[][]{
+            {Fraction.of(5,4),Fraction.ZERO,Fraction.ZERO,Fraction.of(1,4),Fraction.of(-7,4)},
+            {Fraction.of(1,2), Fraction.ONE, Fraction.ZERO, Fraction.of(1,2),Fraction.of(5,2)},
+            {Fraction.of(-1,4),Fraction.ZERO,Fraction.ONE,Fraction.of(-1,4),Fraction.of(7,4)}
+        };
+
+        assertEqualsT(tableauExp, out);
     }
+
+
+    @Test
+    void testApplicaMetodoDueFasi3(){
+        // Fase 1 degenere
+        Fraction[][] tableau = new Fraction[][]{
+            {Fraction.of(-3),Fraction.of(-2),Fraction.of(-1),Fraction.ZERO,Fraction.ZERO, Fraction.ZERO},
+
+            {Fraction.of(2), Fraction.ONE, Fraction.ONE, Fraction.ONE, Fraction.ZERO, Fraction.of(2)},
+            {Fraction.of(3), Fraction.of(4), Fraction.of(2), Fraction.ZERO, Fraction.MINUS_ONE, Fraction.of(8)}
+        };
+
+        var out = DueFasi.applicaMetodoDueFasi(tableau);
+
+        Fraction[][] tableauExp = new Fraction[][]{
+            {Fraction.of(5,4),Fraction.ZERO,Fraction.ZERO,Fraction.of(1,4),Fraction.of(-7,4)},
+            {Fraction.of(1,2), Fraction.ONE, Fraction.ZERO, Fraction.of(1,2),Fraction.of(5,2)},
+            {Fraction.of(-1,4),Fraction.ZERO,Fraction.ONE,Fraction.of(-1,4),Fraction.of(7,4)}
+        };
+
+        assertEquals(Fraction.of(4), out[0][out[0].length - 1]);
+    }
+
 }

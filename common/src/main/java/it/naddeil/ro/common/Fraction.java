@@ -5,6 +5,13 @@ public class Fraction implements Comparable<Fraction> {
     private final long numerator;
     private final long denominator;
 
+    public static Fraction of(long numerator, long denominator) {
+        return new Fraction(numerator, denominator);
+    }
+    public static Fraction of(long numerator) {
+        return new Fraction(numerator);
+    }
+    
     public long getNumerator() {
         return numerator;
     }
