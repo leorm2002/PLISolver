@@ -35,10 +35,12 @@ public class FracResult {
 		}
         return new FracResult(tableau, soluzione, costiRidotti, z, a, null);
     }
-	public Fraction[][] getTableau() {
+	
+    public Fraction[][] getTableau() {
 		return tableau;
 	}
-	public void setTableau(Fraction[][] tableau) {
+	
+    public void setTableau(Fraction[][] tableau) {
 		this.tableau = tableau;
 	}
 	public Fraction[] getSoluzione() {
@@ -71,4 +73,17 @@ public class FracResult {
 	public void setBasis(List<Integer> basis) {
 		this.basis = basis;
 	}
+
+    Fraction[] swapFirstWithLast(Fraction[] in)
+    {
+        Fraction[] out = in.clone();    
+        out[0] = in[in.length - 1];
+        out[in.length - 1] = in[0];
+        return out;
+        
+    }
+
+    public List<List<String>> getTableauStr(){
+        return Arrays.stream(tableau).map(this::swapFirstWithLast).map(row -> Arrays.stream(row).map(Fraction::toString).toList()).toList();
+    }
 }

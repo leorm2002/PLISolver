@@ -1,310 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Linear Optimizer</title>
- 
-  <!-- Bootstrap CSS -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Custom CSS -->
-  <style>
-    .container {
-      margin-top: 50px;
-    }
-    .table-section {
-      margin-top: 30px;
-    }
-    .objective-function,
-    .parameters-section {
-      margin-top: 30px;
-    }
-    table input,
-    table select {
-      width: 100%;
-    }
-    #submit-button {
-        font-size: 18px;
-        padding: 10px 20px;
-        border-radius: 5px;
-        width: 100%;
-    }
 
-  </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Optimizer</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+
+        .table-section {
+            margin-top: 30px;
+        }
+
+        .objective-function,
+        .parameters-section {
+            margin-top: 30px;
+        }
+
+        table input,
+        table select {
+            width: 100%;
+        }
+
+        #submit-button {
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .tableau {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .tableau th,
+        .tableau td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .tableau th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-  <h1 class="text-center">Simplex Linear Optimizer</h1>
-  <p>Prende in input un qualsiasi problema di Ottimizzazione, se non è presente una base iniziale utilizza il metodo delle due fasi per ottenere una 
-    base iniziale ammissibile
-  </p>
-  <div class="form-group">
-    <label for="constraints">Number of Constraints:</label>
-    <select class="form-control" id="constraints" onchange="updateTable()">
-      <option value="" disabled selected>Select number of constraints</option>
-      <!-- Options from 1 to 10 -->
-      <script>
-        for (let i = 1; i <= 10; i++) {
-          document.write(`<option value="${i}">${i}</option>`);
-        }
-      </script>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="variables">Number of Variables:</label>
-    <select class="form-control" id="variables" onchange="updateTable()">
-      <option value="" disabled selected>Select number of variables</option>
-      <!-- Options from 1 to 10 -->
-      <script>
-        for (let i = 1; i <= 10; i++) {
-          document.write(`<option value="${i}">${i}</option>`);
-        }
-      </script>
-    </select>
-  </div>
+    <div class="container">
+        <h1 class="text-center">Simplex Linear Optimizer</h1>
+        <p>Prende in input un qualsiasi problema di Ottimizzazione, se non è presente una base iniziale utilizza il
+            metodo delle due fasi per ottenere una
+            base iniziale ammissibile
+        </p>
+        <div class="form-group">
+            <label for="constraints">Number of Constraints:</label>
+            <select class="form-control" id="constraints" onchange="updateTable()">
+                <option value="" disabled selected>Select number of constraints</option>
+                <!-- Options from 1 to 10 -->
+                <script>
+                    for (let i = 1; i <= 10; i++) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="variables">Number of Variables:</label>
+            <select class="form-control" id="variables" onchange="updateTable()">
+                <option value="" disabled selected>Select number of variables</option>
+                <!-- Options from 1 to 10 -->
+                <script>
+                    for (let i = 1; i <= 10; i++) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
 
-  <div class="objective-function" id="objective-function" style="display: none;">
-    <h2>Objective Function</h2>
-    <div class="form-row align-items-center">
-      <div class="col-auto">
-        <label for="optimization-direction">Optimization Direction:</label>
-        <select class="form-control" id="optimization-direction">
-          <option value="max">Max</option>
-          <option value="min">Min</option>
-        </select>
-      </div>
-      <div class="col-auto">
-        <label for="objective-coefficients">Coefficients:</label>
-      </div>
-      <div id="objective-coefficients" class="form-row">
-        <!-- Coefficients input will be generated here -->
-      </div>
+        <div class="objective-function" id="objective-function" style="display: none;">
+            <h2>Objective Function</h2>
+            <div class="form-row align-items-center">
+                <div class="col-auto">
+                    <label for="optimization-direction">Optimization Direction:</label>
+                    <select class="form-control" id="optimization-direction">
+                        <option value="max">Max</option>
+                        <option value="min">Min</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label for="objective-coefficients">Coefficients:</label>
+                </div>
+                <div id="objective-coefficients" class="form-row">
+                    <!-- Coefficients input will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section" id="table-section" style="display: none;">
+            <h2>Optimizer Parameters</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr id="table-header">
+                        <!-- Table headers will be generated here -->
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Table body will be generated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="parameters-section" id="parameters-section" style="display: none;">
+            <h2>Additional Parameters</h2>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="integer-option">
+                <label class="form-check-label" for="integer-option">Ottimizzazione intera</label>
+            </div>
+            <div class="form-group">
+                <label for="max-iterations">Numero massimo di iterazioni (se utilizzato algoritmo cutting
+                    plane):</label>
+                <input type="number" class="form-control" id="max-iterations" placeholder="Enter maximum iterations">
+            </div>
+            <div class="form-group">
+                <label for="epsilon">Tolleranza (ordini grandezza es. -5 per 10^-5 ) per condizione di
+                    interezza:</label>
+                <input type="number" class="form-control" id="epsilon" placeholder="Enter threshold">
+            </div>
+
+        </div>
+        <button onclick="calcola()" type="button" class="btn btn-primary" id="submit-button">Calcola</button>
+        <br>
+        <br>
+        <button onclick="test()" type="button" class="btn btn-primary" id="submit-button">Test prepopolato </button>
+        <br>
+        <br>
+        <div class="container">
+            <h1 class="text-center">Tableau ottimo</h1>
+            <table id="tableau" class="tableau">
+                <!-- The content will be generated dynamically -->
+            </table>
+        </div>
+        <br>
+        <h5 id="tempo"></h5>
+
+        <br>
+        <br>
+        <br>
     </div>
-  </div>
 
-  <div class="table-section" id="table-section" style="display: none;">
-    <h2>Optimizer Parameters</h2>
-    <table class="table table-bordered">
-      <thead>
-        <tr id="table-header">
-          <!-- Table headers will be generated here -->
-        </tr>
-      </thead>
-      <tbody id="table-body">
-        <!-- Table body will be generated here -->
-      </tbody>
-    </table>
-  </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-  <div class="parameters-section" id="parameters-section" style="display: none;">
-    <h2>Additional Parameters</h2>
-    <div class="form-check">
-      <input type="checkbox" class="form-check-input" id="integer-option">
-      <label class="form-check-label" for="integer-option">Ottimizzazione intera</label>
-    </div>
-    <div class="form-group">
-      <label for="max-iterations">Numero massimo di iterazioni (se utilizzato algoritmo cutting plane):</label>
-      <input type="number" class="form-control" id="max-iterations" placeholder="Enter maximum iterations">
-    </div>
-    <div class="form-group">
-        <label for="epsilon">Tolleranza (ordini grandezza es. -5 per 10^-5 ) per condizione di interezza:</label>
-        <input type="number" class="form-control" id="epsilon" placeholder="Enter threshold">
-      </div>
-  
-  </div>
-  <button onclick="calcola()" type="button" class="btn btn-primary" id="submit-button">Calcola</button>
-  <br>
-  <br>
-  <br>
-</div>
-
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<!-- Custom JS -->
-<script>
-    function getVerso(verso){
-        if(verso == "<="){
-            return "LE"
-        }else if(verso == ">="){
-            return "GE"
-        }else{
-            return "E"
+    <!-- Custom JS -->
+    <script>
+        function getVerso(verso) {
+            if (verso == "<=") {
+                return "LE"
+            } else if (verso == ">=") {
+                return "GE"
+            } else {
+                return "E"
+            }
         }
-    }
 
-    function getVincolo(vincoli, versi, i){
-        return {
-            "vincolo" : vincoli[i],
-            "verso" : getVerso(versi[i])
+        function getVincolo(vincoli, versi, i) {
+            return {
+                "vincolo": vincoli[i],
+                "verso": getVerso(versi[i])
+            }
         }
-    }
 
-    function getVincoli(vincoli, versi, numConstraints){
-        out = []
-        for (let i = 0; i < numConstraints; i++) {
+        function getVincoli(vincoli, versi, numConstraints) {
+            out = []
+            for (let i = 0; i < numConstraints; i++) {
                 let vincolo = getVincolo(vincoli, versi, i)
                 out.push(vincolo);
-        }
-        return out
-    }
-
-    function getFo(tipo, coeff){
-        return {
-            "tipo" : tipo,
-            "c" : coeff
-        }
-    }
-
-    function calcola(){
-        console.log("Ubib")
-        const numConstraints = document.getElementById('constraints').value;
-        const numVariables = document.getElementById('variables').value;
-        vincoli = []
-        versi = []
-        coeff = []
-        for (let i = 0; i < numConstraints; i++) {
-            vincoli.push([])
-        }
-        const tableBody = document.getElementById('table-body');
-        for (let i = 0; i < numConstraints; i++) {
-            for (let j = 0; j < numVariables; j++) {
-                let id = "" + i + "_" + j;
-                let value = document.getElementById(id).value;
-                vincoli[i].push(value);
             }
-            let id = "b" + i;
-            let value = document.getElementById(id).value;
-            vincoli[i].push(value)
-            id = "v" + i;
-            value = document.getElementById(id).value;
-            versi.push(value)
-
-        }
-        for (let j = 0; j < numVariables; j++) {
-            let id = "c" + (j+1)
-            let value = document.getElementById(id).value;
-            coeff.push(value)
+            return out
         }
 
-        let tipo = document.getElementById("optimization-direction").value.toUpperCase()
-        let vincoliRichiesta = getVincoli(vincoli, versi, numConstraints)
-        let funzioneObb= getFo(tipo,coeff)
-        let payload = {
-            "funzioneObbiettivo" : funzioneObb,
-            "vincoli" : vincoliRichiesta
+        function getFo(tipo, coeff) {
+            return {
+                "tipo": tipo,
+                "c": coeff
+            }
         }
 
-        console.log(vincoliRichiesta)
-        console.log(funzioneObb)
-        inviaRichiesta(payload)
-    }
+        function calcola() {
+            console.log("Ubib")
+            const numConstraints = document.getElementById('constraints').value;
+            const numVariables = document.getElementById('variables').value;
+            vincoli = []
+            versi = []
+            coeff = []
+            for (let i = 0; i < numConstraints; i++) {
+                vincoli.push([])
+            }
+            const tableBody = document.getElementById('table-body');
+            for (let i = 0; i < numConstraints; i++) {
+                for (let j = 0; j < numVariables; j++) {
+                    let id = "" + i + "_" + j;
+                    let value = document.getElementById(id).value;
+                    vincoli[i].push(value);
+                }
+                let id = "b" + i;
+                let value = document.getElementById(id).value;
+                vincoli[i].push(value)
+                id = "v" + i;
+                value = document.getElementById(id).value;
+                versi.push(value)
 
+            }
+            for (let j = 0; j < numVariables; j++) {
+                let id = "c" + (j + 1)
+                let value = document.getElementById(id).value;
+                coeff.push(value)
+            }
 
-    function inviaRichiesta(payload){
-        const response = fetch('http://localhost:8080/solveLinearSimplex', {
-            method: 'POST',
-            headers: {
-                'accept': 'text/plain',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-        console.log(response)
-    }
+            let tipo = document.getElementById("optimization-direction").value.toUpperCase()
+            let vincoliRichiesta = getVincoli(vincoli, versi, numConstraints)
+            let funzioneObb = getFo(tipo, coeff)
+            let payload = {
+                "funzioneObbiettivo": funzioneObb,
+                "vincoli": vincoliRichiesta
+            }
 
-  function updateTable() {
-    const numConstraints = document.getElementById('constraints').value;
-    const numVariables = document.getElementById('variables').value;
-
-    if (numConstraints && numVariables) {
-      // Show the table section
-      document.getElementById('table-section').style.display = 'block';
-      document.getElementById('objective-function').style.display = 'block';
-      document.getElementById('parameters-section').style.display = 'block';
-
-      // Generate table headers
-      const tableHeader = document.getElementById('table-header');
-      tableHeader.innerHTML = '';
-      for (let i = 1; i <= numVariables; i++) {
-        const th = document.createElement('th');
-        th.textContent = `x${i}`;
-        tableHeader.appendChild(th);
-      }
-      const thConstraint = document.createElement('th');
-      thConstraint.textContent = 'Constraint';
-      tableHeader.appendChild(thConstraint);
-      const thValue = document.createElement('th');
-      thValue.textContent = 'Value';
-      tableHeader.appendChild(thValue);
-
-      // Generate table body
-      const tableBody = document.getElementById('table-body');
-      tableBody.innerHTML = '';
-      for (let i = 0; i < numConstraints; i++) {
-        const tr = document.createElement('tr');
-        for (let j = 0; j < numVariables; j++) {
-          const td = document.createElement('td');
-          const input = document.createElement('input');
-          input.type = 'number';
-          input.className = 'form-control';
-          input.id = "" + i + "_" + j;
-          td.appendChild(input);
-          tr.appendChild(td);
+            console.log(vincoliRichiesta)
+            console.log(funzioneObb)
+            inviaRichiesta(payload)
         }
-        // Add constraint dropdown
-        const tdConstraint = document.createElement('td');
-        const select = document.createElement('select');
-        select.className = 'form-control';
-        ['<=', '=', '>='].forEach(op => {
-          const option = document.createElement('option');
-          option.value = op;
-          option.textContent = op;
-          select.appendChild(option);
-        });
-        select.id = "v" + i;
-        tdConstraint.appendChild(select);
-        tr.appendChild(tdConstraint);
 
-        // Add value input
-        const tdValue = document.createElement('td');
-        const inputValue = document.createElement('input');
-        inputValue.type = 'number';
-        inputValue.className = 'form-control';
-        inputValue.id = "b" + i;
-        tdValue.appendChild(inputValue);
-        tr.appendChild(tdValue);
 
-        tableBody.appendChild(tr);
-      }
+        function populateTableau(data) {
+            const tableau = document.getElementById('tableau');
+            tableau.innerHTML = '';
 
-      // Generate objective function coefficients inputs
-      const objectiveCoefficients = document.getElementById('objective-coefficients');
-      objectiveCoefficients.innerHTML = '';
-      for (let i = 1; i <= numVariables; i++) {
-        const div = document.createElement('div');
-        div.className = 'col-auto';
-        const label = document.createElement('label');
-        label.textContent = `x${i}`;
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.className = 'form-control';
-        input.id = "c" + i
-        div.appendChild(label);
-        div.appendChild(input);
-        objectiveCoefficients.appendChild(div);
-      }
-    } else {
-      // Hide the table section if either dropdown is not selected
-      document.getElementById('table-section').style.display = 'none';
-      document.getElementById('objective-function').style.display = 'none';
-      document.getElementById('parameters-section').style.display = 'none';
-    }
-  }
-</script>
+            const numVariables = data[0].length - 1; // excluding the first column which is the value column
+            const numRows = data.length;
+
+            // Create header row
+            const header = document.createElement('tr');
+            header.appendChild(document.createElement('th')); // empty cell before -z
+            ['-z', ...Array.from({ length: numVariables }, (_, i) => `x${i + 1}`)].forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                header.appendChild(th);
+            });
+            tableau.appendChild(header);
+
+            // Create data rows
+            for (let i = 0; i < numRows; i++) {
+                const row = document.createElement('tr');
+                const rowHeader = document.createElement('td');
+                rowHeader.textContent = `r${i}`;
+                row.appendChild(rowHeader);
+
+                data[i].forEach(cellText => {
+                    const td = document.createElement('td');
+                    td.textContent = cellText;
+                    row.appendChild(td);
+                });
+                tableau.appendChild(row);
+            }
+        }
+
+        // Example usage:
+        const exampleData = [
+            ['18/2', '0', '-3', '0', '0', '1'],
+            ['4', '1/2', '0', '1', '0', '0'],
+            ['6', '0', '1', '0', '1', '0'],
+            ['18', '3', '2', '0', '0', '1']
+        ];
+
+
+        function test() {
+            let test = { "funzioneObbiettivo": { "tipo": "MIN", "c": ["1", "0", "1"] }, "vincoli": [{ "vincolo": ["1", "2", "0", "5"], "verso": "LE" }, { "vincolo": ["0", "1", "2", "6"], "verso": "E" }] }
+            inviaRichiesta(test)
+        }
+
+        async function mostraTempo(time){
+            const tempo = document.getElementById('tempo');
+            tempo.innerText = 'Tempo elaborazione: ' + time + "ms";
+        }
+
+        async function inviaRichiesta(payload) {
+            const response = await fetch('http://localhost:8080/solveLinearSimplex', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            const resp = await response.json();
+            console.log(resp)
+            // Load text into a vector of vector of strings
+            populateTableau(resp.tableau)
+            mostraTempo(resp.time)
+        }
+
+        function updateTable() {
+            const numConstraints = document.getElementById('constraints').value;
+            const numVariables = document.getElementById('variables').value;
+
+            if (numConstraints && numVariables) {
+                // Show the table section
+                document.getElementById('table-section').style.display = 'block';
+                document.getElementById('objective-function').style.display = 'block';
+                document.getElementById('parameters-section').style.display = 'block';
+
+                // Generate table headers
+                const tableHeader = document.getElementById('table-header');
+                tableHeader.innerHTML = '';
+                for (let i = 1; i <= numVariables; i++) {
+                    const th = document.createElement('th');
+                    th.textContent = `x${i}`;
+                    tableHeader.appendChild(th);
+                }
+                const thConstraint = document.createElement('th');
+                thConstraint.textContent = 'Constraint';
+                tableHeader.appendChild(thConstraint);
+                const thValue = document.createElement('th');
+                thValue.textContent = 'Value';
+                tableHeader.appendChild(thValue);
+
+                // Generate table body
+                const tableBody = document.getElementById('table-body');
+                tableBody.innerHTML = '';
+                for (let i = 0; i < numConstraints; i++) {
+                    const tr = document.createElement('tr');
+                    for (let j = 0; j < numVariables; j++) {
+                        const td = document.createElement('td');
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.className = 'form-control';
+                        input.id = "" + i + "_" + j;
+                        td.appendChild(input);
+                        tr.appendChild(td);
+                    }
+                    // Add constraint dropdown
+                    const tdConstraint = document.createElement('td');
+                    const select = document.createElement('select');
+                    select.className = 'form-control';
+                    ['<=', '=', '>='].forEach(op => {
+                        const option = document.createElement('option');
+                        option.value = op;
+                        option.textContent = op;
+                        select.appendChild(option);
+                    });
+                    select.id = "v" + i;
+                    tdConstraint.appendChild(select);
+                    tr.appendChild(tdConstraint);
+
+                    // Add value input
+                    const tdValue = document.createElement('td');
+                    const inputValue = document.createElement('input');
+                    inputValue.type = 'number';
+                    inputValue.className = 'form-control';
+                    inputValue.id = "b" + i;
+                    tdValue.appendChild(inputValue);
+                    tr.appendChild(tdValue);
+
+                    tableBody.appendChild(tr);
+                }
+
+                // Generate objective function coefficients inputs
+                const objectiveCoefficients = document.getElementById('objective-coefficients');
+                objectiveCoefficients.innerHTML = '';
+                for (let i = 1; i <= numVariables; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'col-auto';
+                    const label = document.createElement('label');
+                    label.textContent = `x${i}`;
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'form-control';
+                    input.id = "c" + i
+                    div.appendChild(label);
+                    div.appendChild(input);
+                    objectiveCoefficients.appendChild(div);
+                }
+            } else {
+                // Hide the table section if either dropdown is not selected
+                document.getElementById('table-section').style.display = 'none';
+                document.getElementById('objective-function').style.display = 'none';
+                document.getElementById('parameters-section').style.display = 'none';
+            }
+        }
+    </script>
 
 </body>
+
 </html>

@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.api.Response;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
@@ -31,14 +32,16 @@ public class Service {
     }
 
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/solveLinearSimplex")
-    public Fraction[][] solveLS(PublicProblem problema){
+    public Response solveLS(PublicProblem problema){
         long startTime = System.currentTimeMillis();
         FracResult s = new SimplexSolver().solve(problema);
-        System.out.println("Tempo impiegato: " + (System.currentTimeMillis() - startTime) + "ms");
-
-        return s.getTableau();
+        long time = System.currentTimeMillis() - startTime;
+        Response r = new Response();
+        r.tableau = s.getTableauStr();
+        r.time = time;
+        return r;
     }
 
     @POST
