@@ -84,7 +84,13 @@ class GomorySolverTest {
             assertEquals(expected[i], actual[i]);
         }
     }
-
+    void assertEqualsT(Fraction[][] expected, Fraction[][] actual){
+        for (int i = 0; i < expected.length; i++) {
+            for (int j = 0; j < expected[i].length; j++) {
+                assert(expected[i][j].equals(actual[i][j]));
+            }
+        }
+    }
     @Test
     void testCreaTaglio() {
         GomorySolver gomorySolver = new GomorySolver(null, null);
@@ -118,7 +124,20 @@ class GomorySolverTest {
 
         p.setFunzioneObbiettivo(f);
 
-        solver.solve(p, new Parameters());
+        FracResult out = solver.solve(p, new Parameters());
+        Fraction[][] tableau = out.getTableau();
+
+        Fraction[][] expected = new Fraction[][]{
+            {Fraction.ZERO,Fraction.ZERO,Fraction.ZERO,Fraction.ZERO,Fraction.ONE,Fraction.ZERO,Fraction.ONE},
+            {Fraction.ONE,Fraction.ZERO,Fraction.ZERO,Fraction.ZERO,Fraction.ONE,Fraction.of(-1,2),Fraction.ONE},
+            {Fraction.ZERO,Fraction.ONE,Fraction.ZERO,Fraction.ZERO,Fraction.ONE,Fraction.ZERO,Fraction.ONE},
+            {Fraction.ZERO,Fraction.ZERO,Fraction.ONE,Fraction.ZERO,Fraction.of(-5),Fraction.of(3,2),Fraction.ONE},
+            {Fraction.ZERO,Fraction.ZERO,Fraction.ZERO,Fraction.ONE,Fraction.ONE,Fraction.of(-3,2),Fraction.ONE}
+        };
+
+        
+
+        
 
     }
 }

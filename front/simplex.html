@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Linear Optimizer</title>
+ 
   <!-- Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom CSS -->
@@ -22,12 +23,22 @@
     table select {
       width: 100%;
     }
+    #submit-button {
+        font-size: 18px;
+        padding: 10px 20px;
+        border-radius: 5px;
+        width: 100%;
+    }
+
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1 class="text-center">Linear Optimizer</h1>
+  <h1 class="text-center">Simplex Linear Optimizer</h1>
+  <p>Prende in input un qualsiasi problema di Ottimizzazione, se non è presente una base iniziale utilizza il metodo delle due fasi per ottenere una 
+    base iniziale ammissibile
+  </p>
   <div class="form-group">
     <label for="constraints">Number of Constraints:</label>
     <select class="form-control" id="constraints" onchange="updateTable()">
@@ -102,9 +113,11 @@
       </div>
   
   </div>
+  <button onclick="calcola()" type="button" class="btn btn-primary" id="submit-button">Calcola</button>
+  <br>
+  <br>
+  <br>
 </div>
-<button onclick="calcola()">Calcola</button>
-<button onclick="calcolaI()">Calcola intera</button>
 
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -189,49 +202,6 @@
         console.log(funzioneObb)
         inviaRichiesta(payload)
     }
-    function calcolaI(){
-        console.log("Ubib")
-        const numConstraints = document.getElementById('constraints').value;
-        const numVariables = document.getElementById('variables').value;
-        vincoli = []
-        versi = []
-        coeff = []
-        for (let i = 0; i < numConstraints; i++) {
-            vincoli.push([])
-        }
-        const tableBody = document.getElementById('table-body');
-        for (let i = 0; i < numConstraints; i++) {
-            for (let j = 0; j < numVariables; j++) {
-                let id = "" + i + "_" + j;
-                let value = document.getElementById(id).value;
-                vincoli[i].push(value);
-            }
-            let id = "b" + i;
-            let value = document.getElementById(id).value;
-            vincoli[i].push(value)
-            id = "v" + i;
-            value = document.getElementById(id).value;
-            versi.push(value)
-
-        }
-        for (let j = 0; j < numVariables; j++) {
-            let id = "c" + (j+1)
-            let value = document.getElementById(id).value;
-            coeff.push(value)
-        }
-
-        let tipo = document.getElementById("optimization-direction").value.toUpperCase()
-        let vincoliRichiesta = getVincoli(vincoli, versi, numConstraints)
-        let funzioneObb= getFo(tipo,coeff)
-        let payload = {
-            "funzioneObbiettivo" : funzioneObb,
-            "vincoli" : vincoliRichiesta
-        }
-
-        console.log(vincoliRichiesta)
-        console.log(funzioneObb)
-        inviaRichiestaI(payload)
-    }
 
 
     function inviaRichiesta(payload){
@@ -245,20 +215,6 @@
         });
         console.log(response)
     }
-
-    function inviaRichiestaI(payload){
-        const response = fetch('http://localhost:8080/solveLinearInteger', {
-            method: 'POST',
-            headers: {
-                'accept': 'text/plain',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-        console.log(response)
-    }
-
-
 
   function updateTable() {
     const numConstraints = document.getElementById('constraints').value;

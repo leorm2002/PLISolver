@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.ejml.simple.SimpleMatrix;
 
+import io.vertx.ext.web.handler.FileSystemAccess;
 import it.naddeil.ro.common.FracResult;
 import it.naddeil.ro.common.Fraction;
 import it.naddeil.ro.common.Parameters;
@@ -31,7 +32,7 @@ public class Service {
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("/solveLinear")
+    @Path("/solveLinearDual")
     public List<Double> solveL(PublicProblem problema){
         long startTime = System.currentTimeMillis();
         Result s = new DualSimplexSolver().solve(problema, new Parameters());

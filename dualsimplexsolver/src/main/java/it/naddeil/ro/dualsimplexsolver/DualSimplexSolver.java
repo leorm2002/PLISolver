@@ -5,7 +5,6 @@ import it.naddeil.ro.common.ProblemTransformer;
 import it.naddeil.ro.common.Problema;
 import it.naddeil.ro.common.Result;
 import java.util.Collections;
-import java.util.Arrays;
 
 import org.ejml.simple.SimpleMatrix;
 
@@ -26,15 +25,6 @@ public class DualSimplexSolver {
         SimpleMatrix sol = dualSimplex.solve(msg);
 
         return dualSimplex.buildResult(sol);
-    }
-
-    public Result reOptimize(Problema matrixProblem, Parameters parameters) {
-        //Aggiungi due righe che formano base
-        SimplessoDuale dualSimplex = SimplessoDuale.createFromStd(matrixProblem.getA(), matrixProblem.getB(), matrixProblem.getC(), matrixProblem.getBasis());
-        DualSimplexMessageBuilder messageBuilder = new DualSimplexMessageBuilder();
-        SimpleMatrix solution = dualSimplex.solve(messageBuilder);
-
-        return dualSimplex.buildResult(solution);
     }
 
     public FracResult riottimizza(Fraction[][] tableau){
