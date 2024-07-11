@@ -38,8 +38,8 @@ public class StdProblem {
     public Fraction[][] toTableau(){
         Fraction[][] tableau = new Fraction[A.numRows()+1][A.numCols()+1];
         // Set c in firt row
-        for (int i = 0; i < c.numRows(); i++) {
-            tableau[0][i] = Fraction.of(c.get(i, 0));
+        for (int i = 0; i < c.numCols(); i++) {
+            tableau[0][i] = Fraction.of(c.get(0,i));
         }
         tableau[0][c.numRows()] = Fraction.ZERO;
         // Set A and b

@@ -81,14 +81,16 @@ public class ProblemTransformer {
         funzioneObbiettivoStd.setC(c);
         out.setFunzioneObbiettivo(funzioneObbiettivoStd);
         int i = 0;
+        int j= 0;
         List<Vincolo> vincoli = new ArrayList<>();
-        while (i < numeroVariabiliSlackDaAggiungere) {
+        while (j < problem.getVincoli().size()) {
             Vincolo vincolo = problem.getVincoli().get(i);
             boolean addSlack = !vincolo.getVerso().equals(Verso.E);
 
             List<Double> vettoreDaAggiungere = addSlack ? getSlackVector(numeroVariabiliSlackDaAggiungere, i) : getSlackVector(numeroVariabiliSlackDaAggiungere, -1);
             vincoli.add(trasformaVincolo(vincolo, vettoreDaAggiungere));
             i = addSlack ? i +1  : i;
+            j += 1;
         }
         out.setVincoli(vincoli);
         return out;

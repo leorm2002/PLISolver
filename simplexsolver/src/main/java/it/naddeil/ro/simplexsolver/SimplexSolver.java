@@ -8,8 +8,6 @@ import it.naddeil.ro.common.Fraction;
 
 
 public class SimplexSolver {
-
-
     public FracResult solve(PublicProblem problem) {
         // Il metodo due fasi prende in input un tableau della forma
         // min c^T x
