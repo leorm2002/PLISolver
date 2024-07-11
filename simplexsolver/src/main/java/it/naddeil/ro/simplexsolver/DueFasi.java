@@ -5,7 +5,6 @@ package it.naddeil.ro.simplexsolver;
 import it.naddeil.ro.common.Fraction;
 import java.util.List;
 
-import org.ejml.interfaces.linsol.LinearSolver;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -15,7 +14,7 @@ public class DueFasi {
     /**
      * InnerDueFasi
      */
-    public record InnerDueFasi(Fraction[][] tableau, Fraction[][] identity) {
+    public record InnerDueFasi(Fraction[][] tableau, Fraction[][] identity, boolean needed) {
     }
 
     static Fraction[][] getIdentity(int n){
@@ -104,6 +103,10 @@ public class DueFasi {
         int numConstraints = tableau.length - 1;
         int numVariables = tableau[0].length - 1;
         List<Fraction[]> basiCorrenti = removeDup(SimplexTableau.getBasis(tableau, numVariables, numConstraints));
+        int nbasi = basiCorrenti.size();
+        if(numConstraints == nbasi ){
+            return new InnerDueFasi(null, null, false);
+        }
         int nuovoNumeroVariabili = numVariables + numConstraints - basiCorrenti.size();
         Fraction[][] nuovoTableau = new Fraction[numConstraints + 1][nuovoNumeroVariabili + 1];
         Fraction[][] identity = getAdditionalBasis(numConstraints, basiCorrenti);
@@ -124,7 +127,7 @@ public class DueFasi {
             nuovoTableau[i] = newRow;
         }
 
-        return new InnerDueFasi(nuovoTableau, identity);
+        return new InnerDueFasi(nuovoTableau, identity, true);
     }
 
     static Fraction[][] pulisciTableau(Fraction[][] ottimo, Fraction[] fObbOrig){
@@ -181,12 +184,22 @@ public class DueFasi {
     }
     static Fraction[][] applicaMetodoDueFasi(Fraction[][] tableau){
         InnerDueFasi nuovoTableau = aggiungiVariabiliSintetiche(tableau);
-        primaOperazione(nuovoTableau.tableau, nuovoTableau.identity);
-        SimplexTableau st = new SimplexTableau(nuovoTableau.tableau);
-        st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true);
-        var tab = pulisciTableau(st.getTableau(), tableau[0]);
+        final Fraction[][] tab;
+        final boolean dueFasi;
+        if(nuovoTableau.needed){
+            SimplexTableau.printTableau(nuovoTableau.tableau);
+            primaOperazione(nuovoTableau.tableau, nuovoTableau.identity);
+            SimplexTableau st = new SimplexTableau(nuovoTableau.tableau);
+            st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true, false);
+            tab = pulisciTableau(st.getTableau(), tableau[0]);
+            dueFasi = true;
+        }else{
+            tab = tableau;
+            dueFasi = false;
+        }
+
         SimplexTableau st2 = new SimplexTableau(tab);
-        st2.solve();
+        st2.solve(dueFasi);
         return st2.getTableau();
     }
 }

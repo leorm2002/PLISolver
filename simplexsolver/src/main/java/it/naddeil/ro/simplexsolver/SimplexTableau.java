@@ -50,8 +50,8 @@ public class SimplexTableau {
             tableau[i +1] = constraintRow;
         }
     }
-    public void solve() {
-        solve(new ArrayList<>(), false);
+    public void solve(boolean dueFasi) {
+        solve(new ArrayList<>(), false, dueFasi);
 
     }
 
@@ -90,6 +90,8 @@ public class SimplexTableau {
             for (int i = riga + 1; i < tableau.length; i++) {
                 nuovoTableau[i - 1] = tableau[i];
             }
+            this.tableau = nuovoTableau;
+            this.numConstraints -= 1;
         }
         // Almeno un coefficiente è diverso da 0 => possiamo pivotare su quello
         else{
@@ -112,14 +114,17 @@ public class SimplexTableau {
         }
     }
 
-    public void solve(List<Integer> artificialBasis, boolean fase1) {
-        if(!fase1){
+    public void solve(List<Integer> artificialBasis, boolean fase1, boolean dueFasi) {
+        if(dueFasi && !fase1){
             portaInCanonica();
         }
         while (canImprove()) {
             printTableau();
             int pivotColumn = findPivotColumn();
             int pivotRow = findPivotRow(pivotColumn);
+            if(pivotRow == -1){
+                throw new RuntimeException("Problema illimitato");
+            }
             pivot(pivotRow, pivotColumn);
 
         }
@@ -143,7 +148,7 @@ public class SimplexTableau {
 
     private boolean canImprove() {
         Fraction[] objectiveRow = tableau[0];
-        for (int i = 1; i < objectiveRow.length; i++) {
+        for (int i = 0; i < objectiveRow.length - 1; i++) {
             if (objectiveRow[i].compareTo(Fraction.ZERO) < 0) {
                 return true;
             }
@@ -200,6 +205,9 @@ public class SimplexTableau {
     }
 
     public void printTableau() {
+        printTableau(tableau);
+    }
+    public static void printTableau(Fraction[][] tableau) {
         for (Fraction[] row : tableau) {
             for (Fraction value : row) {
                 System.out.print(value + "\t");
@@ -214,12 +222,14 @@ public class SimplexTableau {
     }
 
     public static boolean isBasis(int column, Fraction[][] tableau){
-        boolean basicVariable = true;
+        boolean basicVariable = false;
         int basicRow = -1;
         for (int row = 1; row < tableau.length; row++) {
             if (tableau[row][column].equals(Fraction.ONE)) {
                 if (basicRow == -1) {
                     basicRow = row;
+                    basicVariable = true;
+                    
                 } else {
                     basicVariable = false;
                     break;
