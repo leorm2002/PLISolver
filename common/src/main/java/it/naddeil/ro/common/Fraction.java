@@ -11,6 +11,15 @@ public class Fraction implements Comparable<Fraction> {
     public static Fraction of(long numerator) {
         return new Fraction(numerator);
     }
+
+    public static Fraction of(double value){
+        long denominator = 1;
+        while (value != Math.floor(value)) {
+            value *= 10;
+            denominator *= 10;
+        }
+        return new Fraction((long)value, denominator);
+    }
     
     public long getNumerator() {
         return numerator;

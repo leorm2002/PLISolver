@@ -34,6 +34,25 @@ public class StdProblem {
         		c.set(i, 0, p.getC().get(i));
         	}
 	}
+    
+    public Fraction[][] toTableau(){
+        Fraction[][] tableau = new Fraction[A.numRows()+1][A.numCols()+1];
+        // Set c in firt row
+        for (int i = 0; i < c.numRows(); i++) {
+            tableau[0][i] = Fraction.of(c.get(i, 0));
+        }
+        tableau[0][c.numRows()] = Fraction.ZERO;
+        // Set A and b
+        for (int i = 0; i < A.numRows(); i++) {
+            for (int j = 0; j < A.numCols(); j++) {
+                tableau[i+1][j] = Fraction.of(A.get(i, j));
+            }
+            tableau[i+1][A.numCols()] = Fraction.of(b.get(i, 0));
+        }
+
+        return tableau;
+    
+    }
 
 	public StdProblem(SimpleMatrix a, SimpleMatrix b, SimpleMatrix c) {
 		A = a;

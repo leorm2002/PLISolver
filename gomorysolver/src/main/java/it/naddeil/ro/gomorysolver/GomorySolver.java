@@ -122,7 +122,7 @@ public class GomorySolver implements PLISolver {
         int maxIter = 300;
         long startTime = System.nanoTime();
 
-        FracResult rs = simplexSolver.solve(problem, parameters);
+        FracResult rs = simplexSolver.solve(problem);
         printTableau(rs.getTableau());
         System.out.println("Z: " + rs.getZ());
         printTableauD(rs.getTableau());

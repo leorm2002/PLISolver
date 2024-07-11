@@ -17,7 +17,7 @@ class GomorySolverTest {
     void test1(){
         SimplexSolver ss = new SimplexSolver(){
             @Override
-                public FracResult solve(PublicProblem problem, Parameters parameters) {
+                public FracResult solve(PublicProblem problem) {
                     Fraction[][] tableauu = {
                         {new Fraction(0), new Fraction(0), new Fraction(-1,4), new Fraction(-1,4), new Fraction(-3,2)},
                         {Fraction.ONE, Fraction.ZERO, new Fraction(1,6), new Fraction(-1,6),Fraction.ONE},
@@ -38,7 +38,7 @@ class GomorySolverTest {
         void test2(){
             SimplexSolver ss = new SimplexSolver(){
                 @Override
-                    public FracResult solve(PublicProblem problem, Parameters parameters) {
+                    public FracResult solve(PublicProblem problem) {
                         Fraction[][] tableauu = {
                             {Fraction.ZERO, new Fraction(-7),Fraction.ZERO, new Fraction(-8,10), Fraction.ZERO, new Fraction(-12,10), new Fraction(-4,10)},
                             {Fraction.ONE, Fraction.ZERO,Fraction.ZERO,new Fraction(2,10), Fraction.ZERO, new Fraction(-2,10),new Fraction(6,10)},
