@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.exceptions.NumeroMassimoIterazioni;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
@@ -146,7 +147,7 @@ public class GomorySolver  {
                 }
                 i++;
                 if(i > maxIter){
-                    throw new RuntimeException("Numero massimo di iterazioni raggiunto");
+                    throw new NumeroMassimoIterazioni(null);
                 }
         }
     }

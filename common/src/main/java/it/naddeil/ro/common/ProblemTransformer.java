@@ -3,7 +3,6 @@ package it.naddeil.ro.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ejml.simple.SimpleMatrix;
 
 import it.naddeil.ro.common.api.FunzioneObbiettivo;
 import it.naddeil.ro.common.api.PublicProblem;

@@ -6,13 +6,10 @@ import java.util.List;
 
 import org.ejml.simple.SimpleMatrix;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import it.naddeil.ro.common.api.FunzioneObbiettivo;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Vincolo;
 import it.naddeil.ro.common.utils.Fraction;
-import it.naddeil.ro.common.utils.StdProblem;
 
 /**
  * Rappresenta un problema di ottimizzazione ovvero min F s.t. Ax=d dove ogni riga della matrice rappresenta un vincolo di tipo =
@@ -62,15 +59,6 @@ public class Problema implements Serializable {
         return this;
     }
 
-
-    @JsonIgnore
-    public StdProblem toMatrixProblem(){
-        init(); 
-        return new StdProblem(a, b, c);
-    }
-
-
-    @JsonIgnore
     public Fraction[][] toTableauFormProblem(){
         init(); 
         int numeroVincoli = this.a.numRows();
@@ -88,8 +76,8 @@ public class Problema implements Serializable {
         }
 
         // Riporto A
-        for(int i = 0; i < numeroVariabili; i++ ){
-            for(int j = 0; j < numeroVincoli; j++){
+        for(int i = 0; i < numeroVincoli; i++ ){
+            for(int j = 0; j < numeroVariabili; j++){
                 tab[i + 1][j] = Fraction.of(a.get(i,j));
             }
         }

@@ -62,18 +62,17 @@ class GomorySolverTest {
 
     @Test
     void testTrovaRigaConValoreFrazionario() {
-        GomorySolver gomorySolver = new GomorySolver(null, null);
 
         Fraction[] matrice1 = { new Fraction(1), new Fraction(2), new Fraction(3) };
-        int result1 = gomorySolver.trovaRigaConValoreFrazionario(matrice1);
+        int result1 = GomorySolver.trovaRigaConValoreFrazionario(matrice1);
         assertEquals(-1, result1);
 
         Fraction[] matrice2 = { new Fraction(1), new Fraction(5,2), new Fraction(3) };
-        int result2 = gomorySolver.trovaRigaConValoreFrazionario(matrice2);
+        int result2 = GomorySolver.trovaRigaConValoreFrazionario(matrice2);
         assertEquals(2, result2);
 
         Fraction[] matrice3 = { new Fraction(1), new Fraction(2), new Fraction(3,7) };
-        int result3 = gomorySolver.trovaRigaConValoreFrazionario(matrice3);
+        int result3 = GomorySolver.trovaRigaConValoreFrazionario(matrice3);
         assertEquals(3, result3);
     }
 

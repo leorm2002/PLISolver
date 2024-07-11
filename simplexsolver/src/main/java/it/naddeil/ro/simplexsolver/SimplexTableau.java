@@ -1,8 +1,9 @@
 package it.naddeil.ro.simplexsolver;
 
+import it.naddeil.ro.common.exceptions.ProblemaInizialeIllimitato;
+import it.naddeil.ro.common.exceptions.ProblemaInizialeImpossibile;
 import it.naddeil.ro.common.models.Pair;
 import it.naddeil.ro.common.utils.Fraction;
-import pabeles.concurrency.IntObjectConsumer;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class SimplexTableau {
 
     static void verificaW(Fraction w){
         if(w.compareTo(Fraction.ZERO) != 0){
-            throw new RuntimeException("Il valore di W non è 0");
+            throw new ProblemaInizialeImpossibile(null);
         }
     }
 
@@ -123,7 +124,7 @@ public class SimplexTableau {
             int pivotColumn = findPivotColumn();
             int pivotRow = findPivotRow(pivotColumn);
             if(pivotRow == -1){
-                throw new RuntimeException("Problema illimitato");
+                throw new ProblemaInizialeIllimitato(null);
             }
             pivot(pivotRow, pivotColumn);
 

@@ -6,15 +6,14 @@ import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Problema;
 import it.naddeil.ro.common.utils.Fraction;
-import it.naddeil.ro.common.utils.StdProblem;
 
 
 public class DualSimplexSolver {
 
     public FracResult solve(PublicProblem problema, Parameters parameters) {
 
-        StdProblem problem = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problema)).toMatrixProblem();
-        problem.setC(problem.getC().negative());
+        Fraction[][] problem = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problema)).toTableauFormProblem();
+        //problem.setC(problem.getC().negative());
         //SimplessoDuale dualSimplex = SimplessoDuale.createFromStd(problem.getA(), problem.getB(), problem.getC(), Collections.emptyList());
         //DualSimplexMessageBuilder msg = new DualSimplexMessageBuilder();
         //SimpleMatrix sol = dualSimplex.solve(msg);
