@@ -123,15 +123,8 @@ public class GomorySolver  {
 
     public FracResult solve(PublicProblem problem, Parameters parameters) {
         int maxIter = 300;
-        long startTime = System.nanoTime();
 
         FracResult rs = simplexSolver.solve(problem);
-        printTableau(rs.getTableau());
-        System.out.println("Z: " + rs.getZ());
-        printTableauD(rs.getTableau());
-        long endTime = System.nanoTime();
-        System.out.println("Tempo: " + (endTime - startTime) / 1000000);
-
         int i = 0;
         while (i < maxIter) {
 
@@ -149,6 +142,8 @@ public class GomorySolver  {
                 if(i > maxIter){
                     throw new NumeroMassimoIterazioni(null);
                 }
+        }else{
+            return rs;
         }
     }
 

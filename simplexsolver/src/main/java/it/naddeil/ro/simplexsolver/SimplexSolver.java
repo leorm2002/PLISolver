@@ -5,6 +5,7 @@ import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Problema;
 import it.naddeil.ro.common.utils.Fraction;
+import it.naddeil.ro.common.utils.TableauUtils;
 
 
 public class SimplexSolver {
@@ -13,6 +14,9 @@ public class SimplexSolver {
         // min c^T x
         // Ax = b
         Fraction[][] tableau =  Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problem)).toTableauFormProblem();
+        System.out.println("Tableau iniziale simplesso primale");
+        TableauUtils.printTableau(tableau);
+        System.out.println();
         Fraction[][] result = DueFasi.applicaMetodoDueFasi(tableau);
         return FracResult.fromTableau(result);
     }

@@ -25,11 +25,8 @@ public class DualSimplexSolver {
 
     public FracResult riottimizza(Fraction[][] tableau){
         SimplessoDualeFrazionario dualSimplex = new SimplessoDualeFrazionario(tableau);
-        // Neghiamo la funzione obbiettivo
-        //tableau[0] = Arrays.stream(tableau[0]).map(Fraction::negate).toArray(Fraction[]::new);
         dualSimplex.solve();
-        var tableauResult = dualSimplex.getTableau();
-        return FracResult.fromTableau(tableauResult);
+        return FracResult.fromTableau(dualSimplex.getTableau());
     }
     
 }

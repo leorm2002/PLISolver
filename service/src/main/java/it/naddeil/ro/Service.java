@@ -38,22 +38,24 @@ public class Service {
         long startTime = System.currentTimeMillis();
         FracResult s = new SimplexSolver().solve(problema);
         long time = System.currentTimeMillis() - startTime;
-        Response r = new Response();
-        r.tableau = s.getTableauStr();
-        r.time = time;
-        return r;
+        return convert(s, time);
+    }
+
+    Response convert(FracResult r, long time){
+        Response res = new Response();
+        res.tableau = r.getTableauStr();
+        res.time = time;
+        return res;
     }
 
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/solveLinearInteger")
-    public String solveLI(PublicProblem problema){
+    public Response solveLI(PublicProblem problema){
         long startTime = System.currentTimeMillis();
-        GomorySolver gomory = new GomorySolver(null,new DualSimplexSolver());
-        FracResult r = gomory.solve(problema, new Parameters());
-        System.out.println(r.getSoluzione());
-        System.out.println("Tempo impiegato: " + (System.currentTimeMillis() - startTime) + "ms");
-        return "";
+        FracResult r = new GomorySolver(new SimplexSolver(),new DualSimplexSolver()).solve(problema, new Parameters());
+        long time = System.currentTimeMillis() - startTime;
+        return convert(r, time);
     }
 }
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linear Optimizer</title>
+    <title>Linear Integer Optimizer</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -89,10 +89,10 @@
 <body>
 
     <div class="container">
-        <h1 class="text-center">Simplex Linear Optimizer</h1>
-        <p>Prende in input un qualsiasi problema di Ottimizzazione, se non è presente una base iniziale utilizza il
-            metodo delle due fasi per ottenere una
-            base iniziale ammissibile
+        <h1 class="text-center">Integer Linear Optimizer</h1>
+        <p>Prende in input un problema di ottimizzazione lineare intera, risolve il rilassamento continuo con il metodo del simplesso primale, 
+            se la soluzione non è intera procede con il metodo cutting plane (tagli di gomory) aggiungento tagli al tableau ottimo e risolvendo il rilassamento continuo 
+            tramite il metodo del simplesso duale andando a riottimizzare il tableau ottimo con i tagli aggiunti.
         </p>
         <div class="form-group">
             <label for="constraints">Number of Constraints:</label>
@@ -343,7 +343,7 @@
         }
 
         function test() {
-            let test = { "funzioneObbiettivo": { "tipo": "MIN", "c": ["1", "0", "1"] }, "vincoli": [{ "vincolo": ["1", "2", "0", "5"], "verso": "LE" }, { "vincolo": ["0", "1", "2", "6"], "verso": "E" }] }
+            let test = {"funzioneObbiettivo":{"tipo":"MIN","c":["-2","5","4"]},"vincoli":[{"vincolo":["4","1","-2","2"],"verso":"LE"},{"vincolo":["2","-2","1","3"],"verso":"LE"},{"vincolo":["-1","1","-2","-1"],"verso":"LE"}]}
             inviaRichiesta(test)
         }
 
@@ -353,7 +353,7 @@
         }
 
         async function inviaRichiesta(payload) {
-            const response = await fetch('http://localhost:8080/solveLinearSimplex', {
+            const response = await fetch('http://localhost:8080/solveLinearInteger', {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',

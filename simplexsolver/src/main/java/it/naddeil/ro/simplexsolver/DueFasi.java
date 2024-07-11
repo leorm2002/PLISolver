@@ -189,10 +189,9 @@ public class DueFasi {
         final Fraction[][] tab;
         final boolean dueFasi;
         if(nuovoTableau.needed){
-            SimplexTableau.printTableau(nuovoTableau.tableau);
             primaOperazione(nuovoTableau.tableau, nuovoTableau.identity);
             SimplexTableau st = new SimplexTableau(nuovoTableau.tableau);
-            st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true, false);
+            st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true);
             tab = pulisciTableau(st.getTableau(), tableau[0]);
             dueFasi = true;
         }else{
@@ -201,7 +200,7 @@ public class DueFasi {
         }
 
         SimplexTableau st2 = new SimplexTableau(tab);
-        st2.solve(dueFasi);
+        st2.solve();
         return st2.getTableau();
     }
 }

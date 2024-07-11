@@ -51,8 +51,8 @@ public class SimplexTableau {
             tableau[i +1] = constraintRow;
         }
     }
-    public void solve(boolean dueFasi) {
-        solve(new ArrayList<>(), false, dueFasi);
+    public void solve() {
+        solve(new ArrayList<>(), false);
 
     }
 
@@ -115,19 +115,21 @@ public class SimplexTableau {
         }
     }
 
-    public void solve(List<Integer> artificialBasis, boolean fase1, boolean dueFasi) {
-        if(dueFasi && !fase1){
-            portaInCanonica();
-        }
+    public void solve(List<Integer> artificialBasis, boolean fase1) {
+        System.out.println("Tableau iniziale:");
+        printTableau();
+        System.out.println();
+        portaInCanonica();
         while (canImprove()) {
-            printTableau();
             int pivotColumn = findPivotColumn();
             int pivotRow = findPivotRow(pivotColumn);
             if(pivotRow == -1){
                 throw new ProblemaInizialeIllimitato(null);
             }
             pivot(pivotRow, pivotColumn);
-
+            System.out.println("Tableau:");
+            printTableau();
+            System.out.println();
         }
         // Studio W
         if(fase1){
@@ -138,12 +140,11 @@ public class SimplexTableau {
                 gestisciDegenerazione(deg.getFirst(), deg.getSecond(), tableau[0].length - 1 - artificialBasis.size());
                 deg = degenere(artificialBasis);
             }
-            
-            printTableau();
-            // Verifica base degenere
-            
         }
         portaInCanonica();
+        System.out.println("Tableau finale:");
+        printTableau();
+        System.out.println();
         
     }
 
