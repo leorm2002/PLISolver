@@ -2,11 +2,17 @@ package it.naddeil.ro.gomorysolver;
 
 import static org.junit.Assert.assertEquals;
 
+import org.ejml.interfaces.linsol.LinearSolver;
 import org.junit.jupiter.api.Test;
+import java.util.List;
 
 import it.naddeil.ro.common.FracResult;
 import it.naddeil.ro.common.Fraction;
+import it.naddeil.ro.common.FunzioneObbiettivo;
 import it.naddeil.ro.common.Parameters;
+import it.naddeil.ro.common.Tipo;
+import it.naddeil.ro.common.Verso;
+import it.naddeil.ro.common.Vincolo;
 import it.naddeil.ro.common.pub.PublicProblem;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 import it.naddeil.ro.gomorysolver.GomorySolver;
@@ -54,9 +60,7 @@ class GomorySolverTest {
                 FracResult result =  gs.solve(new PublicProblem(), new Parameters());
                 assertEquals(new Fraction(2), result.getZ());
             }
-    
-    
-    
+
     @Test
     void testTrovaRigaConValoreFrazionario() {
         GomorySolver gomorySolver = new GomorySolver(null, null);
@@ -96,5 +100,25 @@ class GomorySolverTest {
         Fraction[] riga3 = { new Fraction(1), new Fraction(2), new Fraction(3, 7) };
         Fraction[] expected3 = { new Fraction(0), new Fraction(0), new Fraction(3, 7) };
         assertArrayEquals(expected3, gomorySolver.creaTaglio(riga3));
+    }
+
+    @Test
+    void testGomoryCompleto(){
+        GomorySolver solver = new GomorySolver(new SimplexSolver(),  new DualSimplexSolver());
+
+        PublicProblem p = new PublicProblem();
+        FunzioneObbiettivo f = new FunzioneObbiettivo();
+        f.setTipo(Tipo.MAX);
+        f.setC(List.of(0d,1d));
+
+        p.setVincoli(List.of(
+            new Vincolo(List.of(3d,2d,6d), Verso.LE),
+            new Vincolo(List.of(-3d,2d,0d), Verso.LE)
+        ));
+
+        p.setFunzioneObbiettivo(f);
+
+        solver.solve(p, new Parameters());
+
     }
 }

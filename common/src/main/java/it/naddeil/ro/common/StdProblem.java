@@ -41,7 +41,7 @@ public class StdProblem {
         for (int i = 0; i < c.numCols(); i++) {
             tableau[0][i] = Fraction.of(c.get(0,i));
         }
-        tableau[0][c.numRows()] = Fraction.ZERO;
+        tableau[0][c.numCols()] = Fraction.ZERO;
         // Set A and b
         for (int i = 0; i < A.numRows(); i++) {
             for (int j = 0; j < A.numCols(); j++) {

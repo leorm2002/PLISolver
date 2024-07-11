@@ -13,10 +13,17 @@ public class Fraction implements Comparable<Fraction> {
     }
 
     public static Fraction of(double value){
+        boolean invert = value < 0;
+        if (invert) {
+            value = value * -1;
+        }
         long denominator = 1;
         while (value != Math.floor(value)) {
             value *= 10;
             denominator *= 10;
+        }
+        if(invert){
+            value = value * -1;
         }
         return new Fraction((long)value, denominator);
     }
