@@ -1,4 +1,4 @@
-package it.naddeil.ro.common;
+package it.naddeil.ro.common.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,7 +8,11 @@ import org.ejml.simple.SimpleMatrix;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import it.naddeil.ro.common.pub.PublicProblem;
+import it.naddeil.ro.common.api.FunzioneObbiettivo;
+import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.api.Vincolo;
+import it.naddeil.ro.common.utils.Fraction;
+import it.naddeil.ro.common.utils.StdProblem;
 
 /**
  * Rappresenta un problema di ottimizzazione ovvero min F s.t. Ax=d dove ogni riga della matrice rappresenta un vincolo di tipo =
@@ -23,14 +27,7 @@ public class Problema implements Serializable {
     private List<Integer> basis = new ArrayList<>();
 
 
-	public Problema(SimpleMatrix a, SimpleMatrix b, SimpleMatrix c, List<Integer> basis) {
-		this.a = a;
-		this.b = b;
-		this.c = c;
-        this.basis = basis;
-	}
-
-	public Problema() {
+	private Problema() {
 	}
 
     public static Problema fromPublic(PublicProblem p){
@@ -70,6 +67,33 @@ public class Problema implements Serializable {
     public StdProblem toMatrixProblem(){
         init(); 
         return new StdProblem(a, b, c);
+    }
+
+
+    @JsonIgnore
+    public Fraction[][] toTableauFormProblem(){
+        init(); 
+        int numeroVincoli = this.a.numRows();
+        int numeroVariabili = a.numCols();
+
+        Fraction[][] tab = new Fraction[numeroVincoli + 1][numeroVariabili + 1];
+        // Riporto funzione obbiettivo
+        for(int i = 0; i < numeroVariabili; i++ ){
+            tab[0][i] = Fraction.of(c.get(i));
+        }
+        tab[0][tab[0].length - 1] = Fraction.ZERO;
+        // Riporto b
+        for(int j = 0; j < numeroVincoli; j++){
+            tab[j + 1][numeroVariabili] = Fraction.of(b.get(j));
+        }
+
+        // Riporto A
+        for(int i = 0; i < numeroVariabili; i++ ){
+            for(int j = 0; j < numeroVincoli; j++){
+                tab[i + 1][j] = Fraction.of(a.get(i,j));
+            }
+        }
+        return tab;
     }
 
 	public FunzioneObbiettivo getFunzioneObbiettivo() {

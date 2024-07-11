@@ -6,16 +6,15 @@ import org.ejml.interfaces.linsol.LinearSolver;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 
-import it.naddeil.ro.common.FracResult;
-import it.naddeil.ro.common.Fraction;
-import it.naddeil.ro.common.FunzioneObbiettivo;
-import it.naddeil.ro.common.Parameters;
-import it.naddeil.ro.common.Tipo;
-import it.naddeil.ro.common.Verso;
-import it.naddeil.ro.common.Vincolo;
-import it.naddeil.ro.common.pub.PublicProblem;
+import it.naddeil.ro.common.api.FunzioneObbiettivo;
+import it.naddeil.ro.common.api.Parameters;
+import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.api.Tipo;
+import it.naddeil.ro.common.api.Verso;
+import it.naddeil.ro.common.api.Vincolo;
+import it.naddeil.ro.common.models.FracResult;
+import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
-import it.naddeil.ro.gomorysolver.GomorySolver;
 import it.naddeil.ro.simplexsolver.SimplexSolver;
 
 class GomorySolverTest {
@@ -98,7 +97,7 @@ class GomorySolverTest {
         Fraction[] riga1 = { new Fraction(1), new Fraction(2), new Fraction(3) };
         Fraction[] expected1 = { new Fraction(0), new Fraction(0), new Fraction(0) };
         assertArrayEquals(expected1, gomorySolver.creaTaglio(riga1));
-        
+
         Fraction[] riga2 = { new Fraction(1), new Fraction(5, 2), new Fraction(3) };
         Fraction[] expected2 = { new Fraction(0), new Fraction(1,2), new Fraction(0) };
         assertArrayEquals(expected2, gomorySolver.creaTaglio(riga2));

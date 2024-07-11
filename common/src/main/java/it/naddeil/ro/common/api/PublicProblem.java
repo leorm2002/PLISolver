@@ -1,11 +1,7 @@
-package it.naddeil.ro.common.pub;
+package it.naddeil.ro.common.api;
 
 import java.io.Serializable;
 import java.util.List;
-
-
-import it.naddeil.ro.common.FunzioneObbiettivo;
-import it.naddeil.ro.common.Vincolo;
 
 /**
  * Rappresenta un problema di ottimizzazione ovvero min F s.t. Ax=d dove ogni riga della matrice rappresenta un vincolo di tipo =

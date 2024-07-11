@@ -1,5 +1,5 @@
 package it.naddeil.ro.dualsimplexsolver;
-import it.naddeil.ro.common.Fraction;
+import it.naddeil.ro.common.utils.Fraction;
 
 
 public class SimplessoDualeFrazionario {

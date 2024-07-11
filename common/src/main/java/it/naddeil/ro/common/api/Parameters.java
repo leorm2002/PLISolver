@@ -1,4 +1,4 @@
-package it.naddeil.ro.common;
+package it.naddeil.ro.common.api;
 
 public class Parameters {
     private double tollleranza = 0.00000000001;

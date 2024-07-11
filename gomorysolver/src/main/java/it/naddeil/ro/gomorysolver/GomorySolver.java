@@ -4,14 +4,16 @@ import java.util.Arrays;
 
 
 
-import it.naddeil.ro.common.*;
-import it.naddeil.ro.common.pub.PublicProblem;
+import it.naddeil.ro.common.api.Parameters;
+import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.models.FracResult;
+import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 import it.naddeil.ro.simplexsolver.SimplexSolver;
 
 
 
-public class GomorySolver implements PLISolver {
+public class GomorySolver  {
     private final SimplexSolver simplexSolver;
     private final DualSimplexSolver dualSimplexSolver;
     // Vincoli:
@@ -117,7 +119,7 @@ public class GomorySolver implements PLISolver {
         }
         System.out.println();
     }
-    @Override
+
     public FracResult solve(PublicProblem problem, Parameters parameters) {
         int maxIter = 300;
         long startTime = System.nanoTime();

@@ -6,7 +6,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.jupiter.api.Test;
 
-import it.naddeil.ro.common.Fraction;
+import it.naddeil.ro.common.utils.Fraction;
 
 public class DueFasiTest {
 

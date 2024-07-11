@@ -1,4 +1,4 @@
-package it.naddeil.ro.common;
+package it.naddeil.ro.common.api;
 
 public enum Verso {
     LE, GE, E

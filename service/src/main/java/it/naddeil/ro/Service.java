@@ -8,18 +8,16 @@ import java.util.List;
 import org.ejml.simple.SimpleMatrix;
 
 import io.vertx.ext.web.handler.FileSystemAccess;
-import it.naddeil.ro.common.FracResult;
-import it.naddeil.ro.common.Fraction;
-import it.naddeil.ro.common.Parameters;
 import it.naddeil.ro.common.ProblemTransformer;
-import it.naddeil.ro.common.Problema;
-import it.naddeil.ro.common.Result;
-import it.naddeil.ro.common.StdProblem;
-import it.naddeil.ro.common.pub.PublicProblem;
-import it.naddeil.ro.common.pub.PublicStdFormProblem;
+import it.naddeil.ro.common.api.Parameters;
+import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.api.PublicStdFormProblem;
+import it.naddeil.ro.common.models.FracResult;
+import it.naddeil.ro.common.models.Problema;
+import it.naddeil.ro.common.utils.Fraction;
+import it.naddeil.ro.common.utils.StdProblem;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexMessageBuilder;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
-import it.naddeil.ro.dualsimplexsolver.SimplessoDuale;
 import it.naddeil.ro.gomorysolver.GomorySolver;
 import it.naddeil.ro.simplexsolver.SimplexSolver;
 import jakarta.ws.rs.POST;
@@ -35,10 +33,11 @@ public class Service {
     @Path("/solveLinearDual")
     public List<Double> solveL(PublicProblem problema){
         long startTime = System.currentTimeMillis();
-        Result s = new DualSimplexSolver().solve(problema, new Parameters());
-        SimpleMatrix sol = s.getSoluzione();
-        System.out.println("Tempo impiegato: " + (System.currentTimeMillis() - startTime) + "ms");
-        return IntStream.range(0, sol.getNumElements()).mapToObj(sol::get).toList();
+        //Result s = new DualSimplexSolver().solve(problema, new Parameters());
+        //SimpleMatrix sol = s.getSoluzione();
+        //System.out.println("Tempo impiegato: " + (System.currentTimeMillis() - startTime) + "ms");
+        //return IntStream.range(0, sol.getNumElements()).mapToObj(sol::get).toList();
+        return null;
     }
 
     @POST

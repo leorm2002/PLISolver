@@ -1,4 +1,4 @@
-package it.naddeil.ro.common.pub;
+package it.naddeil.ro.common.api;
 
 import java.util.List;;
 public class Response {

@@ -1,8 +1,8 @@
-package it.naddeil.ro.common;
+package it.naddeil.ro.common.utils;
 
 import org.ejml.simple.SimpleMatrix;
 
-import it.naddeil.ro.common.pub.PublicStdFormProblem;
+import it.naddeil.ro.common.api.PublicStdFormProblem;
 
 /**
  * Problema in forma standard del tipo:

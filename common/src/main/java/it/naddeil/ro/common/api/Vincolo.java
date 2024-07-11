@@ -1,4 +1,4 @@
-package it.naddeil.ro.common;
+package it.naddeil.ro.common.api;
 
 import java.io.Serializable;
 import java.util.List;

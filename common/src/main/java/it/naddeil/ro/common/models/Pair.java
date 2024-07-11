@@ -1,4 +1,4 @@
-package it.naddeil.ro.common;
+package it.naddeil.ro.common.models;
 
 
 public final class Pair<T, U> {

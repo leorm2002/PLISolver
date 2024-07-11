@@ -5,7 +5,11 @@ import java.util.List;
 
 import org.ejml.simple.SimpleMatrix;
 
-import it.naddeil.ro.common.pub.PublicProblem;
+import it.naddeil.ro.common.api.FunzioneObbiettivo;
+import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.api.Tipo;
+import it.naddeil.ro.common.api.Verso;
+import it.naddeil.ro.common.api.Vincolo;
 
 public class ProblemTransformer {
     static FunzioneObbiettivo getFunzioneObbiettivoStd(FunzioneObbiettivo f){

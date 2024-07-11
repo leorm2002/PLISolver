@@ -1,7 +1,10 @@
-package it.naddeil.ro.common;
+package it.naddeil.ro.common.models;
 
 import java.util.List;
 import java.util.stream.IntStream;
+
+import it.naddeil.ro.common.utils.Fraction;
+
 import java.util.Arrays;
 public class FracResult {
     Fraction[][] tableau;

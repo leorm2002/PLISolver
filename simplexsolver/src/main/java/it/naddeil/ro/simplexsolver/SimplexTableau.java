@@ -1,7 +1,7 @@
 package it.naddeil.ro.simplexsolver;
 
-import it.naddeil.ro.common.Fraction;
-import it.naddeil.ro.common.Pair;
+import it.naddeil.ro.common.models.Pair;
+import it.naddeil.ro.common.utils.Fraction;
 import pabeles.concurrency.IntObjectConsumer;
 
 import java.util.List;

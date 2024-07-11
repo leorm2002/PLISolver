@@ -1,7 +1,5 @@
 package it.naddeil.ro.simplexsolver;
 
-import it.naddeil.ro.common.Fraction;
-
 import static org.junit.Assert.assertEquals;
 
 import java.lang.annotation.Target;
@@ -9,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+
+import it.naddeil.ro.common.utils.Fraction;
 
 
 

@@ -2,12 +2,14 @@ package it.naddeil.ro.simplexsolver;
 
 
 
-import it.naddeil.ro.common.Fraction;
 import java.util.List;
 
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import it.naddeil.ro.common.utils.Fraction;
+
 import java.util.ArrayList;
 
 public class DueFasi {

@@ -1,30 +1,27 @@
 package it.naddeil.ro.dualsimplexsolver;
 
-import it.naddeil.ro.common.Parameters;
 import it.naddeil.ro.common.ProblemTransformer;
-import it.naddeil.ro.common.Problema;
-import it.naddeil.ro.common.Result;
-import java.util.Collections;
-
-import org.ejml.simple.SimpleMatrix;
-
-import it.naddeil.ro.common.StdProblem;
-import it.naddeil.ro.common.pub.PublicProblem;
-import it.naddeil.ro.common.FracResult;
-import it.naddeil.ro.common.Fraction;
+import it.naddeil.ro.common.api.Parameters;
+import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.models.FracResult;
+import it.naddeil.ro.common.models.Problema;
+import it.naddeil.ro.common.utils.Fraction;
+import it.naddeil.ro.common.utils.StdProblem;
 
 
 public class DualSimplexSolver {
 
-    public Result solve(PublicProblem problema, Parameters parameters) {
+    public FracResult solve(PublicProblem problema, Parameters parameters) {
 
         StdProblem problem = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problema)).toMatrixProblem();
         problem.setC(problem.getC().negative());
-        SimplessoDuale dualSimplex = SimplessoDuale.createFromStd(problem.getA(), problem.getB(), problem.getC(), Collections.emptyList());
-        DualSimplexMessageBuilder msg = new DualSimplexMessageBuilder();
-        SimpleMatrix sol = dualSimplex.solve(msg);
+        //SimplessoDuale dualSimplex = SimplessoDuale.createFromStd(problem.getA(), problem.getB(), problem.getC(), Collections.emptyList());
+        //DualSimplexMessageBuilder msg = new DualSimplexMessageBuilder();
+        //SimpleMatrix sol = dualSimplex.solve(msg);
 
-        return dualSimplex.buildResult(sol);
+        //return dualSimplex.buildResult(sol);
+    
+        return null;
     }
 
     public FracResult riottimizza(Fraction[][] tableau){
