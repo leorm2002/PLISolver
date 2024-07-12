@@ -5,6 +5,7 @@ import java.util.stream.IntStream;
 
 import it.naddeil.ro.common.utils.Fraction;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 public class FracResult {
     Fraction[][] tableau;
@@ -74,16 +75,25 @@ public class FracResult {
 		this.basis = basis;
 	}
 
-    Fraction[] swapFirstWithLast(Fraction[] in)
+    Fraction[] shiftRight(Fraction[] in)
     {
-        Fraction[] out = in.clone();    
-        out[0] = in[in.length - 1];
-        out[in.length - 1] = in[0];
+        Fraction[] out = in.clone();
+        for (int i = 0; i < in.length - 1; i++) {
+            out[(i + 1) % in.length] = in[i];
+        }
+
         return out;
         
     }
 
     public List<List<String>> getTableauStr(){
-        return Arrays.stream(tableau).map(this::swapFirstWithLast).map(row -> Arrays.stream(row).map(Fraction::toString).toList()).toList();
+        return Arrays.stream(tableau).map(this::shiftRight).map(row -> Arrays.stream(row).map(Fraction::toString).toList()).toList();
+    }
+    public static void main(String[] args) {
+        FracResult f = FracResult.fromTableau(new Fraction[][] {{Fraction.ONE, Fraction.ZERO,Fraction.ZERO}});
+    
+        var a = f.getTableauStr();
+
+        int x = 1;
     }
 }

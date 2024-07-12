@@ -7,6 +7,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FracResult",
+            "request": "launch",
+            "mainClass": "it.naddeil.ro.common.models.FracResult",
+            "projectName": "Common"
+        },
+        {
+            "type": "java",
             "name": "Fraction",
             "request": "launch",
             "mainClass": "it.naddeil.ro.common.Fraction",

@@ -178,34 +178,34 @@
         <button class="btn btn-primary" onclick="toggleMathContainer()">Visualizza problema</button>
         <div id="math-container" class="math-container mt-3">
             <div class="math-content">
-                <div class="math-row">
-                    <span>min z =</span>
-                    <span class="math-operator">x<sub>1</sub></span>
-                    <span class="math-operator">+</span>
-                    <span class="math-operator">x<sub>3</sub></span>
-                </div>
-                <div class="math-row">
-                    <span>s.t.</span>
-                </div>
-                <div class="math-row-margin">
-                    <span>x<sub>1</sub></span>
-                    <span class="math-operator">+</span>
-                    <span>2x<sub>2</sub></span>
-                    <span class="math-operator">&le;</span>
-                    <span>5</span>
-                </div>
-                <div class="math-row-margin">
-                    <span>x<sub>2</sub></span>
-                    <span class="math-operator">+</span>
-                    <span>2x<sub>3</sub></span>
-                    <span class="math-operator">=</span>
-                    <span>6</span>
-                </div>
-                <div class="math-row-margin">
-                    <span>x<sub>1</sub>, x<sub>2</sub>, x<sub>3</sub> &ge; 0</span>
-                </div>
+              <div class="math-row">
+                <span>min z<sub>p</sub> =</span>
+                <span class="math-operator">-x<sub>2</sub></span>
+              </div>
+              <div class="math-row">
+                <span>s.t.</span>
+              </div>
+              <div class="math-row-margin">
+                <span>+3x<sub>1</sub></span>
+                <span class="math-operator">+</span>
+                <span>2x<sub>2</sub></span>
+                <span class="math-operator">&le;</span>
+                <span>6</span>
+              </div>
+              <div class="math-row-margin">
+                <span>-3x<sub>1</sub></span>
+                <span class="math-operator">+</span>
+                <span>2x<sub>2</sub></span>
+                <span class="math-operator">&le;</span>
+                <span>0</span>
+              </div>
+              <div class="math-row-margin">
+                <span>x<sub>1</sub>, x<sub>2</sub> &ge; 0</span>
+                <span class="math-operator">e intere</span>
+              </div>
             </div>
-        </div>
+          </div>
+          
         <br><br>
 
         <div class="container">
@@ -330,12 +330,23 @@
             for (let i = 0; i < numRows; i++) {
                 const row = document.createElement('tr');
                 const rowHeader = document.createElement('td');
-                rowHeader.textContent = `r${i}`;
+                if(i != 0){
+                    let j = i - 1;
+                    rowHeader.textContent = `r${j}`;
+                }
                 row.appendChild(rowHeader);
-
+                let j = 0;
                 data[i].forEach(cellText => {
                     const td = document.createElement('td');
                     td.textContent = cellText;
+                    if( (i == 0 && j != 0) ||(i != 0 && j == 0)){
+                        td.style = 'background-color: rgb(116, 182, 116)'
+
+                    }
+                    if(i == 0 && j == 0){
+                        td.style = 'background-color: green'
+                    }
+                    j++
                     row.appendChild(td);
                 });
                 tableau.appendChild(row);
@@ -343,7 +354,7 @@
         }
 
         function test() {
-            let test = {"funzioneObbiettivo":{"tipo":"MIN","c":["-2","5","4"]},"vincoli":[{"vincolo":["4","1","-2","2"],"verso":"LE"},{"vincolo":["2","-2","1","3"],"verso":"LE"},{"vincolo":["-1","1","-2","-1"],"verso":"LE"}]}
+            let test = {"funzioneObbiettivo":{"tipo":"MIN","c":["0","-1"]},"vincoli":[{"vincolo":["3","2","6"],"verso":"LE"},{"vincolo":["-3","2","0"],"verso":"LE"}]}
             inviaRichiesta(test)
         }
 

@@ -51,7 +51,7 @@ public class SimplexTableau {
             tableau[i +1] = constraintRow;
         }
     }
-    public void solve() {
+    public void solve(int numroVariabiliSlack) {
         solve(new ArrayList<>(), false);
 
     }
@@ -134,7 +134,8 @@ public class SimplexTableau {
         // Studio W
         if(fase1){
             verificaW(tableau[0][tableau[0].length - 1]);
-    
+        }
+        if(!artificialBasis.isEmpty()){
             var deg = degenere(artificialBasis);
             while (deg.getFirst() != -1) {
                 gestisciDegenerazione(deg.getFirst(), deg.getSecond(), tableau[0].length - 1 - artificialBasis.size());

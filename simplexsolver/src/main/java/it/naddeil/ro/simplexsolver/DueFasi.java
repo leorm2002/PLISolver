@@ -184,23 +184,20 @@ public class DueFasi {
 
         return IntStream.range(0, row[0].length).map(i -> i + numberOfVariables).boxed().collect(Collectors.toList());
     }
-    static Fraction[][] applicaMetodoDueFasi(Fraction[][] tableau){
+    static Fraction[][] applicaMetodoDueFasi(Fraction[][] tableau, List<Integer> numeroVariabiliSlack){
         InnerDueFasi nuovoTableau = aggiungiVariabiliSintetiche(tableau);
         final Fraction[][] tab;
-        final boolean dueFasi;
         if(nuovoTableau.needed){
             primaOperazione(nuovoTableau.tableau, nuovoTableau.identity);
             SimplexTableau st = new SimplexTableau(nuovoTableau.tableau);
             st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true);
             tab = pulisciTableau(st.getTableau(), tableau[0]);
-            dueFasi = true;
         }else{
             tab = tableau;
-            dueFasi = false;
         }
 
         SimplexTableau st2 = new SimplexTableau(tab);
-        st2.solve();
+        st2.solve(numeroVariabiliSlack, false);
         return st2.getTableau();
     }
 }

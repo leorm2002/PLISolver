@@ -134,7 +134,8 @@ public class GomorySolver  {
                 Fraction[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
 
                 rs = dualSimplexSolver.riottimizza(newA);
-
+                System.out.println("Soluzione rilassamento continuo");
+                printTableau(rs.getTableau());
                 if(isSolved(rs)){
                     return rs;
                 }
