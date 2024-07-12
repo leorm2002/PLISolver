@@ -5,12 +5,13 @@ import java.util.List;
 
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
-import it.naddeil.ro.common.api.Response;
+import it.naddeil.ro.common.api.Responsee;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 import it.naddeil.ro.gomorysolver.GomorySolver;
 import it.naddeil.ro.simplexsolver.SimplexSolver;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -34,15 +35,15 @@ public class Service {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/solveLinearSimplex")
-    public Response solveLS(PublicProblem problema){
+    public Responsee solveLS(PublicProblem problema){
         long startTime = System.currentTimeMillis();
         FracResult s = new SimplexSolver().solve(problema);
         long time = System.currentTimeMillis() - startTime;
         return convert(s, time);
     }
 
-    Response convert(FracResult r, long time){
-        Response res = new Response();
+    Responsee convert(FracResult r, long time){
+        Responsee res = new Responsee();
         res.tableau = r.getTableauStr();
         res.time = time;
         return res;
@@ -51,11 +52,12 @@ public class Service {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/solveLinearInteger")
-    public Response solveLI(PublicProblem problema){
+    public Responsee solveLI(PublicProblem problema){
         long startTime = System.currentTimeMillis();
         FracResult r = new GomorySolver(new SimplexSolver(),new DualSimplexSolver()).solve(problema, new Parameters());
         long time = System.currentTimeMillis() - startTime;
         return convert(r, time);
     }
+
 }
 

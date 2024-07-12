@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Optimizer</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="common.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="text-center">Simplex Linear Optimizer</h1>
+        <p>Prende in input un qualsiasi problema di Ottimizzazione, se non è presente una base iniziale utilizza il
+            metodo delle due fasi per ottenere una
+            base iniziale ammissibile
+        </p>
+        <div class="form-group">
+            <label for="constraints">Number of Constraints:</label>
+            <select class="form-control" id="constraints" onchange="updateTable()">
+                <option value="" disabled selected>Select number of constraints</option>
+                <!-- Options from 1 to 10 -->
+                <script>
+                    for (let i = 1; i <= 10; i++) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="variables">Number of Variables:</label>
+            <select class="form-control" id="variables" onchange="updateTable()">
+                <option value="" disabled selected>Select number of variables</option>
+                <!-- Options from 1 to 10 -->
+                <script>
+                    for (let i = 1; i <= 10; i++) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
+
+        <div class="objective-function" id="objective-function" style="display: none;">
+            <h2>Objective Function</h2>
+            <div class="form-row align-items-center">
+                <div class="col-auto">
+                    <label for="optimization-direction">Optimization Direction:</label>
+                    <select class="form-control" id="optimization-direction">
+                        <option value="max">Max</option>
+                        <option value="min">Min</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label for="objective-coefficients">Coefficients:</label>
+                </div>
+                <div id="objective-coefficients" class="form-row">
+                    <!-- Coefficients input will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section" id="table-section" style="display: none;">
+            <h2>Optimizer Parameters</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr id="table-header">
+                        <!-- Table headers will be generated here -->
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Table body will be generated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="parameters-section" id="parameters-section" style="display: none;">
+            <h2>Additional Parameters</h2>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="integer-option">
+                <label class="form-check-label" for="integer-option">Ottimizzazione intera</label>
+            </div>
+            <div class="form-group">
+                <label for="max-iterations">Numero massimo di iterazioni (se utilizzato algoritmo cutting
+                    plane):</label>
+                <input type="number" class="form-control" id="max-iterations" placeholder="Enter maximum iterations">
+            </div>
+            <div class="form-group">
+                <label for="epsilon">Tolleranza (ordini grandezza es. -5 per 10^-5 ) per condizione di
+                    interezza:</label>
+                <input type="number" class="form-control" id="epsilon" placeholder="Enter threshold">
+            </div>
+
+        </div>
+        <button onclick="calcolaL()" type="button" class="btn btn-primary" id="submit-button">Calcola</button>
+        <br><br>
+        <button onclick="testL()" type="button" class="btn btn-primary" id="submit-button">Lancia problema prepopolato
+            (clicca sotto per vedere)</button>
+        <br><br>
+        <button class="btn btn-primary" onclick="toggleMathContainer()">Visualizza problema</button>
+        <div id="math-container" class="math-container mt-3">
+            <div class="math-content">
+                <div class="math-row">
+                    <span>min z =</span>
+                    <span class="math-operator">x<sub>1</sub></span>
+                    <span class="math-operator">+</span>
+                    <span class="math-operator">x<sub>3</sub></span>
+                </div>
+                <div class="math-row">
+                    <span>s.t.</span>
+                </div>
+                <div class="math-row-margin">
+                    <span>x<sub>1</sub></span>
+                    <span class="math-operator">+</span>
+                    <span>2x<sub>2</sub></span>
+                    <span class="math-operator">&le;</span>
+                    <span>5</span>
+                </div>
+                <div class="math-row-margin">
+                    <span>x<sub>2</sub></span>
+                    <span class="math-operator">+</span>
+                    <span>2x<sub>3</sub></span>
+                    <span class="math-operator">=</span>
+                    <span>6</span>
+                </div>
+                <div class="math-row-margin">
+                    <span>x<sub>1</sub>, x<sub>2</sub>, x<sub>3</sub> &ge; 0</span>
+                </div>
+            </div>
+        </div>
+        <br><br>
+
+        <div class="container">
+            <h1 class="text-center">Tableau ottimo</h1>
+            <table id="tableau" class="tableau">
+                <!-- The content will be generated dynamically -->
+            </table>
+        </div>
+        <br>
+        <h5 id="tempo"></h5>
+
+        <br>
+        <br>
+        <br>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="common.js"></script>
+
+ 
+</body>
+
+</html>

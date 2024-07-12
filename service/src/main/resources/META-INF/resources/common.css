@@ -1,0 +1,73 @@
+.container {
+    margin-top: 50px;
+}
+
+.table-section {
+    margin-top: 30px;
+}
+
+.objective-function,
+.parameters-section {
+    margin-top: 30px;
+}
+
+table input,
+table select {
+    width: 100%;
+}
+
+#submit-button {
+    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.tableau {
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.tableau th,
+.tableau td {
+    border: 1px solid black;
+    text-align: center;
+    padding: 8px;
+}
+
+.tableau th {
+    background-color: #f2f2f2;
+}
+
+.math-container {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    display: none;  
+}
+
+.math-content {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 18px;
+}
+
+.math-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.math-row-margin {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-left: 30px;
+}
+
+.math-operator {
+    margin: 0 10px;
+}

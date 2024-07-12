@@ -1,7 +1,7 @@
 package it.naddeil.ro.common.api;
 
 import java.util.List;;
-public class Response implements java.io.Serializable {
+public class Responsee implements java.io.Serializable {
     public List<List<String>> tableau;
     public long time;
     public List<List<String>> getTableau() {
