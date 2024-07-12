@@ -5,7 +5,7 @@ import java.util.List;
 
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
-import it.naddeil.ro.common.api.Responsee;
+import it.naddeil.ro.common.api.Response;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
@@ -35,15 +35,15 @@ public class Service {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/solveLinearSimplex")
-    public Responsee solveLS(PublicProblem problema){
+    public Response solveLS(PublicProblem problema){
         long startTime = System.currentTimeMillis();
         FracResult s = new SimplexSolver().solve(problema);
         long time = System.currentTimeMillis() - startTime;
         return convert(s, time);
     }
 
-    Responsee convert(FracResult r, long time){
-        Responsee res = new Responsee();
+    Response convert(FracResult r, long time){
+        Response res = new Response();
         res.tableau = r.getTableauStr();
         res.time = time;
         return res;
@@ -52,7 +52,7 @@ public class Service {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/solveLinearInteger")
-    public Responsee solveLI(PublicProblem problema){
+    public Response solveLI(PublicProblem problema){
         long startTime = System.currentTimeMillis();
         FracResult r = new GomorySolver(new SimplexSolver(),new DualSimplexSolver()).solve(problema, new Parameters());
         long time = System.currentTimeMillis() - startTime;
