@@ -14,7 +14,7 @@ class SimplexTableauTest {
     };
     Fraction[] rightHandSide = new Fraction[]{new Fraction(80), new Fraction(90)};
     SimplexTableau st = new SimplexTableau(objectiveFunction, constraints, rightHandSide);
-    st.solve();
+    st.solve(0);
     Fraction[][] tableau = st.getTableau();
     assertEquals(new Fraction(13000), tableau[0][tableau[0].length -1]);
   }

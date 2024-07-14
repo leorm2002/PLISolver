@@ -4,6 +4,8 @@ package it.naddeil.ro.simplexsolver;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
 
 import it.naddeil.ro.common.utils.Fraction;
@@ -75,7 +77,7 @@ public class DueFasiTest {
             {Fraction.ONE,Fraction.ONE,new Fraction(2),new Fraction(1),new Fraction(10)},
         };
 
-        var out = DueFasi.applicaMetodoDueFasi(tableau);
+        var out = DueFasi.applicaMetodoDueFasi(tableau, Collections.emptyList());
         Fraction[][] expected = new Fraction[][] {
             {Fraction.ONE, Fraction.ZERO, Fraction.ZERO, Fraction.ZERO, Fraction.ZERO},
             {Fraction.of(-1,2), Fraction.ZERO, Fraction.ZERO, Fraction.ONE, Fraction.of(5, 2)},
@@ -95,7 +97,7 @@ public class DueFasiTest {
 
         };
 
-        var out = DueFasi.applicaMetodoDueFasi(tableau);
+        var out = DueFasi.applicaMetodoDueFasi(tableau, Collections.emptyList());
 
         Fraction[][] tableauExp = new Fraction[][]{
             {Fraction.of(5,4),Fraction.ZERO,Fraction.ZERO,Fraction.of(1,4),Fraction.of(-7,4)},
@@ -117,7 +119,7 @@ public class DueFasiTest {
             {Fraction.of(3), Fraction.of(4), Fraction.of(2), Fraction.ZERO, Fraction.MINUS_ONE, Fraction.of(8)}
         };
 
-        var out = DueFasi.applicaMetodoDueFasi(tableau);
+        var out = DueFasi.applicaMetodoDueFasi(tableau, Collections.emptyList());
 
         Fraction[][] tableauExp = new Fraction[][]{
             {Fraction.ONE,Fraction.ZERO,Fraction.ONE,Fraction.of(2),Fraction.ZERO,Fraction.of(4)},
@@ -137,7 +139,7 @@ public class DueFasiTest {
             {Fraction.of(5), Fraction.of(5), Fraction.of(2), Fraction.ONE, Fraction.of(30)},
             {Fraction.of(3), Fraction.ONE, Fraction.ZERO, Fraction.ONE, Fraction.of(10)}
         };
-        var out = DueFasi.applicaMetodoDueFasi(tableau);
+        var out = DueFasi.applicaMetodoDueFasi(tableau, Collections.emptyList());
 
         Fraction[][] tableauExpected = new Fraction[][]{
             {Fraction.ZERO, Fraction.ZERO, Fraction.of(2,5), Fraction.of(1,5), Fraction.of(26)},
@@ -156,7 +158,7 @@ public class DueFasiTest {
             {Fraction.of(3), Fraction.of(-4), Fraction.ZERO, Fraction.ONE, Fraction.ZERO}
         };
         try {
-            var out = DueFasi.applicaMetodoDueFasi(tableau);
+            var out = DueFasi.applicaMetodoDueFasi(tableau, Collections.emptyList());
             
         } catch (RuntimeException e) {
             // TODO: handle exception

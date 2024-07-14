@@ -1,9 +1,11 @@
 let linear = 'http://localhost:8080/solveLinearSimplex'
+let linearI = 'http://localhost:8080/solveLinearInteger'
 function calcolaL(){
     calcola(linear)
 }
 
 function calcolaLI(){
+    calcola(linearI)
 
 }
 function toggleMathContainer() {
@@ -85,6 +87,7 @@ function calcola() {
 }
 
 function populateTableau(data) {
+    document.getElementById('titoloTab').innerText = 'Tableau ottimo'
     const tableau = document.getElementById('tableau');
     tableau.innerHTML = '';
 
@@ -122,6 +125,10 @@ function testL() {
     inviaRichiesta(test, linear)
 }
 
+function testLI() {
+    let test = {"funzioneObbiettivo":{"tipo":"MIN","c":["0","-1"]},"vincoli":[{"vincolo":["3","2","6"],"verso":"LE"},{"vincolo":["-3","2","0"],"verso":"LE"}]}
+    inviaRichiesta(test, linearI)
+}
 async function mostraTempo(time) {
     const tempo = document.getElementById('tempo');
     tempo.innerText = 'Tempo elaborazione: ' + time + "ms";
@@ -141,6 +148,7 @@ async function inviaRichiesta(payload, link) {
     // Load text into a vector of vector of strings
     populateTableau(resp.tableau)
     mostraTempo(resp.time)
+    getSolution(resp.soluzione)
 }
 
 function updateTable() {
@@ -230,4 +238,16 @@ function updateTable() {
         document.getElementById('objective-function').style.display = 'none';
         document.getElementById('parameters-section').style.display = 'none';
     }
+
+}
+function getSolution(sol){
+    let out = []
+    for (let i = 0; i < sol.length; i++) {
+        
+        out.push(`x${i + 1}: ${sol[i]}`)
+    }
+    console.log(out)
+    let text = "Soluzione: " + out.join(", ")
+    const solution = document.getElementById('solution');
+    solution.innerText = text;
 }

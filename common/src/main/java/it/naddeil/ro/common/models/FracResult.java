@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import it.naddeil.ro.common.utils.Fraction;
+import it.naddeil.ro.common.utils.TableauUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 public class FracResult {
     Fraction[][] tableau;
@@ -14,15 +14,17 @@ public class FracResult {
     Fraction z;
     Fraction[][] a;
     List<Integer> basis;
+    List<Fraction> valoreVariabili;
 
-	public FracResult(Fraction[][] tableau, Fraction[] soluzione, Fraction[] costiRidotti, Fraction z, Fraction[][] a,
-			List<Integer> basis) {
+	private FracResult(Fraction[][] tableau, Fraction[] soluzione, Fraction[] costiRidotti, Fraction z, Fraction[][] a,
+			List<Integer> basis, List<Fraction> valoreVariabili) {
 		this.tableau = tableau;
 		this.soluzione = soluzione;
 		this.costiRidotti = costiRidotti;
 		this.z = z;
 		this.a = a;
 		this.basis = basis;
+        this.valoreVariabili = valoreVariabili;
 	}
 
     public static FracResult fromTableau(Fraction[][] tableau){
@@ -34,7 +36,8 @@ public class FracResult {
 		for (int i = 1; i < tableau.length; i++) {
 			a[i - 1] = Arrays.copyOf(tableau[i], width - 1);
 		}
-        return new FracResult(tableau, soluzione, costiRidotti, z, a, null);
+        List<Fraction> valoreVariabili = TableauUtils.getSolution(costiRidotti.length, soluzione.length, tableau);
+        return new FracResult(tableau, soluzione, costiRidotti, z, a, null, valoreVariabili);
     }
 	
     public Fraction[][] getTableau() {
@@ -78,7 +81,7 @@ public class FracResult {
     Fraction[] shiftRight(Fraction[] in)
     {
         Fraction[] out = in.clone();
-        for (int i = 0; i < in.length - 1; i++) {
+        for (int i = 0; i < in.length; i++) {
             out[(i + 1) % in.length] = in[i];
         }
 
@@ -95,5 +98,13 @@ public class FracResult {
         var a = f.getTableauStr();
 
         int x = 1;
+    }
+
+    public List<Fraction> getValoreVariabili() {
+        return valoreVariabili;
+    }
+
+    public void setValoreVariabili(List<Fraction> valoreVariabili) {
+        this.valoreVariabili = valoreVariabili;
     }
 }

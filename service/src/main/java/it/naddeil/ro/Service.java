@@ -46,6 +46,7 @@ public class Service {
         Response res = new Response();
         res.tableau = r.getTableauStr();
         res.time = time;
+        res.soluzione = r.getValoreVariabili().stream().map(Fraction::toString).toList();
         return res;
     }
 
@@ -55,6 +56,8 @@ public class Service {
     public Response solveLI(PublicProblem problema){
         long startTime = System.currentTimeMillis();
         FracResult r = new GomorySolver(new SimplexSolver(),new DualSimplexSolver()).solve(problema, new Parameters());
+        
+        FracResult s = FracResult.fromTableau(r.getTableau());
         long time = System.currentTimeMillis() - startTime;
         return convert(r, time);
     }
