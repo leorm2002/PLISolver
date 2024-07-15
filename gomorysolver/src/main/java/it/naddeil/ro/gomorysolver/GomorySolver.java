@@ -2,24 +2,23 @@ package it.naddeil.ro.gomorysolver;
 
 import java.util.Arrays;
 
-
-
+import it.naddeil.ro.common.NSimplexSolver;
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.exceptions.NumeroMassimoIterazioni;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
-import it.naddeil.ro.simplexsolver.SimplexSolver;
+import it.naddeil.ro.simplexsolver.ConcreteSimplexSolver;
 
 
 
 public class GomorySolver  {
-    private final SimplexSolver simplexSolver;
+    private final NSimplexSolver simplexSolver;
     private final DualSimplexSolver dualSimplexSolver;
     // Vincoli:
     // Tutti i segni della funzione obbiettivo positivi
-    public GomorySolver(SimplexSolver simplexSolver, DualSimplexSolver dualSimplexSolver) {
+    public GomorySolver(NSimplexSolver simplexSolver, DualSimplexSolver dualSimplexSolver) {
         this.simplexSolver = simplexSolver;
         this.dualSimplexSolver = dualSimplexSolver;
     }

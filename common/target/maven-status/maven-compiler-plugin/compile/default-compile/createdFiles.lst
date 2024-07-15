@@ -3,6 +3,7 @@ it/naddeil/ro/common/models/Problema.class
 it/naddeil/ro/common/exceptions/ProblemaInizialeImpossibile.class
 it/naddeil/ro/common/models/Pair.class
 it/naddeil/ro/common/ProblemTransformer.class
+it/naddeil/ro/common/utils/TableauUtils.class
 it/naddeil/ro/common/api/PublicProblem.class
 it/naddeil/ro/common/exceptions/ProblemaInizialeIllimitato.class
 it/naddeil/ro/common/api/FunzioneObbiettivo.class
@@ -14,6 +15,7 @@ it/naddeil/ro/common/exceptions/BaseException.class
 it/naddeil/ro/common/api/PublicStdFormProblem.class
 it/naddeil/ro/common/api/Message.class
 it/naddeil/ro/common/utils/ConfrontationUtils.class
+it/naddeil/ro/common/NSimplexSolver.class
 it/naddeil/ro/common/SolvingExecption.class
 it/naddeil/ro/common/api/Tipo.class
 it/naddeil/ro/common/models/FracResult.class

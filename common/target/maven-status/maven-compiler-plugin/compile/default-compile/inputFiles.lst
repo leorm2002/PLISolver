@@ -1,9 +1,11 @@
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/FunzioneObbiettivo.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/exceptions/ProblemaAssociatoIrrisolvibile.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/Verso.java
+/Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/utils/TableauUtils.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/PublicStdFormProblem.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/models/Problema.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/Vincolo.java
+/Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/NSimplexSolver.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/PublicProblem.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/SolvingExecption.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/ProblemTransformer.java

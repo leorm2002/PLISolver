@@ -6,6 +6,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 
+import it.naddeil.ro.apachesimplexsolver.MySimplexSolver;
 import it.naddeil.ro.common.api.FunzioneObbiettivo;
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
@@ -15,12 +16,12 @@ import it.naddeil.ro.common.api.Vincolo;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
-import it.naddeil.ro.simplexsolver.SimplexSolver;
+import it.naddeil.ro.simplexsolver.ConcreteSimplexSolver;
 
 class GomorySolverTest {
     @Test
     void test1(){
-        SimplexSolver ss = new SimplexSolver(){
+        ConcreteSimplexSolver ss = new ConcreteSimplexSolver(){
             @Override
                 public FracResult solve(PublicProblem problem) {
                     Fraction[][] tableauu = {
@@ -41,7 +42,7 @@ class GomorySolverTest {
 
         @Test
         void test2(){
-            SimplexSolver ss = new SimplexSolver(){
+            ConcreteSimplexSolver ss = new ConcreteSimplexSolver(){
                 @Override
                     public FracResult solve(PublicProblem problem) {
                         Fraction[][] tableauu = {
@@ -108,7 +109,7 @@ class GomorySolverTest {
 
     @Test
     void testGomoryCompleto(){
-        GomorySolver solver = new GomorySolver(new SimplexSolver(),  new DualSimplexSolver());
+        GomorySolver solver = new GomorySolver(new MySimplexSolver(),  new DualSimplexSolver());
 
         PublicProblem p = new PublicProblem();
         FunzioneObbiettivo f = new FunzioneObbiettivo();
