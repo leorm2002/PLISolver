@@ -1,15 +1,17 @@
 :root {
     --prim: #191919;
+    --primD: #404040;
     --acc: #03DAc5;
     --sec: #873be3;
   }
+
 
 body {
     background-color: var(--prim);
 
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
     text-transform: uppercase !important;
-    font-size: 12px !important;
+    font-size: 17px !important;
     font-weight: 300 !important;
     letter-spacing: 0.00em !important;
 }
@@ -69,7 +71,6 @@ table select {
 
 .tableau th,
 .tableau td {
-    border: 1px solid black;
     text-align: center;
     padding: 8px;
     border: 1px solid var(--acc) !important;

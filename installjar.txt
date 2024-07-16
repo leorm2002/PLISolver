@@ -1,1 +1,0 @@
-mvn install:install-file -Dfile=commons-math-2.2.jar -DgroupId=org.apache.commons -DartifactId=commons-math -Dversion=2.2 -Dpackaging=pom

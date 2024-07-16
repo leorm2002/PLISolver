@@ -1,10 +1,10 @@
 let linear = 'http://localhost:8080/solveLinearSimplex'
 let linearI = 'http://localhost:8080/solveLinearInteger'
-function calcolaL(){
+function calcolaL() {
     calcola(linear)
 }
 
-function calcolaLI(){
+function calcolaLI() {
     calcola(linearI)
 
 }
@@ -86,9 +86,9 @@ function calcola() {
     inviaRichiesta(payload, link)
 }
 
-function populateTableau(data) {
+function populateTableau(data, tableauId) {
     document.getElementById('titoloTab').innerText = 'Tableau ottimo'
-    const tableau = document.getElementById('tableau');
+    const tableau = document.getElementById(tableauId);
     tableau.innerHTML = '';
 
     const numVariables = data[0].length - 1; // excluding the first column which is the value column
@@ -110,11 +110,16 @@ function populateTableau(data) {
         const rowHeader = document.createElement('td');
         rowHeader.textContent = `r${i}`;
         row.appendChild(rowHeader);
-
+        let j = 0;
         data[i].forEach(cellText => {
             const td = document.createElement('td');
             td.textContent = cellText;
+            if(j != 0 && i != 0){
+                // Imposto più scuro
+                td.style = "background-color: var(--primD)!important;"
+            }
             row.appendChild(td);
+            j++;
         });
         tableau.appendChild(row);
     }
@@ -126,7 +131,7 @@ function testL() {
 }
 
 function testLI() {
-    let test = {"funzioneObbiettivo":{"tipo":"MIN","c":["0","-1"]},"vincoli":[{"vincolo":["3","2","6"],"verso":"LE"},{"vincolo":["-3","2","0"],"verso":"LE"}]}
+    let test = { "funzioneObbiettivo": { "tipo": "MAX", "c": ["0", "-1"] }, "vincoli": [{ "vincolo": ["3", "2", "6"], "verso": "LE" }, { "vincolo": ["-3", "2", "0"], "verso": "LE" }] }
     inviaRichiesta(test, linearI)
 }
 async function mostraTempo(time) {
@@ -146,9 +151,13 @@ async function inviaRichiesta(payload, link) {
     const resp = await response.json();
     console.log(resp)
     // Load text into a vector of vector of strings
-    populateTableau(resp.tableau)
+    populateTableau(resp.tableau, 'tableau')
     mostraTempo(resp.time)
     getSolution(resp.soluzione)
+    // Esempio di utilizzo
+    displayFormattedStrings(resp.passiRisoluzione);
+    responseData = resp.passiRisoluzione;
+    document.getElementById('downloadButton').style.display = 'block';
 }
 
 function updateTable() {
@@ -240,10 +249,10 @@ function updateTable() {
     }
 
 }
-function getSolution(sol){
+function getSolution(sol) {
     let out = []
     for (let i = 0; i < sol.length; i++) {
-        
+
         out.push(`x${i + 1}: ${sol[i]}`)
     }
     console.log(out)
@@ -251,3 +260,62 @@ function getSolution(sol){
     const solution = document.getElementById('solution');
     solution.innerText = text;
 }
+
+function formatString(str) {
+    return str
+        .replace(/\n/g, '<br>')
+        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+}
+
+function displayFormattedStrings(strings) {
+    const container = document.getElementById('output');
+    let i = 0;
+    strings.forEach(str => {
+        let msg = str.message
+        if (msg != null) {
+            const preElement = document.createElement('pre');
+            preElement.innerHTML = msg;
+            container.appendChild(preElement);
+        }
+        let tableau = str.tableau
+        if (tableau != null) {
+            console.log(tableau)
+            const preElement = document.createElement('table');
+            preElement.className = 'tableau'
+            preElement.id = 'tableau' + i
+            i += 1;
+            container.appendChild(preElement);
+            populateTableau(tableau, preElement.id)
+        }
+        container.appendChild(document.createElement('br'));
+        container.appendChild(document.createElement('br'));
+    });
+}
+
+
+function downloadJSON() {
+    // Converti l'oggetto in una stringa JSON
+    const jsonString = JSON.stringify(responseData, null, 2);
+
+    // Crea un Blob con il contenuto JSON
+    const blob = new Blob([jsonString], { type: 'application/json' });
+
+    // Crea un URL oggetto per il Blob
+    const url = URL.createObjectURL(blob);
+
+    // Crea un elemento <a> nascosto
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'response.json'; // Nome del file da scaricare
+
+    // Aggiungi il link al documento, clicca programmaticamente e rimuovilo
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Rilascia l'URL oggetto
+    URL.revokeObjectURL(url);
+}
+
+// Aggiungi un event listener al bottone
+document.getElementById('downloadButton').addEventListener('click', downloadJSON);

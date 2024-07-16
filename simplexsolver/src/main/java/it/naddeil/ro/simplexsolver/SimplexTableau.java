@@ -1,5 +1,6 @@
 package it.naddeil.ro.simplexsolver;
 
+import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.exceptions.ProblemaInizialeIllimitato;
 import it.naddeil.ro.common.exceptions.ProblemaInizialeImpossibile;
 import it.naddeil.ro.common.models.Pair;
@@ -8,13 +9,13 @@ import it.naddeil.ro.common.utils.Fraction;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
+import java.util.Collections;
+
+import org.ejml.interfaces.linsol.LinearSolver;
 
 public class SimplexTableau {
     private Fraction[][] tableau;
-    public Fraction[][] getTableau() {
-		return tableau;
-	}
-
+    private List<Message> passaggi = new ArrayList<>();
 	private int numVariables;
     private int numConstraints;
 
@@ -66,8 +67,9 @@ public class SimplexTableau {
         return Pair.of(-1, -1);
     }
 
-    static void verificaW(Fraction w){
+    void verificaW(Fraction w){
         if(w.compareTo(Fraction.ZERO) != 0){
+            passaggi.add(Message.messaggioSemplice("W != 0, problema non risolvibile senza uso di variabili ausiliarie"));
             throw new ProblemaInizialeImpossibile(null);
         }
     }
@@ -106,29 +108,46 @@ public class SimplexTableau {
             pivot(riga, colonnaPivot);
         }
     }
-    void portaInCanonica(){
+
+    List<Message> portaInCanonica(){
+        List<Message> passaggi = new ArrayList<>();
+        boolean shouldReturn = false;
         // Potrebbe essere necessario portare in forma canonica
+        passaggi.add(Message.messaggioSemplice("Porto il tableau in forma canonica"));
         var basis = getCostoRidottoDaAggiornare();
         while(basis.getFirst() != -1){
             pivot(basis.getFirst(), basis.getSecond());
             basis = getCostoRidottoDaAggiornare();
+            passaggi.add(
+            Message.messaggioConTableau(String.format("Esiste base con costi ridotti positivi (tableu non in forma canonica), pivot su X%s R%s, tableau dopo pivotaggio:",basis.getFirst() + 1,basis.getSecond()), tableau)
+            );
+            shouldReturn = true;
         }
+        passaggi.add(Message.messaggioConTableau("Tableau portato in forma canonica", tableau));
+
+        return shouldReturn ? passaggi : Collections.emptyList();
     }
 
     public void solve(List<Integer> artificialBasis, boolean fase1) {
         System.out.println("Tableau iniziale:");
         printTableau();
+
         System.out.println();
-        portaInCanonica();
+        passaggi.addAll(portaInCanonica());
         while (canImprove()) {
             int pivotColumn = findPivotColumn();
             int pivotRow = findPivotRow(pivotColumn);
             if(pivotRow == -1){
+                passaggi.add(Message.messaggioSemplice("Il problema è illimitato"));
                 throw new ProblemaInizialeIllimitato(null);
             }
+            passaggi.add(Message.messaggioConTableau(String.format("La soluzione può essere migliorata, faccio pivot su x%s r%s", pivotRow + 1, pivotColumn), tableau));
             pivot(pivotRow, pivotColumn);
             System.out.println("Tableau:");
+            passaggi.add(Message.messaggioConTableau("Tableau dopo il pivot", tableau));
+
             printTableau();
+
             System.out.println();
         }
         // Studio W
@@ -136,16 +155,22 @@ public class SimplexTableau {
             verificaW(tableau[0][tableau[0].length - 1]);
         }
         if(!artificialBasis.isEmpty()){
+            boolean degenere = false;
             var deg = degenere(artificialBasis);
             while (deg.getFirst() != -1) {
                 gestisciDegenerazione(deg.getFirst(), deg.getSecond(), tableau[0].length - 1 - artificialBasis.size());
                 deg = degenere(artificialBasis);
+                degenere = true;
+            }
+            if(degenere){
+                passaggi.add(Message.messaggioSemplice("Il tableau è degenere, alcune variabili artificiali sono nella base, eseguo pivoting per riportare su variabili originali"));
             }
         }
         portaInCanonica();
         System.out.println("Tableau finale:");
         printTableau();
         System.out.println();
+        passaggi.add(Message.messaggioConTableau("Tableau finale ottimo", tableau));
         
     }
 
@@ -232,7 +257,6 @@ public class SimplexTableau {
                 if (basicRow == -1) {
                     basicRow = row;
                     basicVariable = true;
-                    
                 } else {
                     basicVariable = false;
                     break;
@@ -299,4 +323,14 @@ public class SimplexTableau {
         }
         return Pair.of(-1, -1);
     }
+
+    public List<Message> getPassaggi() {
+        return passaggi;
+    }
+
+    public Fraction[][] getTableau() {
+		return tableau;
+	}
+
+
 }

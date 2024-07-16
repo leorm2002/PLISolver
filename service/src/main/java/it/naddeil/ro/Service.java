@@ -3,7 +3,6 @@ package it.naddeil.ro;
 
 import java.util.List;
 
-import it.naddeil.ro.apachesimplexsolver.MySimplexSolver;
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Response;
@@ -12,7 +11,6 @@ import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 import it.naddeil.ro.gomorysolver.GomorySolver;
 import it.naddeil.ro.simplexsolver.ConcreteSimplexSolver;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -48,6 +46,7 @@ public class Service {
         res.tableau = r.getTableauStr();
         res.time = time;
         res.soluzione = r.getValoreVariabili().stream().map(Fraction::toString).toList();
+        res.passiRisoluzione = r.getOut();
         return res;
     }
 
@@ -56,7 +55,7 @@ public class Service {
     @Path("/solveLinearInteger")
     public Response solveLI(PublicProblem problema){
         long startTime = System.currentTimeMillis();
-        FracResult r = new GomorySolver(new MySimplexSolver(),new DualSimplexSolver()).solve(problema, new Parameters());
+        FracResult r = new GomorySolver(new ConcreteSimplexSolver(),new DualSimplexSolver()).solve(problema, new Parameters());
         
         FracResult s = FracResult.fromTableau(r.getTableau());
         long time = System.currentTimeMillis() - startTime;

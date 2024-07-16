@@ -5,8 +5,8 @@
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/PublicStdFormProblem.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/models/Problema.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/Vincolo.java
-/Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/NSimplexSolver.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/PublicProblem.java
+/Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/SimplexSolver.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/SolvingExecption.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/ProblemTransformer.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/utils/Fraction.java
@@ -16,6 +16,7 @@
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/exceptions/ProblemaInizialeIllimitato.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/Response.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/Parameters.java
+/Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/models/FracResultWithPassages.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/exceptions/ProblemaInizialeImpossibile.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/exceptions/NumeroMassimoIterazioni.java
 /Users/naddeil/Desktop/PLISolver/Common/src/main/java/it/naddeil/ro/common/api/Message.java

@@ -1,27 +1,23 @@
 package it.naddeil.ro.apachesimplexsolver;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import javax.management.relation.Relation;
-import javax.management.relation.RelationService;
 
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.linear.LinearConstraint;
 import org.apache.commons.math.optimization.linear.LinearObjectiveFunction;
 import org.apache.commons.math.optimization.linear.Relationship;
-import org.apache.commons.math.optimization.linear.SimplexSolver;
+import org.apache.commons.math.optimization.linear.SimplexSolverN;
 
-import it.naddeil.ro.common.NSimplexSolver;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Tipo;
 import it.naddeil.ro.common.api.Verso;
 import it.naddeil.ro.common.api.Vincolo;
 import it.naddeil.ro.common.models.FracResult;
 
-public class MySimplexSolver implements NSimplexSolver {
+public class MySimplexSolver implements it.naddeil.ro.common.SimplexSolver {
     private Relationship transform(Verso v){
         switch (v) {
             case LE:
@@ -59,7 +55,7 @@ public class MySimplexSolver implements NSimplexSolver {
         List<LinearConstraint> vincoli = (problem.getVincoli().stream().map(this::vincoloMapper).toList());
         
 
-        SimplexSolver solver = new SimplexSolver();
+        SimplexSolverN solver = new SimplexSolverN();
         
          try {
             return FracResult.fromTableau(MatrixBridge.transform(solver.optimizeToTab(f, vincoli, g, true).getTableau().getData()));

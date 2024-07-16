@@ -3,11 +3,14 @@ package it.naddeil.ro.simplexsolver;
 
 
 import java.util.List;
-
-
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.ejml.interfaces.linsol.LinearSolver;
+
+import it.naddeil.ro.common.api.Message;
+import it.naddeil.ro.common.models.Pair;
 import it.naddeil.ro.common.utils.Fraction;
 
 import java.util.ArrayList;
@@ -16,7 +19,7 @@ public class DueFasi {
     /**
      * InnerDueFasi
      */
-    public record InnerDueFasi(Fraction[][] tableau, Fraction[][] identity, boolean needed) {
+    public record InnerDueFasi(Fraction[][] tableau, Fraction[][] identity, boolean needed, List<Message> passaggi) {
     }
 
     static Fraction[][] getIdentity(int n){
@@ -107,9 +110,10 @@ public class DueFasi {
         List<Fraction[]> basiCorrenti = removeDup(SimplexTableau.getBasis(tableau, numVariables, numConstraints));
         int nbasi = basiCorrenti.size();
         if(numConstraints == nbasi ){
-            return new InnerDueFasi(null, null, false);
+            return new InnerDueFasi(null, null, false, Collections.emptyList());
         }
         int nuovoNumeroVariabili = numVariables + numConstraints - basiCorrenti.size();
+        int numeroBasiAggiunte = nuovoNumeroVariabili - numVariables;
         Fraction[][] nuovoTableau = new Fraction[numConstraints + 1][nuovoNumeroVariabili + 1];
         Fraction[][] identity = getAdditionalBasis(numConstraints, basiCorrenti);
         // Riporto funzione obbiettivo artificiale
@@ -128,8 +132,12 @@ public class DueFasi {
             newRow[nuovoNumeroVariabili] = tableau[i][numVariables];
             nuovoTableau[i] = newRow;
         }
+        Message msg = Message.messaggioSemplice("Il problema non ha una base iniziale ammissibile, aggiungo " + numeroBasiAggiunte + " variabili sintetiche");
+        Message msg2 = Message.messaggioConTableau("Tableau prima dell'aggiunta", tableau);
+        Message msg3 = Message.messaggioConTableau("Tableau dopo aggiunta", nuovoTableau);
 
-        return new InnerDueFasi(nuovoTableau, identity, true);
+
+        return new InnerDueFasi(nuovoTableau, identity, true, List.of(msg, msg2, msg3));
     }
 
     static Fraction[][] pulisciTableau(Fraction[][] ottimo, Fraction[] fObbOrig){
@@ -184,20 +192,33 @@ public class DueFasi {
 
         return IntStream.range(0, row[0].length).map(i -> i + numberOfVariables).boxed().collect(Collectors.toList());
     }
+
     static Fraction[][] applicaMetodoDueFasi(Fraction[][] tableau, List<Integer> numeroVariabiliSlack){
+        return applicaMetodoDueFasi(tableau, numeroVariabiliSlack, new ArrayList<>());
+    }
+    static Fraction[][] applicaMetodoDueFasi(Fraction[][] tableau, List<Integer> numeroVariabiliSlack, List<Message> passaggi){
         InnerDueFasi nuovoTableau = aggiungiVariabiliSintetiche(tableau);
         final Fraction[][] tab;
+        passaggi.addAll(nuovoTableau.passaggi);
         if(nuovoTableau.needed){
+            passaggi.add(Message.messaggioSemplice("Risolvo il problema con le variabili sintetiche, vado ad azzerare i costi ridotti delle variabili sintetiche"));
             primaOperazione(nuovoTableau.tableau, nuovoTableau.identity);
+            passaggi.add(Message.messaggioConTableau("Tableau una volta effettuato azzeramento", nuovoTableau.tableau));
             SimplexTableau st = new SimplexTableau(nuovoTableau.tableau);
             st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true);
+            passaggi.addAll(st.getPassaggi());
+            passaggi.add(Message.messaggioConTableau("Tableu ottimo della fase 1", st.getTableau()));
+
             tab = pulisciTableau(st.getTableau(), tableau[0]);
+            passaggi.add(Message.messaggioConTableau("Tableu ottimo finale della fase 1 con variabili rimosse, riolvo con il simplesso", tab));
         }else{
             tab = tableau;
         }
 
         SimplexTableau st2 = new SimplexTableau(tab);
         st2.solve(numeroVariabiliSlack, false);
+        passaggi.addAll(st2.getPassaggi());
+
         return st2.getTableau();
     }
 }

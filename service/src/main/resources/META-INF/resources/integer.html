@@ -18,8 +18,10 @@
 
     <div class="container">
         <h1 class="text-center">Integer Linear Optimizer - Cutting Plane</h1>
-        <p>Prende in input un problema di ottimizzazione lineare intera, risolve il rilassamento continuo con il metodo del simplesso primale, 
-            se la soluzione non è intera procede con il metodo cutting plane (tagli di gomory) aggiungento tagli al tableau ottimo e risolvendo il rilassamento continuo 
+        <p>Prende in input un problema di ottimizzazione lineare intera, risolve il rilassamento continuo con il metodo
+            del simplesso primale,
+            se la soluzione non è intera procede con il metodo cutting plane (tagli di gomory) aggiungento tagli al
+            tableau ottimo e risolvendo il rilassamento continuo
             tramite il metodo del simplesso duale andando a riottimizzare il tableau ottimo con i tagli aggiunti.
         </p>
         <div class="form-group">
@@ -95,46 +97,50 @@
         <button class="btn btn-primary" onclick="toggleMathContainer()">Visualizza problema</button>
         <div id="math-container" class="math-container mt-3">
             <div class="math-content">
-              <div class="math-row">
-                <span>min z<sub>p</sub> =</span>
-                <span class="math-operator">-x<sub>2</sub></span>
-              </div>
-              <div class="math-row">
-                <span>s.t.</span>
-              </div>
-              <div class="math-row-margin">
-                <span>+3x<sub>1</sub></span>
-                <span class="math-operator">+</span>
-                <span>2x<sub>2</sub></span>
-                <span class="math-operator">&le;</span>
-                <span>6</span>
-              </div>
-              <div class="math-row-margin">
-                <span>-3x<sub>1</sub></span>
-                <span class="math-operator">+</span>
-                <span>2x<sub>2</sub></span>
-                <span class="math-operator">&le;</span>
-                <span>0</span>
-              </div>
-              <div class="math-row-margin">
-                <span>x<sub>1</sub>, x<sub>2</sub> &ge; 0</span>
-                <span class="math-operator">e intere</span>
-              </div>
+                <div class="math-row">
+                    <span>min z<sub>p</sub> =</span>
+                    <span class="math-operator">-x<sub>2</sub></span>
+                </div>
+                <div class="math-row">
+                    <span>s.t.</span>
+                </div>
+                <div class="math-row-margin">
+                    <span>+3x<sub>1</sub></span>
+                    <span class="math-operator">+</span>
+                    <span>2x<sub>2</sub></span>
+                    <span class="math-operator">&le;</span>
+                    <span>6</span>
+                </div>
+                <div class="math-row-margin">
+                    <span>-3x<sub>1</sub></span>
+                    <span class="math-operator">+</span>
+                    <span>2x<sub>2</sub></span>
+                    <span class="math-operator">&le;</span>
+                    <span>0</span>
+                </div>
+                <div class="math-row-margin">
+                    <span>x<sub>1</sub>, x<sub>2</sub> &ge; 0</span>
+                    <span class="math-operator">e intere</span>
+                </div>
             </div>
-          </div>
-          
+        </div>
+
         <br><br>
 
         <div class="container">
-            <h1 class="text-center" id="titoloTab" ></h1>
+            <h1 class="text-center" id="titoloTab"></h1>
             <table id="tableau" class="tableau">
                 <!-- The content will be generated dynamically -->
             </table>
+            <br><br>
+            <button class="btn btn-primary" id="downloadButton" style="display: none;">Scarica JSON con
+                passaggi</button>
         </div>
         <br>
         <h3 id="solution"></h3>
         <h5 id="tempo"></h5>
 
+        <div class="container" id="output"></div>
         <br>
         <br>
         <br>

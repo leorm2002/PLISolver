@@ -30,7 +30,7 @@ import org.apache.commons.math.util.MathUtils;
  * @version $Revision$ $Date$
  * @since 2.0
  */
-public class SimplexSolver extends AbstractLinearOptimizer {
+public class SimplexSolverN extends AbstractLinearOptimizer {
 
     /** Default amount of error to accept in floating point comparisons. */
     private static final double DEFAULT_EPSILON = 1.0e-6;
@@ -41,7 +41,7 @@ public class SimplexSolver extends AbstractLinearOptimizer {
     /**
      * Build a simplex solver with default settings.
      */
-    public SimplexSolver() {
+    public SimplexSolverN() {
         this(DEFAULT_EPSILON);
     }
 
@@ -49,7 +49,7 @@ public class SimplexSolver extends AbstractLinearOptimizer {
      * Build a simplex solver with a specified accepted amount of error
      * @param epsilon the amount of error to accept in floating point comparisons
      */
-    public SimplexSolver(final double epsilon) {
+    public SimplexSolverN(final double epsilon) {
         this.epsilon = epsilon;
     }
 

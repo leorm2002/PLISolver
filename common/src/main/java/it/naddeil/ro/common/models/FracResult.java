@@ -3,6 +3,7 @@ package it.naddeil.ro.common.models;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.common.utils.TableauUtils;
 
@@ -15,8 +16,18 @@ public class FracResult {
     Fraction[][] a;
     List<Integer> basis;
     List<Fraction> valoreVariabili;
+    List<Message> out;
 
-	private FracResult(Fraction[][] tableau, Fraction[] soluzione, Fraction[] costiRidotti, Fraction z, Fraction[][] a,
+	public List<Message> getOut() {
+        return out;
+    }
+
+    public FracResult setOut(List<Message> out) {
+        this.out = out;
+        return this;
+    }
+
+    FracResult(Fraction[][] tableau, Fraction[] soluzione, Fraction[] costiRidotti, Fraction z, Fraction[][] a,
 			List<Integer> basis, List<Fraction> valoreVariabili) {
 		this.tableau = tableau;
 		this.soluzione = soluzione;
@@ -27,17 +38,21 @@ public class FracResult {
         this.valoreVariabili = valoreVariabili;
 	}
 
-    public static FracResult fromTableau(Fraction[][] tableau){
+    public static FracResult fromTableau(Fraction[][] tableau, boolean invert){
         int width = tableau[0].length;
         Fraction[] soluzione = IntStream.range(1, tableau.length).mapToObj(i -> tableau[i][width -1]).toArray(Fraction[]::new);
         Fraction[] costiRidotti = IntStream.range(0, width - 1).mapToObj(i -> tableau[0][i]).toArray(Fraction[]::new);
         Fraction z = tableau[0][width - 1];
+        z = invert ? z.negate() : z;
         Fraction[][] a = new Fraction[tableau.length - 1][width - 1];
 		for (int i = 1; i < tableau.length; i++) {
 			a[i - 1] = Arrays.copyOf(tableau[i], width - 1);
 		}
         List<Fraction> valoreVariabili = TableauUtils.getSolution(costiRidotti.length, soluzione.length, tableau);
         return new FracResult(tableau, soluzione, costiRidotti, z, a, null, valoreVariabili);
+    }
+    public static FracResult fromTableau(Fraction[][] tableau){
+        return fromTableau(tableau, false);
     }
 	
     public Fraction[][] getTableau() {

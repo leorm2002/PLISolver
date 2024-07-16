@@ -1,26 +1,32 @@
 package it.naddeil.ro.gomorysolver;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-import it.naddeil.ro.common.NSimplexSolver;
+import it.naddeil.ro.common.SimplexSolver;
+import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.exceptions.NumeroMassimoIterazioni;
 import it.naddeil.ro.common.models.FracResult;
+import it.naddeil.ro.common.models.FracResultWithPassages;
+import it.naddeil.ro.common.models.Pair;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
-import it.naddeil.ro.simplexsolver.ConcreteSimplexSolver;
 
 
 
 public class GomorySolver  {
-    private final NSimplexSolver simplexSolver;
+    private final SimplexSolver simplexSolver;
     private final DualSimplexSolver dualSimplexSolver;
+    private final List<Message> out;
     // Vincoli:
     // Tutti i segni della funzione obbiettivo positivi
-    public GomorySolver(NSimplexSolver simplexSolver, DualSimplexSolver dualSimplexSolver) {
+    public GomorySolver(SimplexSolver simplexSolver, DualSimplexSolver dualSimplexSolver) {
         this.simplexSolver = simplexSolver;
         this.dualSimplexSolver = dualSimplexSolver;
+        this.out = new LinkedList<>();
     }
 
     boolean isSolved(FracResult r) {
@@ -89,14 +95,14 @@ public class GomorySolver  {
         return nuovaMatrice;
     }
 
-    Fraction[] creaTaglio(Fraction[] b, Fraction[][] tableau) {
+    Pair<Fraction[], Integer> creaTaglio(Fraction[] b, Fraction[][] tableau) {
         // 0. Estraggo l'ultima colonna ovvero i valori di b
         // 1. trova riga su cui aggiungere taglio (riga con coefficiente frazionario più grande)
         int rigaTaglio = trovaRigaConValoreFrazionario(b);
         Fraction[] riga = tableau[rigaTaglio];
 
         // 2. calcola taglio
-        return  Arrays.stream(creaTaglio(riga)).map(Fraction::negate).toArray(Fraction[]::new);
+        return  Pair.of(Arrays.stream(creaTaglio(riga)).map(Fraction::negate).toArray(Fraction[]::new), rigaTaglio);
         
     }
     
@@ -122,32 +128,37 @@ public class GomorySolver  {
 
     public FracResult solve(PublicProblem problem, Parameters parameters) {
         int maxIter = 300;
-
+        out.add(Message.messaggioSemplice("Inizio risoluzione problema, numero massimo iterazioni:" + maxIter));
+        out.add(Message.messaggioSemplice("Risolvo il rilassamento continuo con il metodo del simplesso"));
         FracResult rs = simplexSolver.solve(problem);
+        // TODO deve essere annidato
+        out.addAll(rs.getOut());
+        out.add(Message.messaggioConRisultato("Soluzione del rilassamento continuo", rs));
         int i = 0;
-        while (i < maxIter) {
-
-        if (!isSolved(rs)) {
+        while (true) {
+            if (!isSolved(rs)) {
+                out.add(Message.messaggioSemplice("Soluzione non intera, aggiungo taglio"));
                 // Calcolo il taglio
-                Fraction[] taglio = creaTaglio(rs.getSoluzione(), rs.getTableau());
+                var cutResult =  creaTaglio(rs.getSoluzione(), rs.getTableau());
+                Fraction[] taglio = cutResult.getFirst();
+                out.add(Message.messaggioConTaglio(cutResult.getSecond(), taglio));
                 Fraction[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
-
+                out.add(Message.messaggioConTableau("Tableau ottimo rilassamento continuo dopo aggiunta taglio", newA));
                 rs = dualSimplexSolver.riottimizza(newA);
-                System.out.println("Soluzione rilassamento continuo");
-                printTableau(rs.getTableau());
+                out.add(Message.messaggioConRisultato("Tableau ottimo rilassamento continuo dopo aggiunta taglio", rs));
                 if(isSolved(rs)){
-                    return rs;
+                    out.add(Message.messaggioSemplice("Soluzione intera trovata"));
+                    return rs.setOut(out);
                 }
                 i++;
                 if(i > maxIter){
+                    out.add(Message.messaggioSemplice("Numero massimo iterazioni raggiunto"));
                     throw new NumeroMassimoIterazioni(null);
                 }
-        }else{
-            return rs;
+            }else{
+                out.add(Message.messaggioSemplice("Soluzione intera trovata"));
+                return rs.setOut(out);
+            }
         }
-    }
-
-        // Todo return solution
-        return null;
     }
 }
