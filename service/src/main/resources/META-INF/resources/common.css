@@ -150,3 +150,7 @@ th{
 .nav-link:hover {
     text-decoration: underline;
 }
+
+hr{
+    border: 2px solid var(--sec)!important;
+}

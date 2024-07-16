@@ -267,8 +267,8 @@ function formatString(str) {
         .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 }
 
-function displayFormattedStrings(strings) {
-    const container = document.getElementById('output');
+function displayFormattedStrings(strings, containerId = 'output') {
+    const container = document.getElementById(containerId);
     let i = 0;
     strings.forEach(str => {
         let msg = str.message
@@ -287,11 +287,52 @@ function displayFormattedStrings(strings) {
             container.appendChild(preElement);
             populateTableau(tableau, preElement.id)
         }
+        let sottoProblema = str.passaggiIntermedi
+        if (sottoProblema != null) {
+            let sectionId = "passaggio" + i
+            let section = getCollapsableSection(sectionId);
+            
+            container.appendChild(section);
+            displayFormattedStrings(sottoProblema, sectionId)
+            document.getElementById(sectionId).appendChild(document.createElement('hr'));
+
+
+        }
+
         container.appendChild(document.createElement('br'));
         container.appendChild(document.createElement('br'));
     });
 }
+function getCollapsableSection(idSezione){
+    let container = document.createElement('div');
+    container.className = 'collapsableSection'
+    let button = document.createElement('button');
+    button.className = 'btn btn-primary'
+    button.innerText = 'Mostra passaggi intermedi'
+    let div = document.createElement('div');
 
+    button.onclick = function () {
+        let content = document.getElementById(idSezione);
+        if (content.style.display === "block") {
+            content.style.display = "none";
+            this.innerText = 'Mostra passaggi intermedi'
+        } else {
+            content.style.display = "block";
+            this.innerText = 'Nascondi passaggi intermedi'
+        }
+    }
+    container.appendChild(button)
+    container.appendChild(document.createElement('br'));
+    container.appendChild(document.createElement('br'));
+
+    div.style.display = "none";
+    div.className = 'collapsableContent'
+    div.id = idSezione
+
+    container.appendChild(div)
+    return container
+
+}
 
 function downloadJSON() {
     // Converti l'oggetto in una stringa JSON

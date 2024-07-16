@@ -132,7 +132,7 @@ public class GomorySolver  {
         out.add(Message.messaggioSemplice("Risolvo il rilassamento continuo con il metodo del simplesso"));
         FracResult rs = simplexSolver.solve(problem);
         // TODO deve essere annidato
-        out.addAll(rs.getOut());
+        out.add(Message.conPassaggiIntermedi(rs.getOut()));
         out.add(Message.messaggioConRisultato("Soluzione del rilassamento continuo", rs));
         int i = 0;
         while (true) {

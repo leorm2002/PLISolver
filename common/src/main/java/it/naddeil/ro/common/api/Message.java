@@ -11,6 +11,9 @@ public class Message implements Serializable {
     List<List<String>> tableau;
     List<Message> passaggiIntermedi;
 
+    public Message(List<Message> passaggiIntermedi) {
+        this.passaggiIntermedi = passaggiIntermedi;
+    }
     public Message(String message) {
         this.message = message;
     }
@@ -18,6 +21,9 @@ public class Message implements Serializable {
         this.message = message;
         this.tableau = tableau;}
 
+    public static Message conPassaggiIntermedi(List<Message> passaggiIntermedi) {
+        return new Message(passaggiIntermedi);
+    }
     public static Message messaggioConTaglio(int riga, Fraction[] taglio) {
         return new Message("Calcolo da riga " + riga + "\nTaglio risultante :" + taglioToStr(taglio));
     }
@@ -63,5 +69,8 @@ public class Message implements Serializable {
     }
     public void setTableau(List<List<String>> tableau) {
         this.tableau = tableau;
+    }
+    public List<Message> getPassaggiIntermedi() {
+        return passaggiIntermedi;
     }
 }
