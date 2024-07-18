@@ -4,11 +4,11 @@ import java.util.List;
 
 import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.utils.Fraction;
-import it.naddeil.ro.common.utils.Comp;
+import it.naddeil.ro.common.utils.Value;
 
 
 public class SimplessoDualeFrazionario {
-    private Comp[][] tableau;
+    private Value[][] tableau;
     private List<Message> passaggi = new ArrayList<>();
 
     public List<Message> getPassaggi() {
@@ -16,7 +16,7 @@ public class SimplessoDualeFrazionario {
     }
 
 
-    public Comp[][] getTableau() {
+    public Value[][] getTableau() {
 		return tableau;
 	}
 
@@ -24,7 +24,7 @@ public class SimplessoDualeFrazionario {
 	private int numVariables;
     private int numConstraints;
 
-    public SimplessoDualeFrazionario(Comp[][] initialTableau) {
+    public SimplessoDualeFrazionario(Value[][] initialTableau) {
         this.tableau = initialTableau;
         this.numConstraints = tableau.length - 1;
         this.numVariables = tableau[0].length - 1;
@@ -55,22 +55,22 @@ public class SimplessoDualeFrazionario {
 
     private int determineRowR() {
         int r = -1;
-        Comp minValue = Comp.POSITIVE_INFINITY;
+        Value minValue = Value.POSITIVE_INFINITY;
         for (int i = 1; i <= numConstraints; i++) {
             if (tableau[i][numVariables].compareTo(minValue) < 0) {
                 minValue = tableau[i][numVariables];
                 r = i;
             }
         }
-        return (minValue.compareTo(Comp.ZERO) < 0) ? r : -1;
+        return (minValue.compareTo(Value.ZERO) < 0) ? r : -1;
     }
 
     private int determineColumnK(int r) {
         int k = -1;
-        Comp minRatio = Comp.POSITIVE_INFINITY;
+        Value minRatio = Value.POSITIVE_INFINITY;
         for (int j = 0; j < numVariables; j++) {
-            if (tableau[r][j].compareTo(Comp.ZERO) < 0) {
-                Comp ratio = tableau[0][j].divide(tableau[r][j]).abs();
+            if (tableau[r][j].compareTo(Value.ZERO) < 0) {
+                Value ratio = tableau[0][j].divide(tableau[r][j]).abs();
                 if (ratio.compareTo(minRatio) < 0 || (ratio.equals(minRatio) && j < k)) {  // Regola di Bland
                     minRatio = ratio;
                     k = j;
@@ -81,14 +81,14 @@ public class SimplessoDualeFrazionario {
     }
 
     private void pivot(int r, int k) {
-        Comp pivotElement = tableau[r][k];
+        Value pivotElement = tableau[r][k];
         for (int j = 0; j <= numVariables; j++) {
             tableau[r][j] = tableau[r][j].divide(pivotElement);
         }
 
         for (int i = 0; i <= numConstraints; i++) {
             if (i != r) {
-                Comp factor = tableau[i][k];
+                Value factor = tableau[i][k];
                 for (int j = 0; j <= numVariables; j++) {
                     tableau[i][j] = tableau[i][j].subtract(factor.multiply(tableau[r][j]));
                 }
@@ -100,9 +100,9 @@ public class SimplessoDualeFrazionario {
         System.out.println("Soluzione ottima:");
         for (int j = 0; j < numVariables - 1; j++) { // Escludi la variabile artificiale
             boolean isBasic = false;
-            Comp value = Comp.ZERO;
+            Value value = Value.ZERO;
             for (int i = 1; i <= numConstraints; i++) {
-                if (isUnitVector(j) && tableau[i][j].equals(Comp.ONE)) {
+                if (isUnitVector(j) && tableau[i][j].equals(Value.ONE)) {
                     isBasic = true;
                     value = tableau[i][numVariables];
                     break;
@@ -120,9 +120,9 @@ public class SimplessoDualeFrazionario {
     private boolean isUnitVector(int col) {
         int oneCount = 0;
         for (int i = 1; i <= numConstraints; i++) {
-            if (tableau[i][col].equals(Comp.ONE)) {
+            if (tableau[i][col].equals(Value.ONE)) {
                 oneCount++;
-            } else if (!tableau[i][col].equals(Comp.ZERO)) {
+            } else if (!tableau[i][col].equals(Value.ZERO)) {
                 return false;
             }
         }
@@ -130,8 +130,8 @@ public class SimplessoDualeFrazionario {
     }
 
     public void printTableau() {
-        for (Comp[] row : tableau) {
-            for (Comp val : row) {
+        for (Value[] row : tableau) {
+            for (Value val : row) {
                 System.out.print(val + "\t");
             }
             System.out.println();
@@ -142,9 +142,9 @@ public class SimplessoDualeFrazionario {
     
         public static void main(String[] args) {
             Fraction[][] tableau = {
-                {new Fraction(-2), new Fraction(-3), new Fraction(-4), Comp.ZERO, Comp.ZERO, Comp.ZERO},
-                {new Fraction(-1), new Fraction(-2), new Fraction(-1), Comp.ONE, Comp.ZERO, new Fraction(-3)},
-                {new Fraction(-2), Comp.ONE, new Fraction(-3), Comp.ZERO, Comp.ONE, new Fraction(-4)}
+                {new Fraction(-2), new Fraction(-3), new Fraction(-4), Value.ZERO, Value.ZERO, Value.ZERO},
+                {new Fraction(-1), new Fraction(-2), new Fraction(-1), Value.ONE, Value.ZERO, new Fraction(-3)},
+                {new Fraction(-2), Value.ONE, new Fraction(-3), Value.ZERO, Value.ONE, new Fraction(-4)}
             };
 
           

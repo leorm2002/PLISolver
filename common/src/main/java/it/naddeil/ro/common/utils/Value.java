@@ -1,31 +1,31 @@
 package it.naddeil.ro.common.utils;
 
-public interface Comp extends Comparable<Comp> {
+public interface Value extends Comparable<Value> {
 
     Fraction ZERO = new Fraction(0, 1);
     Fraction ONE = new Fraction(1, 1);
     Fraction MINUS_ONE = new Fraction(-1, 1);
     Fraction POSITIVE_INFINITY = new Fraction(1, 0);
 
-    Comp floor();
+    Value floor();
 
-    Comp add(Comp other);
+    Value add(Value other);
 
-    Comp subtract(Comp other);
+    Value subtract(Value other);
 
-    Comp multiply(Comp other);
+    Value multiply(Value other);
 
-    Comp divide(Comp other);
+    Value divide(Value other);
 
-    Comp negate();
+    Value negate();
 
-    Comp abs();
+    Value abs();
 
     boolean isInteger();
 
     double doubleValue();
 
-    int compareTo(Comp other);
+    int compareTo(Value other);
 
     boolean equals(Object obj);
 

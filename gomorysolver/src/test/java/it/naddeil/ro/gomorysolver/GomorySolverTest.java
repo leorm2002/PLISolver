@@ -15,7 +15,7 @@ import it.naddeil.ro.common.api.Verso;
 import it.naddeil.ro.common.api.Vincolo;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Fraction;
-import it.naddeil.ro.common.utils.Comp;
+import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 import it.naddeil.ro.simplexsolver.ConcreteSimplexSolver;
 
@@ -27,8 +27,8 @@ class GomorySolverTest {
                 public FracResult solve(PublicProblem problem) {
                     Fraction[][] tableauu = {
                         {new Fraction(0), new Fraction(0), new Fraction(-1,4), new Fraction(-1,4), new Fraction(-3,2)},
-                        {Comp.ONE, Comp.ZERO, new Fraction(1,6), new Fraction(-1,6),Comp.ONE},
-                        {Comp.ZERO, Comp.ONE, new Fraction(1,4), new Fraction(1,4), new Fraction(3,2)}
+                        {Value.ONE, Value.ZERO, new Fraction(1,6), new Fraction(-1,6),Value.ONE},
+                        {Value.ZERO, Value.ONE, new Fraction(1,4), new Fraction(1,4), new Fraction(3,2)}
                     };
                     return FracResult.fromTableau(tableauu);
                 }
@@ -47,10 +47,10 @@ class GomorySolverTest {
                 @Override
                     public FracResult solve(PublicProblem problem) {
                         Fraction[][] tableauu = {
-                            {Comp.ZERO, new Fraction(-7),Comp.ZERO, new Fraction(-8,10), Comp.ZERO, new Fraction(-12,10), new Fraction(-4,10)},
-                            {Comp.ONE, Comp.ZERO,Comp.ZERO,new Fraction(2,10), Comp.ZERO, new Fraction(-2,10),new Fraction(6,10)},
-                            {Comp.ZERO, new Fraction(-15, 10),Comp.ZERO,new Fraction(-3,10), Comp.ONE,new Fraction(8,10),new Fraction(16,10)},
-                            {Comp.ZERO, new Fraction(-5,10),Comp.ONE,new Fraction(-1,10), Comp.ZERO, new Fraction(-4,10),new Fraction(2,10)},
+                            {Value.ZERO, new Fraction(-7),Value.ZERO, new Fraction(-8,10), Value.ZERO, new Fraction(-12,10), new Fraction(-4,10)},
+                            {Value.ONE, Value.ZERO,Value.ZERO,new Fraction(2,10), Value.ZERO, new Fraction(-2,10),new Fraction(6,10)},
+                            {Value.ZERO, new Fraction(-15, 10),Value.ZERO,new Fraction(-3,10), Value.ONE,new Fraction(8,10),new Fraction(16,10)},
+                            {Value.ZERO, new Fraction(-5,10),Value.ONE,new Fraction(-1,10), Value.ZERO, new Fraction(-4,10),new Fraction(2,10)},
                         };
                         return FracResult.fromTableau(tableauu);
                     }
@@ -65,26 +65,26 @@ class GomorySolverTest {
     @Test
     void testTrovaRigaConValoreFrazionario() {
 
-        Comp[] matrice1 = { new Fraction(1), new Fraction(2), new Fraction(3) };
+        Value[] matrice1 = { new Fraction(1), new Fraction(2), new Fraction(3) };
         int result1 = GomorySolver.trovaRigaConValoreFrazionario(matrice1);
         assertEquals(-1, result1);
 
-        Comp[] matrice2 = { new Fraction(1), new Fraction(5,2), new Fraction(3) };
+        Value[] matrice2 = { new Fraction(1), new Fraction(5,2), new Fraction(3) };
         int result2 = GomorySolver.trovaRigaConValoreFrazionario(matrice2);
         assertEquals(2, result2);
 
-        Comp[] matrice3 = { new Fraction(1), new Fraction(2), new Fraction(3,7) };
+        Value[] matrice3 = { new Fraction(1), new Fraction(2), new Fraction(3,7) };
         int result3 = GomorySolver.trovaRigaConValoreFrazionario(matrice3);
         assertEquals(3, result3);
     }
 
-    void assertArrayEquals(Comp[] expected, Comp[] actual) {
+    void assertArrayEquals(Value[] expected, Value[] actual) {
         assertEquals(expected.length, actual.length);
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], actual[i]);
         }
     }
-    void assertEqualsT(Comp[][] expected, Comp[][] actual){
+    void assertEqualsT(Value[][] expected, Value[][] actual){
         for (int i = 0; i < expected.length; i++) {
             for (int j = 0; j < expected[i].length; j++) {
                 assert(expected[i][j].equals(actual[i][j]));
@@ -95,16 +95,16 @@ class GomorySolverTest {
     void testCreaTaglio() {
         GomorySolver gomorySolver = new GomorySolver(null, null);
 
-        Comp[] riga1 = { new Fraction(1), new Fraction(2), new Fraction(3) };
-        Comp[] expected1 = { new Fraction(0), new Fraction(0), new Fraction(0) };
+        Value[] riga1 = { new Fraction(1), new Fraction(2), new Fraction(3) };
+        Value[] expected1 = { new Fraction(0), new Fraction(0), new Fraction(0) };
         assertArrayEquals(expected1, gomorySolver.creaTaglio(riga1));
 
-        Comp[] riga2 = { new Fraction(1), new Fraction(5, 2), new Fraction(3) };
-        Comp[] expected2 = { new Fraction(0), new Fraction(1,2), new Fraction(0) };
+        Value[] riga2 = { new Fraction(1), new Fraction(5, 2), new Fraction(3) };
+        Value[] expected2 = { new Fraction(0), new Fraction(1,2), new Fraction(0) };
         assertArrayEquals(expected2, gomorySolver.creaTaglio(riga2));
 
-        Comp[] riga3 = { new Fraction(1), new Fraction(2), new Fraction(3, 7) };
-        Comp[] expected3 = { new Fraction(0), new Fraction(0), new Fraction(3, 7) };
+        Value[] riga3 = { new Fraction(1), new Fraction(2), new Fraction(3, 7) };
+        Value[] expected3 = { new Fraction(0), new Fraction(0), new Fraction(3, 7) };
         assertArrayEquals(expected3, gomorySolver.creaTaglio(riga3));
     }
 
@@ -125,14 +125,14 @@ class GomorySolverTest {
         p.setFunzioneObbiettivo(f);
 
         FracResult out = solver.solve(p, new Parameters());
-        Comp[][] tableau = out.getTableau();
+        Value[][] tableau = out.getTableau();
 
-        Comp[][] expected = new Comp[][]{
-            {Comp.ZERO,Comp.ZERO,Comp.ZERO,Comp.ZERO,Comp.ONE,Comp.ZERO,Comp.ONE},
-            {Comp.ONE,Comp.ZERO,Comp.ZERO,Comp.ZERO,Comp.ONE,Fraction.of(-1,2),Comp.ONE},
-            {Comp.ZERO,Comp.ONE,Comp.ZERO,Comp.ZERO,Comp.ONE,Comp.ZERO,Comp.ONE},
-            {Comp.ZERO,Comp.ZERO,Comp.ONE,Comp.ZERO,Fraction.of(-5),Fraction.of(3,2),Comp.ONE},
-            {Comp.ZERO,Comp.ZERO,Comp.ZERO,Comp.ONE,Comp.ONE,Fraction.of(-3,2),Comp.ONE}
+        Value[][] expected = new Value[][]{
+            {Value.ZERO,Value.ZERO,Value.ZERO,Value.ZERO,Value.ONE,Value.ZERO,Value.ONE},
+            {Value.ONE,Value.ZERO,Value.ZERO,Value.ZERO,Value.ONE,Fraction.of(-1,2),Value.ONE},
+            {Value.ZERO,Value.ONE,Value.ZERO,Value.ZERO,Value.ONE,Value.ZERO,Value.ONE},
+            {Value.ZERO,Value.ZERO,Value.ONE,Value.ZERO,Fraction.of(-5),Fraction.of(3,2),Value.ONE},
+            {Value.ZERO,Value.ZERO,Value.ZERO,Value.ONE,Value.ONE,Fraction.of(-3,2),Value.ONE}
         };
 
         

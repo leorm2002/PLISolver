@@ -7,7 +7,7 @@ import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Response;
 import it.naddeil.ro.common.models.FracResult;
-import it.naddeil.ro.common.utils.Comp;
+import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 import it.naddeil.ro.gomorysolver.GomorySolver;
@@ -46,7 +46,7 @@ public class Service {
         Response res = new Response();
         res.tableau = r.getTableauStr();
         res.time = time;
-        res.soluzione = r.getValoreVariabili().stream().map(Comp::toString).toList();
+        res.soluzione = r.getValoreVariabili().stream().map(Value::toString).toList();
         res.passiRisoluzione = r.getOut();
         return res;
     }

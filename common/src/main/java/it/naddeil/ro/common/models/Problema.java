@@ -10,7 +10,7 @@ import it.naddeil.ro.common.api.FunzioneObbiettivo;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Vincolo;
 import it.naddeil.ro.common.utils.Fraction;
-import it.naddeil.ro.common.utils.Comp;
+import it.naddeil.ro.common.utils.Value;
 
 /**
  * Rappresenta un problema di ottimizzazione ovvero min F s.t. Ax=d dove ogni riga della matrice rappresenta un vincolo di tipo =
@@ -70,7 +70,7 @@ public class Problema implements Serializable {
         for(int i = 0; i < numeroVariabili; i++ ){
             tab[0][i] = Fraction.of(c.get(i));
         }
-        tab[0][tab[0].length - 1] = Comp.ZERO;
+        tab[0][tab[0].length - 1] = Value.ZERO;
         // Riporto b
         for(int j = 0; j < numeroVincoli; j++){
             tab[j + 1][numeroVariabili] = Fraction.of(b.get(j));

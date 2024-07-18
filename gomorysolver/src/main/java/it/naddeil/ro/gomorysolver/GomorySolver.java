@@ -11,7 +11,7 @@ import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.exceptions.NumeroMassimoIterazioni;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Pair;
-import it.naddeil.ro.common.utils.Comp;
+import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 
 
@@ -29,7 +29,7 @@ public class GomorySolver  {
     }
 
     boolean isSolved(FracResult r) {
-        Comp[] s = r.getSoluzione();
+        Value[] s = r.getSoluzione();
         for (int i= 0; i < s.length; i++){
             if(!s[i].isInteger()){
                 return false;
@@ -38,21 +38,21 @@ public class GomorySolver  {
         return true;
     }
 
-    static Comp f(Comp x) {
+    static Value f(Value x) {
         return x.subtract(x.floor());
     }
 
-    public static Comp[] creaTaglio(Comp[] riga) {
+    public static Value[] creaTaglio(Value[] riga) {
         // Un taglio è del tipo f(c[1])x_1 + f(c[2])x_2 + ... + f(c[n])x_n >= f(c[0])
         // Dove f(x) è definita come x -> x - floor(x)
-        Comp[] taglio = new Comp[riga.length];
+        Value[] taglio = new Value[riga.length];
         for (int i = 0; i < riga.length ; i++) {
             taglio[i] =  f(riga[i]);
         }
         return taglio;
     }
 
-    public static int trovaRigaConValoreFrazionario(Comp[] matrice) {
+    public static int trovaRigaConValoreFrazionario(Value[] matrice) {
         int riga = -1;
         for (int i = 0; i < matrice.length; i++) {
             if (!matrice[i].isInteger()) {
@@ -63,17 +63,17 @@ public class GomorySolver  {
         return riga;
     }
 
-    Comp[][] aggiungiVincolo(Comp[][] tableau, Comp[] taglio, Comp[] b, Comp z) {
+    Value[][] aggiungiVincolo(Value[][] tableau, Value[] taglio, Value[] b, Value z) {
         int nRighe = tableau.length;
         int nColonne = tableau[0].length;
-        Comp[][] nuovaMatrice = new Comp[nRighe + 1][nColonne + 1];
+        Value[][] nuovaMatrice = new Value[nRighe + 1][nColonne + 1];
 
         // Ricopio la matrice settando 0 alla fine di ogni riga
         for (int i = 0; i < nRighe; i++) {
             for (int j = 0; j < nColonne - 1; j++) {
                 nuovaMatrice[i][j] = tableau[i][j];
             }
-            nuovaMatrice[i][nColonne - 1] = Comp.ZERO;  // Aggiungi 0 alla fine
+            nuovaMatrice[i][nColonne - 1] = Value.ZERO;  // Aggiungi 0 alla fine
         }
 
         // Aggiungo il taglio alla fine
@@ -81,7 +81,7 @@ public class GomorySolver  {
             nuovaMatrice[nRighe][i] = taglio[i];
         }
         // Variabile di slack per il taglio
-        nuovaMatrice[nRighe][nColonne - 1] = Comp.ONE;
+        nuovaMatrice[nRighe][nColonne - 1] = Value.ONE;
         // Riporto il valore di b per il taglio
         nuovaMatrice[nRighe][nColonne] = taglio[taglio.length - 1];
         // Riporto soluzione
@@ -94,20 +94,20 @@ public class GomorySolver  {
         return nuovaMatrice;
     }
 
-    Pair<Comp[], Integer> creaTaglio(Comp[] b, Comp[][] tableau) {
+    Pair<Value[], Integer> creaTaglio(Value[] b, Value[][] tableau) {
         // 0. Estraggo l'ultima colonna ovvero i valori di b
         // 1. trova riga su cui aggiungere taglio (riga con coefficiente frazionario più grande)
         int rigaTaglio = trovaRigaConValoreFrazionario(b);
-        Comp[] riga = tableau[rigaTaglio];
+        Value[] riga = tableau[rigaTaglio];
 
         // 2. calcola taglio
-        return  Pair.of(Arrays.stream(creaTaglio(riga)).map(Comp::negate).toArray(Comp[]::new), rigaTaglio);
+        return  Pair.of(Arrays.stream(creaTaglio(riga)).map(Value::negate).toArray(Value[]::new), rigaTaglio);
         
     }
     
-    public void printTableau(Comp[][] tableau) {
-        for (Comp[] row : tableau) {
-            for (Comp val : row) {
+    public void printTableau(Value[][] tableau) {
+        for (Value[] row : tableau) {
+            for (Value val : row) {
                 System.out.print(val + "\t");
             }
             System.out.println();
@@ -115,9 +115,9 @@ public class GomorySolver  {
         System.out.println();
     }
 
-    public void printTableauD(Comp[][] tableau) {
-        for (Comp[] row : tableau) {
-            for (Comp val : row) {
+    public void printTableauD(Value[][] tableau) {
+        for (Value[] row : tableau) {
+            for (Value val : row) {
                 System.out.print(val.doubleValue() + "\t");
             }
             System.out.println();
@@ -138,9 +138,9 @@ public class GomorySolver  {
                 out.add(Message.messaggioSemplice("Soluzione non intera, aggiungo taglio"));
                 // Calcolo il taglio
                 var cutResult =  creaTaglio(rs.getSoluzione(), rs.getTableau());
-                Comp[] taglio = cutResult.getFirst();
+                Value[] taglio = cutResult.getFirst();
                 out.add(Message.messaggioConTaglio(cutResult.getSecond(), taglio));
-                Comp[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
+                Value[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
                 out.add(Message.messaggioConTableau("Tableau ottimo rilassamento continuo dopo aggiunta taglio", newA));
                 rs = dualSimplexSolver.riottimizza(newA);
                 out.add(Message.conPassaggiIntermedi(rs.getOut()));

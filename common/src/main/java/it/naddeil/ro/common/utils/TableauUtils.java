@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableauUtils {
-    public static void printTableau(Comp[][] tableau) {
+    public static void printTableau(Value[][] tableau) {
         for (int i = 0; i < tableau.length; i++) {
             for (int j = 0; j < tableau[i].length; j++) {
                 System.out.print(tableau[i][j] + " ");
@@ -14,12 +14,12 @@ public class TableauUtils {
     }
 
     
-    public static List<Comp> getSolution(int numVariables, int numConstraints, Comp[][] tableau) {
-        List<Comp> soluzione = new ArrayList<>();
+    public static List<Value> getSolution(int numVariables, int numConstraints, Value[][] tableau) {
+        List<Value> soluzione = new ArrayList<>();
         for (int j = 0; j < numVariables; j++) {
-            Comp value = Comp.ZERO;
+            Value value = Value.ZERO;
             for (int i = 1; i <= numConstraints; i++) {
-                if (isUnitVector(j, numConstraints, tableau) && tableau[i][j].equals(Comp.ONE)) {
+                if (isUnitVector(j, numConstraints, tableau) && tableau[i][j].equals(Value.ONE)) {
                     value = tableau[i][numVariables];
                     break;
                 }
@@ -29,12 +29,12 @@ public class TableauUtils {
         return soluzione;
     }
 
-    public static boolean isUnitVector(int col, int numConstraints, Comp[][] tableau) {
+    public static boolean isUnitVector(int col, int numConstraints, Value[][] tableau) {
         int oneCount = 0;
         for (int i = 1; i <= numConstraints; i++) {
-            if (tableau[i][col].equals(Comp.ONE)) {
+            if (tableau[i][col].equals(Value.ONE)) {
                 oneCount++;
-            } else if (!tableau[i][col].equals(Comp.ZERO)) {
+            } else if (!tableau[i][col].equals(Value.ZERO)) {
                 return false;
             }
         }

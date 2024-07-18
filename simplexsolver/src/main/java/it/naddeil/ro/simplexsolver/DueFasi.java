@@ -12,7 +12,7 @@ import org.ejml.interfaces.linsol.LinearSolver;
 import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.models.Pair;
 import it.naddeil.ro.common.utils.Fraction;
-import it.naddeil.ro.common.utils.Comp;
+import it.naddeil.ro.common.utils.Value;
 
 import java.util.ArrayList;
 
@@ -20,23 +20,23 @@ public class DueFasi {
     /**
      * InnerDueFasi
      */
-    public record InnerDueFasi(Comp[][] tableau, Comp[][] identity, boolean needed, List<Message> passaggi) {
+    public record InnerDueFasi(Value[][] tableau, Value[][] identity, boolean needed, List<Message> passaggi) {
     }
 
-    static Comp[][] getIdentity(int n){
-        Comp[][] identity = new Fraction[n][n];
+    static Value[][] getIdentity(int n){
+        Value[][] identity = new Fraction[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                identity[i][j] = i == j ? Comp.ONE : Comp.ZERO;
+                identity[i][j] = i == j ? Value.ONE : Value.ZERO;
             }
         }
         return identity;
     }
 
-    static Comp[][] transpose(Comp[][] matrix){
+    static Value[][] transpose(Value[][] matrix){
         int n = matrix.length;
         int m = matrix[0].length;
-        Comp[][] transposed = new Comp[m][n];
+        Value[][] transposed = new Value[m][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++){
                 transposed[j][i] = matrix[i][j];
@@ -45,20 +45,20 @@ public class DueFasi {
         return transposed;
     }
 
-    static Comp[] getExtendedObjective(Comp[] objectiveFunction, int numConstraints){
+    static Value[] getExtendedObjective(Value[] objectiveFunction, int numConstraints){
         int numVariables = objectiveFunction.length;
-        Comp[] extendedObjective = new Comp[numVariables + numConstraints];
+        Value[] extendedObjective = new Value[numVariables + numConstraints];
         for (int i = 0; i < numVariables - 1; i++) {
-            extendedObjective[i] = Comp.ZERO;
+            extendedObjective[i] = Value.ZERO;
         }
         for (int i = numVariables - 1; i < numVariables + numConstraints; i++) {
-            extendedObjective[i] = Comp.ONE;
+            extendedObjective[i] = Value.ONE;
         }
         extendedObjective[extendedObjective.length - 1] = objectiveFunction[objectiveFunction.length - 1];
         return extendedObjective;
     }
 
-    static boolean equalsFrac(Comp[] a, Comp[] b){
+    static boolean equalsFrac(Value[] a, Value[] b){
         for (int i = 0; i < a.length; i++) {
             if (!a[i].equals(b[i])) {
                 return false;
@@ -67,8 +67,8 @@ public class DueFasi {
         return true;
     }
 
-    static boolean contains(List<Comp[]> list, Comp[] element){
-        for (Comp[] fractions : list) {
+    static boolean contains(List<Value[]> list, Value[] element){
+        for (Value[] fractions : list) {
             if (equalsFrac(fractions,element)) {
                 return true;
             }
@@ -76,14 +76,14 @@ public class DueFasi {
         return false;
     }
 
-    static Comp[][] getAdditionalBasis(int numConstraints, List<Comp[]> basiCorrenti){
-        Comp[][] identity = getIdentity(numConstraints);
+    static Value[][] getAdditionalBasis(int numConstraints, List<Value[]> basiCorrenti){
+        Value[][] identity = getIdentity(numConstraints);
 
-        Comp[][] iT = transpose(identity);
+        Value[][] iT = transpose(identity);
 
-        Comp[][] out = new Comp[numConstraints - basiCorrenti.size()][numConstraints];
+        Value[][] out = new Value[numConstraints - basiCorrenti.size()][numConstraints];
         int i = 0;
-        for (Comp[] fractions : iT) {
+        for (Value[] fractions : iT) {
             if (!contains(basiCorrenti,fractions)) {
                 out[i] = fractions;
                 i += 1;
@@ -93,10 +93,10 @@ public class DueFasi {
         return transpose(out);
     }
 
-    static List<Comp[]> removeDup(List<Comp[]> list){
-        List<Comp[]> ret = new ArrayList<>();
+    static List<Value[]> removeDup(List<Value[]> list){
+        List<Value[]> ret = new ArrayList<>();
 
-        for (Comp[] base : list) {
+        for (Value[] base : list) {
             if (!contains(ret,base)) {
                 ret.add(base);
             }
@@ -105,27 +105,27 @@ public class DueFasi {
         return ret;
     }
 
-    static InnerDueFasi aggiungiVariabiliSintetiche(Comp[][] tableau){
+    static InnerDueFasi aggiungiVariabiliSintetiche(Value[][] tableau){
         int numConstraints = tableau.length - 1;
         int numVariables = tableau[0].length - 1;
-        List<Comp[]> basiCorrenti = removeDup(SimplexTableau.getBasis(tableau, numVariables, numConstraints));
+        List<Value[]> basiCorrenti = removeDup(SimplexTableau.getBasis(tableau, numVariables, numConstraints));
         int nbasi = basiCorrenti.size();
         if(numConstraints == nbasi ){
             return new InnerDueFasi(null, null, false, Collections.emptyList());
         }
         int nuovoNumeroVariabili = numVariables + numConstraints - basiCorrenti.size();
         int numeroBasiAggiunte = nuovoNumeroVariabili - numVariables;
-        Comp[][] nuovoTableau = new Comp[numConstraints + 1][nuovoNumeroVariabili + 1];
-        Comp[][] identity = getAdditionalBasis(numConstraints, basiCorrenti);
+        Value[][] nuovoTableau = new Value[numConstraints + 1][nuovoNumeroVariabili + 1];
+        Value[][] identity = getAdditionalBasis(numConstraints, basiCorrenti);
         // Riporto funzione obbiettivo artificiale
         nuovoTableau[0] = getExtendedObjective(tableau[0], numConstraints - basiCorrenti.size());
         // Riporto i vincoli
         for (int i = 1; i < numConstraints + 1; i++) {
-            Comp[] newRow = new Comp[nuovoNumeroVariabili + 1];
+            Value[] newRow = new Value[nuovoNumeroVariabili + 1];
             for (int j = 0; j < numVariables; j++) {
                 newRow[j] = tableau[i][j];
             }
-            Comp[] identityRow = identity[i - 1];
+            Value[] identityRow = identity[i - 1];
             for (int j = numVariables; j < nuovoNumeroVariabili; j++) {
                 newRow[j] = identityRow[j - numVariables];
             }
@@ -141,11 +141,11 @@ public class DueFasi {
         return new InnerDueFasi(nuovoTableau, identity, true, List.of(msg, msg2, msg3));
     }
 
-    static Comp[][] pulisciTableau(Comp[][] ottimo, Comp[] fObbOrig){
+    static Value[][] pulisciTableau(Value[][] ottimo, Value[] fObbOrig){
         int numeroVariabiliOriginali = fObbOrig.length - 1;
-        Comp[][] nuovoTableau = new Comp[ottimo.length][numeroVariabiliOriginali + 1];
+        Value[][] nuovoTableau = new Value[ottimo.length][numeroVariabiliOriginali + 1];
         for (int i = 0; i < ottimo.length; i++) {
-            Comp[] newRow = new Comp[numeroVariabiliOriginali + 1];
+            Value[] newRow = new Value[numeroVariabiliOriginali + 1];
             for (int j = 0; j < numeroVariabiliOriginali; j++) {
                 newRow[j] = ottimo[i][j];
             }
@@ -160,26 +160,26 @@ public class DueFasi {
         return nuovoTableau;
     }
 
-    static Comp[] sub(Comp[] a, Comp[] b){
-        Comp[] c = new Comp[a.length];
+    static Value[] sub(Value[] a, Value[] b){
+        Value[] c = new Value[a.length];
         for (int i = 0; i < a.length; i++) {
             c[i] = a[i].subtract(b[i]);
         }
         return c;
     }
 
-    static boolean contains(Comp[] a, Comp b){
-        for (Comp fraction : a) {
+    static boolean contains(Value[] a, Value b){
+        for (Value fraction : a) {
             if (fraction.equals(b)) {
                 return true;
             }
         }
         return false;
     }
-    static void primaOperazione(Comp[][] tableau, Comp[][] basiSintetiche){
+    static void primaOperazione(Value[][] tableau, Value[][] basiSintetiche){
         List<Integer> righeDaSottrarre = new ArrayList<>();
         for(int i= 0; i < basiSintetiche.length; i++){
-            if (contains(basiSintetiche[i], Comp.ONE)) {
+            if (contains(basiSintetiche[i], Value.ONE)) {
                 righeDaSottrarre.add(i);
             }
         }
@@ -188,18 +188,18 @@ public class DueFasi {
         }
     }
 
-    static List<Integer> getAVIndexes(Comp[][] row, int numberOfVariables){
+    static List<Integer> getAVIndexes(Value[][] row, int numberOfVariables){
         if(row.length == 0) return new ArrayList<>();
 
         return IntStream.range(0, row[0].length).map(i -> i + numberOfVariables).boxed().collect(Collectors.toList());
     }
 
-    static Comp[][] applicaMetodoDueFasi(Comp[][] tableau, List<Integer> numeroVariabiliSlack){
+    static Value[][] applicaMetodoDueFasi(Value[][] tableau, List<Integer> numeroVariabiliSlack){
         return applicaMetodoDueFasi(tableau, numeroVariabiliSlack, new ArrayList<>());
     }
-    static Comp[][] applicaMetodoDueFasi(Comp[][] tableau, List<Integer> numeroVariabiliSlack, List<Message> passaggi){
+    static Value[][] applicaMetodoDueFasi(Value[][] tableau, List<Integer> numeroVariabiliSlack, List<Message> passaggi){
         InnerDueFasi nuovoTableau = aggiungiVariabiliSintetiche(tableau);
-        final Comp[][] tab;
+        final Value[][] tab;
         passaggi.addAll(nuovoTableau.passaggi);
         if(nuovoTableau.needed){
             passaggi.add(Message.messaggioSemplice("Risolvo il problema con le variabili sintetiche, vado ad azzerare i costi ridotti delle variabili sintetiche"));

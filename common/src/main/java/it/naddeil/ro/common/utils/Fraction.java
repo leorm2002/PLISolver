@@ -1,8 +1,8 @@
 package it.naddeil.ro.common.utils;
 
 
-public class Fraction implements  Comp {
-    public static Comp of(long numerator, long denominator) {
+public class Fraction implements  Value {
+    public static Value of(long numerator, long denominator) {
         return new Fraction(numerator, denominator);
     }
 
@@ -52,7 +52,7 @@ public class Fraction implements  Comp {
             return new Fraction(numerator / denominator - 1);
         }}
 
-    public Comp add(Fraction other) {
+    public Value add(Fraction other) {
         long newNumerator = this.numerator * other.denominator + other.numerator * this.denominator;
         long newDenominator = this.denominator * other.denominator;
         return new Fraction(newNumerator, newDenominator);
@@ -112,7 +112,7 @@ public class Fraction implements  Comp {
     }
 
     @Override
-    public int compareTo(Comp other) {
+    public int compareTo(Value other) {
         if(other instanceof Fraction f){
             return this.compareTo(f);
         }
@@ -120,7 +120,7 @@ public class Fraction implements  Comp {
     }
 
     @Override
-    public Comp add(Comp other) {
+    public Value add(Value other) {
         if(other instanceof Fraction f){
             return this.add(f);
         }
@@ -128,7 +128,7 @@ public class Fraction implements  Comp {
     }
 
     @Override
-    public Comp subtract(Comp other) {
+    public Value subtract(Value other) {
         if(other instanceof Fraction f){
             return this.subtract(f);
         }
@@ -136,7 +136,7 @@ public class Fraction implements  Comp {
     }
 
     @Override
-    public Comp multiply(Comp other) {
+    public Value multiply(Value other) {
         if(other instanceof Fraction f){
             return this.multiply(f);
         }
@@ -144,7 +144,7 @@ public class Fraction implements  Comp {
     }
 
     @Override
-    public Comp divide(Comp other) {
+    public Value divide(Value other) {
         if(other instanceof Fraction f){
             return this.divide(f);
         }
