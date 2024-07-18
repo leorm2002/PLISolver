@@ -8,6 +8,7 @@ import it.naddeil.ro.common.SimplexSolver;
 import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.exceptions.ExceptionUtils;
 import it.naddeil.ro.common.exceptions.NumeroMassimoIterazioni;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Pair;
@@ -129,7 +130,8 @@ public class GomorySolver  {
         int maxIter = 300;
         out.add(Message.messaggioSemplice("Inizio risoluzione problema, numero massimo iterazioni:" + maxIter));
         out.add(Message.messaggioSemplice("Risolvo il rilassamento continuo con il metodo del simplesso"));
-        FracResult rs = simplexSolver.solve(problem);
+
+        FracResult rs = ExceptionUtils.catchAndRetrow(() -> simplexSolver.solve(problem), out);
         out.add(Message.conPassaggiIntermedi(rs.getOut()));
         out.add(Message.messaggioConTableau("Soluzione del rilassamento continuo", rs.getTableau()));
         int i = 0;
@@ -142,7 +144,7 @@ public class GomorySolver  {
                 out.add(Message.messaggioConTaglio(cutResult.getSecond(), taglio));
                 Value[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
                 out.add(Message.messaggioConTableau("Tableau ottimo rilassamento continuo dopo aggiunta taglio", newA));
-                rs = dualSimplexSolver.riottimizza(newA);
+                rs = ExceptionUtils.catchAndRetrow(() -> dualSimplexSolver.riottimizza(newA), out);
                 out.add(Message.conPassaggiIntermedi(rs.getOut()));
                 out.add(Message.messaggioConRisultato("Risulato dell'ottimizzazione del nuovo tableau", rs));
                 if(isSolved(rs)){
@@ -152,7 +154,7 @@ public class GomorySolver  {
                 i++;
                 if(i > maxIter){
                     out.add(Message.messaggioSemplice("Numero massimo iterazioni raggiunto"));
-                    throw new NumeroMassimoIterazioni(null);
+                    throw new NumeroMassimoIterazioni(out);
                 }
             }else{
                 out.add(Message.messaggioSemplice("Soluzione intera trovata"));

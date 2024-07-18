@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import org.ejml.interfaces.linsol.LinearSolver;
 
 import it.naddeil.ro.common.api.Message;
+import it.naddeil.ro.common.exceptions.ExceptionUtils;
 import it.naddeil.ro.common.models.Pair;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.common.utils.Value;
@@ -206,7 +207,7 @@ public class DueFasi {
             primaOperazione(nuovoTableau.tableau, nuovoTableau.identity);
             passaggi.add(Message.messaggioConTableau("Tableau una volta effettuato azzeramento", nuovoTableau.tableau));
             SimplexTableau st = new SimplexTableau(nuovoTableau.tableau);
-            st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true);
+            ExceptionUtils.catchAndRetrow(() -> st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true), passaggi);
             passaggi.addAll(st.getPassaggi());
             passaggi.add(Message.messaggioConTableau("Tableu ottimo della fase 1", st.getTableau()));
 
@@ -217,7 +218,8 @@ public class DueFasi {
         }
 
         SimplexTableau st2 = new SimplexTableau(tab);
-        st2.solve(numeroVariabiliSlack, false);
+        ExceptionUtils.catchAndRetrow(() -> st2.solve(numeroVariabiliSlack, false), passaggi);
+
         passaggi.addAll(st2.getPassaggi());
 
         return st2.getTableau();

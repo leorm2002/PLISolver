@@ -71,7 +71,7 @@ public class SimplexTableau {
     void verificaW(Value w){
         if(w.compareTo(Value.ZERO) != 0){
             passaggi.add(Message.messaggioSemplice("W != 0, problema non risolvibile senza uso di variabili ausiliarie"));
-            throw new ProblemaInizialeImpossibile(null);
+            throw new ProblemaInizialeImpossibile(passaggi);
         }
     }
 
@@ -145,7 +145,7 @@ public class SimplexTableau {
             int pivotRow = findPivotRow(pivotColumn);
             if(pivotRow == -1){
                 passaggi.add(Message.messaggioSemplice("Il problema è illimitato"));
-                throw new ProblemaInizialeIllimitato(null);
+                throw new ProblemaInizialeIllimitato(passaggi);
             }
             passaggi.add(Message.messaggioConTableau(String.format("La soluzione può essere migliorata, faccio pivot su x%s r%s", pivotRow + 1, pivotColumn), tableau));
             pivot(pivotRow, pivotColumn);

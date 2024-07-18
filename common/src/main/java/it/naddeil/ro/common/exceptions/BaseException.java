@@ -13,4 +13,8 @@ public class BaseException extends RuntimeException {
     public List<Message> getState() {
         return state;
     }
+
+    public void setState(List<Message> state) {
+        state = state;
+    }
 }
