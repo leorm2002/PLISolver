@@ -8,7 +8,6 @@ import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Response;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Value;
-import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 import it.naddeil.ro.gomorysolver.GomorySolver;
 import it.naddeil.ro.simplexsolver.ConcreteSimplexSolver;

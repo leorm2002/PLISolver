@@ -46,7 +46,7 @@ function getFo(tipo, coeff) {
     }
 }
 
-function calcola() {
+function calcola(link) {
     const numConstraints = document.getElementById('constraints').value;
     const numVariables = document.getElementById('variables').value;
     var vincoli = []
@@ -155,6 +155,7 @@ async function inviaRichiesta(payload, link) {
     mostraTempo(resp.time)
     getSolution(resp.soluzione)
     // Esempio di utilizzo
+    clean()
     displayFormattedStrings(resp.passiRisoluzione);
     responseData = resp.passiRisoluzione;
     document.getElementById('downloadButton').style.display = 'block';
@@ -266,7 +267,11 @@ function formatString(str) {
         .replace(/\n/g, '<br>')
         .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 }
+function clean(containerId = 'output'){
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
 
+}
 function displayFormattedStrings(strings, containerId = 'output') {
     const container = document.getElementById(containerId);
     let i = 0;

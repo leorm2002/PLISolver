@@ -75,7 +75,7 @@ public class SimplexTableau {
         }
     }
 
-    void gestisciDegenerazione(int colonna, int riga, int numeroVariabiliOrig){
+    boolean gestisciDegenerazione(int colonna, int riga, int numeroVariabiliOrig, boolean fase1){
         // Due casi: tutti i coefficienti della riga pivot sono 0 => possiamo eliminare la riga
         Value[] rigaTableau = tableau[riga];
         boolean tuttiZero = true;   
@@ -85,7 +85,7 @@ public class SimplexTableau {
                 break;
             }
         }
-        if(tuttiZero){
+        if(tuttiZero && fase1){
             // Possiamo eliminare vincolo
             Value[][] nuovoTableau = new Value[tableau.length - 1][tableau[0].length];
             for (int i = 0; i < riga; i++) {
@@ -106,8 +106,12 @@ public class SimplexTableau {
                     break;
                 }
             }
+            if(colonnaPivot == -1){
+                return true;
+            }
             pivot(riga, colonnaPivot);
         }
+        return false;
     }
 
     List<Message> portaInCanonica(){
@@ -160,8 +164,9 @@ public class SimplexTableau {
             boolean degenere = false;
             List<Message> passiDeg = new ArrayList<>();
             var deg = degenere(artificialBasis);
-            while (deg.getFirst() != -1) {
-                gestisciDegenerazione(deg.getFirst(), deg.getSecond(), tableau[0].length - 1 - artificialBasis.size());
+            boolean exit =false;
+            while (deg.getFirst() != -1 && !exit) {
+                exit = gestisciDegenerazione(deg.getFirst(), deg.getSecond(), tableau[0].length - 1 - artificialBasis.size(), fase1);
                 deg = degenere(artificialBasis);
                 degenere = true;
             }

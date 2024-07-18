@@ -53,27 +53,17 @@ public class ProblemTransformer {
         return out;
     }
 
-    static Vincolo trasformaVincoloPerDuale(Vincolo v){
-        Vincolo out = new Vincolo(null, null);
-        if(Verso.GE.equals(v.getVerso())){
-            out.setVerso(Verso.LE);
-            out.setVincolo(v.getVincolo().stream().map(x -> -x).toList());
-        }else{
-            out.setVerso(v.getVerso());
-            out.setVincolo(v.getVincolo());
-        }
-        return out;
-    }
 
-    static Vincolo trasformaVincolo(Vincolo v, List<Double> slackVector){
-        Vincolo out = trasformaVincoloPerDuale(v);
-        out.setVerso(Verso.E);
-        List<Double> vincolo = new ArrayList<>(out.getVincolo());
+    static Vincolo trasformaVincolo(Vincolo in, List<Double> slackVector){
+        List<Double> vincolo = new ArrayList<>(in.getVincolo());
         Double last = vincolo.remove(vincolo.size() - 1);
+        if(Verso.GE.equals(in.getVerso())){
+            // Cambio verso alla variabile di slack
+            slackVector = slackVector.stream().map(x -> -x).toList();
+        }
         vincolo.addAll(slackVector);
         vincolo.add(last);
-        out.setVincolo(vincolo);
-        return out;
+        return new Vincolo(vincolo, Verso.E);
     }
 
     static List<Double> getSlackVector(int size, int slakPos){
@@ -83,31 +73,6 @@ public class ProblemTransformer {
         }
         return out;
     }
-
-
-    /**
-     * Dato un problema generico resituisce preparato per il duale
-     *      min c^T x
-     *      s.t. Ax >= b
-     */
-    public static PublicProblem preparaPerDuale(PublicProblem problem) {
-        int numeroVariabiliSlackDaAggiungere = getNumeroVariabiliDaAggiungere(problem);
-        PublicProblem out = new PublicProblem();
-        // Gestione funzione obiettivo
-        var funzioneObbiettivo = getFunzioneObbiettivoStd(problem.getFunzioneObbiettivo());
-        funzioneObbiettivo.setC(getExtendedC(funzioneObbiettivo.getC(), numeroVariabiliSlackDaAggiungere));
-
-        out.setVincoli(problem.getVincoli().stream().map(ProblemTransformer::trasformaVincoloPerDuale).toList());
-        aggiungiSlack(out, numeroVariabiliSlackDaAggiungere);
-        out.setFunzioneObbiettivo(funzioneObbiettivo);
-
-        // Todo aggiungere slack
-        out.setFunzioneObbiettivo(funzioneObbiettivo);
-
-        return out;
-    }
-
-
 
     /**
      * Dato un problema generico lo restituisce in forma canonica ovvero

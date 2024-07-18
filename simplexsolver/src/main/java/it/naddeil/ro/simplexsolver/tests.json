@@ -1,0 +1,2 @@
+Fase 1 degenere pivotaggio richeisto:
+{"funzioneObbiettivo":{"tipo":"MIN","c":["1","0","1"]},"vincoli":[{"vincolo":["1","2","0","5"],"verso":"LE"},{"vincolo":["0","1","2","6"],"verso":"E"}]}

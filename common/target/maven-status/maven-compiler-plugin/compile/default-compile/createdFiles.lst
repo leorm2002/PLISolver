@@ -1,8 +1,8 @@
 it/naddeil/ro/common/exceptions/ProblemaAssociatoIrrisolvibile.class
 it/naddeil/ro/common/models/Problema.class
 it/naddeil/ro/common/exceptions/ProblemaInizialeImpossibile.class
+it/naddeil/ro/common/utils/Value.class
 it/naddeil/ro/common/models/Pair.class
-it/naddeil/ro/common/models/FracResultWithPassages.class
 it/naddeil/ro/common/ProblemTransformer.class
 it/naddeil/ro/common/utils/TableauUtils.class
 it/naddeil/ro/common/api/PublicProblem.class
