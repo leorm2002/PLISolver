@@ -32,8 +32,6 @@
         <module>Service</module>
         <module>DualSimplexSolver</module>
         <module>SimplexSolver</module>
-        <module>ApacheSimplexSolver</module>
-        <module>commons-math</module>
     </modules>
 
 
