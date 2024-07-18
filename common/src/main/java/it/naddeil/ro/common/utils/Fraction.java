@@ -1,31 +1,15 @@
 package it.naddeil.ro.common.utils;
 
 
-public class Fraction implements Comparable<Fraction> {
-    private final long numerator;
-    private final long denominator;
-
-    public static Fraction of(long numerator, long denominator) {
+public class Fraction implements  Comp {
+    public static Comp of(long numerator, long denominator) {
         return new Fraction(numerator, denominator);
     }
+
     public static Fraction of(long numerator) {
         return new Fraction(numerator);
     }
 
-    public long getNumerator() {
-        return numerator;
-    }
-
-    public long getDenominator() {
-        return denominator;
-    }
-
-    public static final Fraction ZERO = new Fraction(0, 1);
-    public static final Fraction ONE = new Fraction(1, 1);
-    public static final Fraction MINUS_ONE = new Fraction(-1, 1);
-    public static final Fraction POSITIVE_INFINITY = new Fraction(1, 0);
-
-    
     public static Fraction of(double value){
         boolean invert = value < 0;
         if (invert) {
@@ -41,7 +25,11 @@ public class Fraction implements Comparable<Fraction> {
         }
         return new Fraction((long)value, denominator);
     }
-    
+    private static long gcd(long a, long b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+    private final long numerator;
+    private final long denominator;
 
     public Fraction(long numerator, long denominator) {
         if (denominator == 0 && numerator != 1) {
@@ -56,19 +44,15 @@ public class Fraction implements Comparable<Fraction> {
         this(wholeNumber, 1);
     }
 
-    
-    private static long gcd(long a, long b) {
-        return b == 0 ? a : gcd(b, a % b);
-    }
-
+    @Override
     public Fraction floor(){
         if (numerator >= 0) {
             return new Fraction(numerator / denominator);
         }else{
             return new Fraction(numerator / denominator - 1);
         }}
-    
-    public Fraction add(Fraction other) {
+
+    public Comp add(Fraction other) {
         long newNumerator = this.numerator * other.denominator + other.numerator * this.denominator;
         long newDenominator = this.denominator * other.denominator;
         return new Fraction(newNumerator, newDenominator);
@@ -88,28 +72,31 @@ public class Fraction implements Comparable<Fraction> {
         return new Fraction(this.numerator * other.denominator, this.denominator * other.numerator);
     }
 
+    @Override
     public Fraction negate() {
         return new Fraction(-this.numerator, this.denominator);
     }
 
+    @Override
     public Fraction abs() {
         return new Fraction(Math.abs(this.numerator), this.denominator);
     }
 
+    @Override
     public boolean isInteger() {
         return denominator == 1;
     }
 
+    @Override
     public double doubleValue(){
         return ((double)numerator)/denominator;
     }
-
-    @Override
     public int compareTo(Fraction other) {
         long difference = this.numerator * other.denominator - other.numerator * this.denominator;
         return Long.compare(difference, 0);
     }
 
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -122,5 +109,45 @@ public class Fraction implements Comparable<Fraction> {
     public String toString() {
         if (denominator == 1) return Long.toString(numerator);
         return numerator + "/" + denominator;
+    }
+
+    @Override
+    public int compareTo(Comp other) {
+        if(other instanceof Fraction f){
+            return this.compareTo(f);
+        }
+        throw new IllegalArgumentException("Not a Fraction");
+    }
+
+    @Override
+    public Comp add(Comp other) {
+        if(other instanceof Fraction f){
+            return this.add(f);
+        }
+        return other.add(this);
+    }
+
+    @Override
+    public Comp subtract(Comp other) {
+        if(other instanceof Fraction f){
+            return this.subtract(f);
+        }
+        return other.subtract(this).negate();
+    }
+
+    @Override
+    public Comp multiply(Comp other) {
+        if(other instanceof Fraction f){
+            return this.multiply(f);
+        }
+        return other.multiply(this);
+    }
+
+    @Override
+    public Comp divide(Comp other) {
+        if(other instanceof Fraction f){
+            return this.divide(f);
+        }
+        return other.divide(this);
     }
 }

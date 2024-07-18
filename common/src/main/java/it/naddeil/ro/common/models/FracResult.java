@@ -6,16 +6,17 @@ import java.util.stream.IntStream;
 import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.common.utils.TableauUtils;
+import it.naddeil.ro.common.utils.Comp;
 
 import java.util.Arrays;
 public class FracResult {
-    Fraction[][] tableau;
-    Fraction[] soluzione;
-    Fraction[] costiRidotti;
-    Fraction z;
-    Fraction[][] a;
+    Comp[][] tableau;
+    Comp[] soluzione;
+    Comp[] costiRidotti;
+    Comp z;
+    Comp[][] a;
     List<Integer> basis;
-    List<Fraction> valoreVariabili;
+    List<Comp> valoreVariabili;
     List<Message> out;
 
 	public List<Message> getOut() {
@@ -27,8 +28,8 @@ public class FracResult {
         return this;
     }
 
-    FracResult(Fraction[][] tableau, Fraction[] soluzione, Fraction[] costiRidotti, Fraction z, Fraction[][] a,
-			List<Integer> basis, List<Fraction> valoreVariabili) {
+    FracResult(Comp[][] tableau, Comp[] soluzione, Comp[] costiRidotti, Comp z, Comp[][] a,
+			List<Integer> basis, List<Comp> valoreVariabili) {
 		this.tableau = tableau;
 		this.soluzione = soluzione;
 		this.costiRidotti = costiRidotti;
@@ -38,52 +39,52 @@ public class FracResult {
         this.valoreVariabili = valoreVariabili;
 	}
 
-    public static FracResult fromTableau(Fraction[][] tableau, boolean invert){
+    public static FracResult fromTableau(Comp[][] tableau, boolean invert){
         int width = tableau[0].length;
-        Fraction[] soluzione = IntStream.range(1, tableau.length).mapToObj(i -> tableau[i][width -1]).toArray(Fraction[]::new);
-        Fraction[] costiRidotti = IntStream.range(0, width - 1).mapToObj(i -> tableau[0][i]).toArray(Fraction[]::new);
-        Fraction z = tableau[0][width - 1];
+        Comp[] soluzione = IntStream.range(1, tableau.length).mapToObj(i -> tableau[i][width -1]).toArray(Comp[]::new);
+        Comp[] costiRidotti = IntStream.range(0, width - 1).mapToObj(i -> tableau[0][i]).toArray(Comp[]::new);
+        Comp z = tableau[0][width - 1];
         z = invert ? z.negate() : z;
-        Fraction[][] a = new Fraction[tableau.length - 1][width - 1];
+        Comp[][] a = new Comp[tableau.length - 1][width - 1];
 		for (int i = 1; i < tableau.length; i++) {
 			a[i - 1] = Arrays.copyOf(tableau[i], width - 1);
 		}
-        List<Fraction> valoreVariabili = TableauUtils.getSolution(costiRidotti.length, soluzione.length, tableau);
+        List<Comp> valoreVariabili = TableauUtils.getSolution(costiRidotti.length, soluzione.length, tableau);
         return new FracResult(tableau, soluzione, costiRidotti, z, a, null, valoreVariabili);
     }
-    public static FracResult fromTableau(Fraction[][] tableau){
+    public static FracResult fromTableau(Comp[][] tableau){
         return fromTableau(tableau, false);
     }
 	
-    public Fraction[][] getTableau() {
+    public Comp[][] getTableau() {
 		return tableau;
 	}
 	
-    public void setTableau(Fraction[][] tableau) {
+    public void setTableau(Comp[][] tableau) {
 		this.tableau = tableau;
 	}
-	public Fraction[] getSoluzione() {
+	public Comp[] getSoluzione() {
 		return soluzione;
 	}
-	public void setSoluzione(Fraction[] soluzione) {
+	public void setSoluzione(Comp[] soluzione) {
 		this.soluzione = soluzione;
 	}
-	public Fraction[] getCostiRidotti() {
+	public Comp[] getCostiRidotti() {
 		return costiRidotti;
 	}
-	public void setCostiRidotti(Fraction[] costiRidotti) {
+	public void setCostiRidotti(Comp[] costiRidotti) {
 		this.costiRidotti = costiRidotti;
 	}
-	public Fraction getZ() {
+	public Comp getZ() {
 		return z;
 	}
-	public void setZ(Fraction z) {
+	public void setZ(Comp z) {
 		this.z = z;
 	}
-	public Fraction[][] getA() {
+	public Comp[][] getA() {
 		return a;
 	}
-	public void setA(Fraction[][] a) {
+	public void setA(Comp[][] a) {
 		this.a = a;
 	}
 	public List<Integer> getBasis() {
@@ -93,9 +94,9 @@ public class FracResult {
 		this.basis = basis;
 	}
 
-    Fraction[] shiftRight(Fraction[] in)
+    Comp[] shiftRight(Comp[] in)
     {
-        Fraction[] out = in.clone();
+        Comp[] out = in.clone();
         for (int i = 0; i < in.length; i++) {
             out[(i + 1) % in.length] = in[i];
         }
@@ -105,21 +106,21 @@ public class FracResult {
     }
 
     public List<List<String>> getTableauStr(){
-        return Arrays.stream(tableau).map(this::shiftRight).map(row -> Arrays.stream(row).map(Fraction::toString).toList()).toList();
+        return Arrays.stream(tableau).map(this::shiftRight).map(row -> Arrays.stream(row).map(Comp::toString).toList()).toList();
     }
     public static void main(String[] args) {
-        FracResult f = FracResult.fromTableau(new Fraction[][] {{Fraction.ONE, Fraction.ZERO,Fraction.ZERO}});
+        FracResult f = FracResult.fromTableau(new Fraction[][] {{Comp.ONE, Comp.ZERO,Comp.ZERO}});
     
         var a = f.getTableauStr();
 
         int x = 1;
     }
 
-    public List<Fraction> getValoreVariabili() {
+    public List<Comp> getValoreVariabili() {
         return valoreVariabili;
     }
 
-    public void setValoreVariabili(List<Fraction> valoreVariabili) {
+    public void setValoreVariabili(List<Comp> valoreVariabili) {
         this.valoreVariabili = valoreVariabili;
     }
 }

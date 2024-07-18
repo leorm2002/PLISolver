@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Fraction;
+import it.naddeil.ro.common.utils.Comp;
 
 public class Message implements Serializable {
     String message;
@@ -24,13 +25,13 @@ public class Message implements Serializable {
     public static Message conPassaggiIntermedi(List<Message> passaggiIntermedi) {
         return new Message(passaggiIntermedi);
     }
-    public static Message messaggioConTaglio(int riga, Fraction[] taglio) {
+    public static Message messaggioConTaglio(int riga, Comp[] taglio) {
         return new Message("Calcolo da riga " + riga + "\nTaglio risultante :" + taglioToStr(taglio));
     }
     public static Message messaggioSemplice(String messaggio) {
         return new Message(messaggio);
     }
-    public static Message messaggioConTableau(String messaggio, Fraction[][] tableau) {
+    public static Message messaggioConTableau(String messaggio, Comp[][] tableau) {
         return new Message(messaggio, formattaTableauJson(tableau));
     }
 
@@ -38,11 +39,11 @@ public class Message implements Serializable {
         return new Message(messaggio, formattaTableauJson(tableau.getTableau()));
     }
 
-    private static List<List<String>> formattaTableauJson(Fraction[][] tableau){
+    private static List<List<String>> formattaTableauJson(Comp[][] tableau){
      return FracResult.fromTableau(tableau).getTableauStr();
     }
 
-    static String taglioToStr(Fraction[] taglio){
+    static String taglioToStr(Comp[] taglio){
         int i = 1;
         String out = "";
         for(int j = 0; j < taglio.length - 1; j++){

@@ -6,6 +6,7 @@ import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Problema;
 import it.naddeil.ro.common.utils.Fraction;
+import it.naddeil.ro.common.utils.Comp;
 
 import java.util.stream.*;
 import java.lang.reflect.Array;
@@ -14,9 +15,9 @@ public class DualSimplexSolver {
 
     public FracResult solve(PublicProblem problema, Parameters parameters) {
 
-        Fraction[][] problem = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problema)).toTableauFormProblem();
+        Comp[][] problem = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problema)).toTableauFormProblem();
         // Nego la funzione obbiettivo
-        problem[0] = Arrays.stream(problem[0]).map(Fraction::negate).toArray(Fraction[]::new);
+        problem[0] = Arrays.stream(problem[0]).map(Comp::negate).toArray(Comp[]::new);
         //SimplessoDuale dualSimplex = SimplessoDuale.createFromStd(problem.getA(), problem.getB(), problem.getC(), Collections.emptyList());
         //DualSimplexMessageBuilder msg = new DualSimplexMessageBuilder();
         //SimpleMatrix sol = dualSimplex.solve(msg);
@@ -26,7 +27,7 @@ public class DualSimplexSolver {
         return null;
     }
 
-    public FracResult riottimizza(Fraction[][] tableau){
+    public FracResult riottimizza(Comp[][] tableau){
         SimplessoDualeFrazionario dualSimplex = new SimplessoDualeFrazionario(tableau);
         dualSimplex.solve();
         return FracResult.fromTableau(dualSimplex.getTableau()).setOut(dualSimplex.getPassaggi());
