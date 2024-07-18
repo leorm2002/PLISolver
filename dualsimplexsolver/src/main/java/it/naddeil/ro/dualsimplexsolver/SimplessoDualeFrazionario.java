@@ -1,9 +1,18 @@
 package it.naddeil.ro.dualsimplexsolver;
+import java.util.ArrayList;
+import java.util.List;
+
+import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.utils.Fraction;
 
 
 public class SimplessoDualeFrazionario {
     private Fraction[][] tableau;
+    private List<Message> passaggi = new ArrayList<>();
+
+    public List<Message> getPassaggi() {
+        return passaggi;
+    }
 
 
     public Fraction[][] getTableau() {
@@ -22,21 +31,24 @@ public class SimplessoDualeFrazionario {
 
 
     public void solve() {
+        passaggi.add(Message.messaggioConTableau("Inizio risoluzione del tableau con il metodo del simplesso duale", tableau));
         while (true) {
             int r = determineRowR();
             if (r == -1) {
                 System.out.println("Soluzione ottima trovata.");
                 printSolution();
+                passaggi.add(Message.messaggioSemplice("Soluzione ottima trovata"));
                 return;
             }
 
             int k = determineColumnK(r);
             if (k == -1) {
                 System.out.println("Il duale è illimitato, la soluzione ammissibile del primale non esiste.");
+                passaggi.add(Message.messaggioSemplice("Il duale è illimitato, la soluzione ammissibile del primale non esiste."));
                 return;
             }
-
             pivot(r, k);
+            passaggi.add(Message.messaggioConTableau(String.format("Eseguo pivotaggio su X%s R%s, tableau dopo operazione:", k + 1, r), tableau));
         }
     }
 
@@ -44,7 +56,6 @@ public class SimplessoDualeFrazionario {
         int r = -1;
         Fraction minValue = Fraction.POSITIVE_INFINITY;
         for (int i = 1; i <= numConstraints; i++) {
-            Fraction val = tableau[i][numVariables];
             if (tableau[i][numVariables].compareTo(minValue) < 0) {
                 minValue = tableau[i][numVariables];
                 r = i;

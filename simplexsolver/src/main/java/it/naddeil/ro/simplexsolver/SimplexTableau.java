@@ -117,6 +117,7 @@ public class SimplexTableau {
         var basis = getCostoRidottoDaAggiornare();
         while(basis.getFirst() != -1){
             pivot(basis.getFirst(), basis.getSecond());
+            passaggi.add(Message.messaggioSemplice(String.format("Pivot su X%s R%s", basis.getSecond() + 1, basis.getFirst())));
             basis = getCostoRidottoDaAggiornare();
             passaggi.add(
             Message.messaggioConTableau(String.format("Esiste base con costi ridotti positivi (tableu non in forma canonica), pivot su X%s R%s, tableau dopo pivotaggio:",basis.getFirst() + 1,basis.getSecond()), tableau)
@@ -156,6 +157,7 @@ public class SimplexTableau {
         }
         if(!artificialBasis.isEmpty()){
             boolean degenere = false;
+            List<Message> passiDeg = new ArrayList<>();
             var deg = degenere(artificialBasis);
             while (deg.getFirst() != -1) {
                 gestisciDegenerazione(deg.getFirst(), deg.getSecond(), tableau[0].length - 1 - artificialBasis.size());
@@ -166,7 +168,10 @@ public class SimplexTableau {
                 passaggi.add(Message.messaggioSemplice("Il tableau è degenere, alcune variabili artificiali sono nella base, eseguo pivoting per riportare su variabili originali"));
             }
         }
-        portaInCanonica();
+        passaggi.addAll(portaInCanonica());
+        //if(canImprove()){
+            //solve(artificialBasis, true);
+        //}
         System.out.println("Tableau finale:");
         printTableau();
         System.out.println();

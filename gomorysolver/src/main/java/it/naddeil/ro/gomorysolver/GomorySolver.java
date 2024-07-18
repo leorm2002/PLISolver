@@ -131,9 +131,8 @@ public class GomorySolver  {
         out.add(Message.messaggioSemplice("Inizio risoluzione problema, numero massimo iterazioni:" + maxIter));
         out.add(Message.messaggioSemplice("Risolvo il rilassamento continuo con il metodo del simplesso"));
         FracResult rs = simplexSolver.solve(problem);
-        // TODO deve essere annidato
         out.add(Message.conPassaggiIntermedi(rs.getOut()));
-        out.add(Message.messaggioConRisultato("Soluzione del rilassamento continuo", rs));
+        out.add(Message.messaggioConTableau("Soluzione del rilassamento continuo", rs.getTableau()));
         int i = 0;
         while (true) {
             if (!isSolved(rs)) {
@@ -145,7 +144,8 @@ public class GomorySolver  {
                 Fraction[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
                 out.add(Message.messaggioConTableau("Tableau ottimo rilassamento continuo dopo aggiunta taglio", newA));
                 rs = dualSimplexSolver.riottimizza(newA);
-                out.add(Message.messaggioConRisultato("Tableau ottimo rilassamento continuo dopo aggiunta taglio", rs));
+                out.add(Message.conPassaggiIntermedi(rs.getOut()));
+                out.add(Message.messaggioConRisultato("Risulato dell'ottimizzazione del nuovo tableau", rs));
                 if(isSolved(rs)){
                     out.add(Message.messaggioSemplice("Soluzione intera trovata"));
                     return rs.setOut(out);

@@ -12,6 +12,20 @@ public class Fraction implements Comparable<Fraction> {
         return new Fraction(numerator);
     }
 
+    public long getNumerator() {
+        return numerator;
+    }
+
+    public long getDenominator() {
+        return denominator;
+    }
+
+    public static final Fraction ZERO = new Fraction(0, 1);
+    public static final Fraction ONE = new Fraction(1, 1);
+    public static final Fraction MINUS_ONE = new Fraction(-1, 1);
+    public static final Fraction POSITIVE_INFINITY = new Fraction(1, 0);
+
+    
     public static Fraction of(double value){
         boolean invert = value < 0;
         if (invert) {
@@ -28,18 +42,6 @@ public class Fraction implements Comparable<Fraction> {
         return new Fraction((long)value, denominator);
     }
     
-    public long getNumerator() {
-        return numerator;
-    }
-
-    public long getDenominator() {
-        return denominator;
-    }
-
-    public static final Fraction ZERO = new Fraction(0, 1);
-    public static final Fraction ONE = new Fraction(1, 1);
-    public static final Fraction MINUS_ONE = new Fraction(-1, 1);
-    public static final Fraction POSITIVE_INFINITY = new Fraction(1, 0);
 
     public Fraction(long numerator, long denominator) {
         if (denominator == 0 && numerator != 1) {
@@ -54,16 +56,18 @@ public class Fraction implements Comparable<Fraction> {
         this(wholeNumber, 1);
     }
 
+    
+    private static long gcd(long a, long b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+
     public Fraction floor(){
         if (numerator >= 0) {
             return new Fraction(numerator / denominator);
         }else{
             return new Fraction(numerator / denominator - 1);
         }}
-    private static long gcd(long a, long b) {
-        return b == 0 ? a : gcd(b, a % b);
-    }
-
+    
     public Fraction add(Fraction other) {
         long newNumerator = this.numerator * other.denominator + other.numerator * this.denominator;
         long newDenominator = this.denominator * other.denominator;
@@ -96,6 +100,10 @@ public class Fraction implements Comparable<Fraction> {
         return denominator == 1;
     }
 
+    public double doubleValue(){
+        return ((double)numerator)/denominator;
+    }
+
     @Override
     public int compareTo(Fraction other) {
         long difference = this.numerator * other.denominator - other.numerator * this.denominator;
@@ -109,18 +117,10 @@ public class Fraction implements Comparable<Fraction> {
         Fraction other = (Fraction) obj;
         return this.numerator == other.numerator && this.denominator == other.denominator;
     }
-    public double doubleValue(){
-        return ((double)numerator)/denominator;
-    }
+
     @Override
     public String toString() {
         if (denominator == 1) return Long.toString(numerator);
         return numerator + "/" + denominator;
-    }
-
-    public static void main(String[] args) {
-        Fraction a = new Fraction(-330,32);
-        var b = a.floor();
-        System.out.println(b);
     }
 }

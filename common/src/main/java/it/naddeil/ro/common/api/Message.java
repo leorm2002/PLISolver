@@ -46,7 +46,7 @@ public class Message implements Serializable {
         int i = 1;
         String out = "";
         for(int j = 0; j < taglio.length - 1; j++){
-            out += taglio[j].toString()  + " x*" + i++ + " + ";
+            out += taglio[j].toString()  + " x" + i++ + " + ";
         }
         out += taglio[taglio.length - 2].toString();
         out += ">= " + taglio[taglio.length - 1].toString();

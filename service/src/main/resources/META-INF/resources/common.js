@@ -282,7 +282,7 @@ function displayFormattedStrings(strings, containerId = 'output') {
             console.log(tableau)
             const preElement = document.createElement('table');
             preElement.className = 'tableau'
-            preElement.id = 'tableau' + i
+            preElement.id = 'tableau' + i + containerId
             i += 1;
             container.appendChild(preElement);
             populateTableau(tableau, preElement.id)
@@ -299,7 +299,6 @@ function displayFormattedStrings(strings, containerId = 'output') {
 
         }
 
-        container.appendChild(document.createElement('br'));
         container.appendChild(document.createElement('br'));
     });
 }

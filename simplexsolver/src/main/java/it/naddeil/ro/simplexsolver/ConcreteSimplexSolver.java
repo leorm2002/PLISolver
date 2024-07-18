@@ -27,6 +27,7 @@ public class ConcreteSimplexSolver implements SimplexSolver{
         TableauUtils.printTableau(tableau);
         System.out.println();
         List<Message> passaggi = new ArrayList<>();
+        passaggi.add(Message.messaggioConTableau("Problema iniziale:", tableau));
         Fraction[][] result = DueFasi.applicaMetodoDueFasi(tableau, indiciSlack, passaggi);
         return FracResult.fromTableau(result).setOut(passaggi);
     }

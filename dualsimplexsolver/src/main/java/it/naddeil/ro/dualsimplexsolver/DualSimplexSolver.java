@@ -29,7 +29,7 @@ public class DualSimplexSolver {
     public FracResult riottimizza(Fraction[][] tableau){
         SimplessoDualeFrazionario dualSimplex = new SimplessoDualeFrazionario(tableau);
         dualSimplex.solve();
-        return FracResult.fromTableau(dualSimplex.getTableau());
+        return FracResult.fromTableau(dualSimplex.getTableau()).setOut(dualSimplex.getPassaggi());
     }
     
 }
