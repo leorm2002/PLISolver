@@ -2,9 +2,9 @@ package it.naddeil.ro.gomorysolver;
 
 import static org.junit.Assert.assertEquals;
 
-import org.ejml.interfaces.linsol.LinearSolver;
-import org.junit.jupiter.api.Test;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import it.naddeil.ro.apachesimplexsolver.MySimplexSolver;
 import it.naddeil.ro.common.api.FunzioneObbiettivo;

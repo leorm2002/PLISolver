@@ -87,7 +87,7 @@ function calcola(link) {
 }
 
 function populateTableau(data, tableauId) {
-    if(data == null){
+    if (data == null) {
         return
     }
     document.getElementById('titoloTab').innerText = 'Tableau ottimo'
@@ -117,7 +117,7 @@ function populateTableau(data, tableauId) {
         data[i].forEach(cellText => {
             const td = document.createElement('td');
             td.textContent = cellText;
-            if(j != 0 && i != 0){
+            if (j != 0 && i != 0) {
                 // Imposto più scuro
                 td.style = "background-color: var(--primD)!important;"
             }
@@ -143,7 +143,10 @@ async function mostraTempo(time) {
 }
 
 async function inviaRichiesta(payload, link) {
-    clean()
+    clean('output')
+    clean('tableau')
+    clean('solution')
+    clean('tempo')
     const response = await fetch(link, {
         method: 'POST',
         headers: {
@@ -155,9 +158,9 @@ async function inviaRichiesta(payload, link) {
     const resp = await response.json();
     console.log(resp)
     // Load text into a vector of vector of strings
-    if(resp.error != null){
+    if (resp.error != null) {
         alert(resp.error)
-    }else{
+    } else {
         populateTableau(resp.tableau, 'tableau')
         mostraTempo(resp.time)
         getSolution(resp.soluzione)
@@ -275,7 +278,7 @@ function formatString(str) {
         .replace(/\n/g, '<br>')
         .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 }
-function clean(containerId = 'output'){
+function clean(containerId = 'output') {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
 
@@ -304,7 +307,7 @@ function displayFormattedStrings(strings, containerId = 'output') {
         if (sottoProblema != null) {
             let sectionId = "passaggio" + i
             let section = getCollapsableSection(sectionId);
-            
+
             container.appendChild(section);
             displayFormattedStrings(sottoProblema, sectionId)
             document.getElementById(sectionId).appendChild(document.createElement('hr'));
@@ -315,7 +318,7 @@ function displayFormattedStrings(strings, containerId = 'output') {
         container.appendChild(document.createElement('br'));
     });
 }
-function getCollapsableSection(idSezione){
+function getCollapsableSection(idSezione) {
     let container = document.createElement('div');
     container.className = 'collapsableSection'
     let button = document.createElement('button');
