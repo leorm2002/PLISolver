@@ -17,7 +17,7 @@ public class ProblemTransformer {
         int j= 0;
         List<Vincolo> vincoli = new ArrayList<>();
         while (j < problem.getVincoli().size()) {
-            Vincolo vincolo = problem.getVincoli().get(i);
+            Vincolo vincolo = problem.getVincoli().get(j);
             boolean addSlack = !vincolo.getVerso().equals(Verso.E);
 
             List<Double> vettoreDaAggiungere = addSlack ? getSlackVector(numeroVariabiliSlackDaAggiungere, i) : getSlackVector(numeroVariabiliSlackDaAggiungere, -1);
