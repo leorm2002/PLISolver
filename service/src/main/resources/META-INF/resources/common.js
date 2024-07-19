@@ -87,6 +87,9 @@ function calcola(link) {
 }
 
 function populateTableau(data, tableauId) {
+    if(data == null){
+        return
+    }
     document.getElementById('titoloTab').innerText = 'Tableau ottimo'
     const tableau = document.getElementById(tableauId);
     tableau.innerHTML = '';
@@ -140,6 +143,7 @@ async function mostraTempo(time) {
 }
 
 async function inviaRichiesta(payload, link) {
+    clean()
     const response = await fetch(link, {
         method: 'POST',
         headers: {
@@ -151,11 +155,15 @@ async function inviaRichiesta(payload, link) {
     const resp = await response.json();
     console.log(resp)
     // Load text into a vector of vector of strings
-    populateTableau(resp.tableau, 'tableau')
-    mostraTempo(resp.time)
-    getSolution(resp.soluzione)
+    if(resp.error != null){
+        alert(resp.error)
+    }else{
+        populateTableau(resp.tableau, 'tableau')
+        mostraTempo(resp.time)
+        getSolution(resp.soluzione)
+
+    }
     // Esempio di utilizzo
-    clean()
     displayFormattedStrings(resp.passiRisoluzione);
     responseData = resp.passiRisoluzione;
     document.getElementById('downloadButton').style.display = 'block';

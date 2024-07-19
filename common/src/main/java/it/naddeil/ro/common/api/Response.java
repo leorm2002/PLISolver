@@ -6,6 +6,7 @@ public class Response implements java.io.Serializable {
     public List<String> soluzione;
     public long time;
     public List<Message> passiRisoluzione;
+    public String error;
     public List<List<String>> getTableau() {
         return tableau;
     }
@@ -29,6 +30,12 @@ public class Response implements java.io.Serializable {
     }
     public void setPassiRisoluzione(List<Message> passiRisoluzione) {
         this.passiRisoluzione = passiRisoluzione;
+    }
+    public String getError() {
+        return error;
+    }
+    public void setError(String error) {
+        this.error = error;
     }
 
 }

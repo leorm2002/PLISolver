@@ -15,12 +15,11 @@ import it.naddeil.ro.common.models.Pair;
 import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 
-
-
-public class GomorySolver  {
+public class GomorySolver {
     private final SimplexSolver simplexSolver;
     private final DualSimplexSolver dualSimplexSolver;
     private final List<Message> out;
+
     // Vincoli:
     // Tutti i segni della funzione obbiettivo positivi
     public GomorySolver(SimplexSolver simplexSolver, DualSimplexSolver dualSimplexSolver) {
@@ -31,8 +30,8 @@ public class GomorySolver  {
 
     boolean isSolved(FracResult r) {
         Value[] s = r.getSoluzione();
-        for (int i= 0; i < s.length; i++){
-            if(!s[i].isInteger()){
+        for (int i = 0; i < s.length; i++) {
+            if (!s[i].isInteger()) {
                 return false;
             }
         }
@@ -47,8 +46,8 @@ public class GomorySolver  {
         // Un taglio è del tipo f(c[1])x_1 + f(c[2])x_2 + ... + f(c[n])x_n >= f(c[0])
         // Dove f(x) è definita come x -> x - floor(x)
         Value[] taglio = new Value[riga.length];
-        for (int i = 0; i < riga.length ; i++) {
-            taglio[i] =  f(riga[i]);
+        for (int i = 0; i < riga.length; i++) {
+            taglio[i] = f(riga[i]);
         }
         return taglio;
     }
@@ -74,11 +73,11 @@ public class GomorySolver  {
             for (int j = 0; j < nColonne - 1; j++) {
                 nuovaMatrice[i][j] = tableau[i][j];
             }
-            nuovaMatrice[i][nColonne - 1] = Value.ZERO;  // Aggiungi 0 alla fine
+            nuovaMatrice[i][nColonne - 1] = Value.ZERO; // Aggiungi 0 alla fine
         }
 
         // Aggiungo il taglio alla fine
-        for (int i = 0; i < nColonne -1; i++) {
+        for (int i = 0; i < nColonne - 1; i++) {
             nuovaMatrice[nRighe][i] = taglio[i];
         }
         // Variabile di slack per il taglio
@@ -86,7 +85,7 @@ public class GomorySolver  {
         // Riporto il valore di b per il taglio
         nuovaMatrice[nRighe][nColonne] = taglio[taglio.length - 1];
         // Riporto soluzione
-        nuovaMatrice[0][nColonne] =z;
+        nuovaMatrice[0][nColonne] = z;
 
         // Riporto il vettore b
         for (int i = 1; i < nRighe; i++) {
@@ -102,10 +101,10 @@ public class GomorySolver  {
         Value[] riga = tableau[rigaTaglio];
 
         // 2. calcola taglio
-        return  Pair.of(Arrays.stream(creaTaglio(riga)).map(Value::negate).toArray(Value[]::new), rigaTaglio);
-        
+        return Pair.of(Arrays.stream(creaTaglio(riga)).map(Value::negate).toArray(Value[]::new), rigaTaglio);
+
     }
-    
+
     public void printTableau(Value[][] tableau) {
         for (Value[] row : tableau) {
             for (Value val : row) {
@@ -137,9 +136,10 @@ public class GomorySolver  {
         int i = 0;
         while (true) {
             if (!isSolved(rs)) {
+                System.out.println("Soluzione non intera, aggiungo taglio");
                 out.add(Message.messaggioSemplice("Soluzione non intera, aggiungo taglio"));
                 // Calcolo il taglio
-                var cutResult =  creaTaglio(rs.getSoluzione(), rs.getTableau());
+                var cutResult = creaTaglio(rs.getSoluzione(), rs.getTableau());
                 Value[] taglio = cutResult.getFirst();
                 out.add(Message.messaggioConTaglio(cutResult.getSecond(), taglio));
                 Value[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
@@ -147,16 +147,16 @@ public class GomorySolver  {
                 rs = ExceptionUtils.catchAndRetrow(() -> dualSimplexSolver.riottimizza(newA), out);
                 out.add(Message.conPassaggiIntermedi(rs.getOut()));
                 out.add(Message.messaggioConRisultato("Risulato dell'ottimizzazione del nuovo tableau", rs));
-                if(isSolved(rs)){
+                if (isSolved(rs)) {
                     out.add(Message.messaggioSemplice("Soluzione intera trovata"));
                     return rs.setOut(out);
                 }
                 i++;
-                if(i > maxIter){
+                if (i > maxIter) {
                     out.add(Message.messaggioSemplice("Numero massimo iterazioni raggiunto"));
                     throw new NumeroMassimoIterazioni(out);
                 }
-            }else{
+            } else {
                 out.add(Message.messaggioSemplice("Soluzione intera trovata"));
                 return rs.setOut(out);
             }

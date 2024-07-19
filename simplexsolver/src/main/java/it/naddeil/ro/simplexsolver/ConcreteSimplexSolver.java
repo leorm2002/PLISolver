@@ -11,7 +11,6 @@ import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Problema;
 import it.naddeil.ro.common.utils.Value;
-import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.common.utils.TableauUtils;
 
 

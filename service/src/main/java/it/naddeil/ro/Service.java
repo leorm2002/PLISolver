@@ -6,6 +6,7 @@ import java.util.List;
 import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Response;
+import it.naddeil.ro.common.exceptions.BaseException;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
@@ -36,9 +37,18 @@ public class Service {
     @Path("/solveLinearSimplex")
     public Response solveLS(PublicProblem problema){
         long startTime = System.currentTimeMillis();
-        FracResult s = new ConcreteSimplexSolver().solve(problema);
-        long time = System.currentTimeMillis() - startTime;
-        return convert(s, time);
+        
+        try {
+            FracResult s = new ConcreteSimplexSolver().solve(problema);
+            long time = System.currentTimeMillis() - startTime;
+            return convert(s, time);
+        } catch (BaseException e) {
+            long time = System.currentTimeMillis() - startTime;
+            return convert(e, time);
+        }
+        catch (Throwable e) {
+            throw e;
+        }
     }
 
     Response convert(FracResult r, long time){
@@ -47,6 +57,13 @@ public class Service {
         res.time = time;
         res.soluzione = r.getValoreVariabili().stream().map(Value::toString).toList();
         res.passiRisoluzione = r.getOut();
+        return res;
+    }
+    Response convert(BaseException e, long time){
+        Response res = new Response();
+        res.time = time;
+        res.passiRisoluzione = e.getState();
+        res.error = e.getMessage();
         return res;
     }
 
