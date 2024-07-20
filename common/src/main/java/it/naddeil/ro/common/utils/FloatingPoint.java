@@ -3,6 +3,10 @@ package it.naddeil.ro.common.utils;
 public class FloatingPoint implements Value {
     private double value;
 
+    public static FloatingPoint of(double value) {
+        return new FloatingPoint(value);
+    }
+
     public FloatingPoint(double value) {
         this.value = value;
     }
@@ -56,9 +60,10 @@ public class FloatingPoint implements Value {
         return new FloatingPoint(Math.abs(value));
     }
 
+    final static double EPSILON = 1e-8;
+
     @Override
     public boolean isInteger() {
-        final double EPSILON = 1e-8;
         return areEqual(value % 1, 0, EPSILON) || areEqual(value % 1, 1, EPSILON);
     }
 
@@ -70,6 +75,33 @@ public class FloatingPoint implements Value {
     @Override
     public int compareTo(Value other) {
         return Double.compare(value, getDoubleValue(other));
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%.2f", value);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(value);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (obj instanceof Value) {
+            return areEqual(value, getDoubleValue((Value) obj), EPSILON);
+        }
+        return false;
     }
 
 }

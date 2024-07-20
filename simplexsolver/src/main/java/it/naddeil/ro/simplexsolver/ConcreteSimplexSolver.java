@@ -30,7 +30,7 @@ public class ConcreteSimplexSolver implements SimplexSolver {
         // min c^T x
         // Ax = b
         int numeroVariabili = problem.getVincoli().get(0).getVincolo().size() - 1;
-        Value[][] tableau = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problem)).toTableauFormProblem();
+        Value[][] tableau = Problema.fromPublic(ProblemTransformer.portaInFormaCanonica(problem)).toTableauForm(problem.getParameters());
         int numeroVariabiliSlack = tableau[0].length - 1 - numeroVariabili;
         List<Integer> indiciSlack = IntStream.range(numeroVariabili, numeroVariabili + numeroVariabiliSlack).boxed().toList();
         System.out.println("Tableau iniziale simplesso primale");

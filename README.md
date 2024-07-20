@@ -37,7 +37,11 @@ This project is a solver for linear and integer linear optimization problems usi
     cd service
     ./mvnw quarkus:dev -DdebugHost=0.0.0.0
     ```
-
+    or after building
+    ```sh
+    cd service/target
+    java -jar Service-1.0.0-SNAPSHOT-runner.jar
+    ```
 ## Usage
 
 The solver can be used either via a web gui or used via rest api

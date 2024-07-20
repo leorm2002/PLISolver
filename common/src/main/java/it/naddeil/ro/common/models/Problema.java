@@ -7,8 +7,10 @@ import java.util.List;
 import org.ejml.simple.SimpleMatrix;
 
 import it.naddeil.ro.common.api.FunzioneObbiettivo;
+import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Vincolo;
+import it.naddeil.ro.common.utils.FloatingPoint;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.common.utils.Value;
 
@@ -24,24 +26,23 @@ public class Problema implements Serializable {
     private SimpleMatrix c;
     private List<Integer> basis = new ArrayList<>();
 
+    private Problema() {
+    }
 
-	private Problema() {
-	}
-
-    public static Problema fromPublic(PublicProblem p){
+    public static Problema fromPublic(PublicProblem p) {
         Problema out = new Problema();
         out.setFunzioneObbiettivo(p.getFunzioneObbiettivo());
         out.setVincoli(p.getVincoli());
         return out;
     }
 
-    public Problema init(){
-        if(funzioneObbiettivo == null || vincoli == null){
+    public Problema init() {
+        if (funzioneObbiettivo == null || vincoli == null) {
             return this;
         }
         int n = funzioneObbiettivo.getC().size();
         this.a = new SimpleMatrix(vincoli.size(), n);
-        this.b  = new SimpleMatrix(vincoli.size(), 1);
+        this.b = new SimpleMatrix(vincoli.size(), 1);
         int j = 0;
         for (Vincolo vincolo : vincoli) {
             List<Double> coefficienti = vincolo.getVincolo();
@@ -60,73 +61,106 @@ public class Problema implements Serializable {
         return this;
     }
 
-    public Fraction[][] toTableauFormProblem(){
-        init(); 
+    public Fraction[][] toFractionTableauFormProblem() {
+        init();
         int numeroVincoli = this.a.numRows();
         int numeroVariabili = a.numCols();
 
         Fraction[][] tab = new Fraction[numeroVincoli + 1][numeroVariabili + 1];
         // Riporto funzione obbiettivo
-        for(int i = 0; i < numeroVariabili; i++ ){
+        for (int i = 0; i < numeroVariabili; i++) {
             tab[0][i] = Fraction.of(c.get(i));
         }
         tab[0][tab[0].length - 1] = Value.ZERO;
         // Riporto b
-        for(int j = 0; j < numeroVincoli; j++){
+        for (int j = 0; j < numeroVincoli; j++) {
             tab[j + 1][numeroVariabili] = Fraction.of(b.get(j));
         }
 
         // Riporto A
-        for(int i = 0; i < numeroVincoli; i++ ){
-            for(int j = 0; j < numeroVariabili; j++){
-                tab[i + 1][j] = Fraction.of(a.get(i,j));
+        for (int i = 0; i < numeroVincoli; i++) {
+            for (int j = 0; j < numeroVariabili; j++) {
+                tab[i + 1][j] = Fraction.of(a.get(i, j));
             }
         }
         return tab;
     }
 
-	public FunzioneObbiettivo getFunzioneObbiettivo() {
-		return funzioneObbiettivo;
-	}
+    public FloatingPoint[][] toFPTableauFormProblem() {
+        init();
+        int numeroVincoli = this.a.numRows();
+        int numeroVariabili = a.numCols();
 
-	private void setFunzioneObbiettivo(FunzioneObbiettivo funzioneObbiettivo) {
-		this.funzioneObbiettivo = funzioneObbiettivo;
-	}
+        FloatingPoint[][] tab = new FloatingPoint[numeroVincoli + 1][numeroVariabili + 1];
+        // Riporto funzione obbiettivo
+        for (int i = 0; i < numeroVariabili; i++) {
+            tab[0][i] = FloatingPoint.of(c.get(i));
+        }
+        tab[0][tab[0].length - 1] = FloatingPoint.of(0);
+        // Riporto b
+        for (int j = 0; j < numeroVincoli; j++) {
+            tab[j + 1][numeroVariabili] = FloatingPoint.of(b.get(j));
+        }
 
-	public List<Vincolo> getVincoli() {
-		return vincoli;
-	}
+        // Riporto A
+        for (int i = 0; i < numeroVincoli; i++) {
+            for (int j = 0; j < numeroVariabili; j++) {
+                tab[i + 1][j] = FloatingPoint.of(a.get(i, j));
+            }
+        }
+        return tab;
+    }
 
-	private void setVincoli(List<Vincolo> vincoli) {
-		this.vincoli = vincoli;
-	}
+    public Value[][] toTableauForm(Parameters p) {
+        if (Boolean.TRUE.equals(p.getFloatingPoint())) {
+            return toFPTableauFormProblem();
+        } else {
+            return toFractionTableauFormProblem();
+        }
+    }
 
-	public SimpleMatrix getA() {
-		return a;
-	}
+    public FunzioneObbiettivo getFunzioneObbiettivo() {
+        return funzioneObbiettivo;
+    }
 
-	public SimpleMatrix getB() {
-		return b;
-	}
+    private void setFunzioneObbiettivo(FunzioneObbiettivo funzioneObbiettivo) {
+        this.funzioneObbiettivo = funzioneObbiettivo;
+    }
 
-	public SimpleMatrix getC() {
-		return c;
-	}
+    public List<Vincolo> getVincoli() {
+        return vincoli;
+    }
+
+    private void setVincoli(List<Vincolo> vincoli) {
+        this.vincoli = vincoli;
+    }
+
+    public SimpleMatrix getA() {
+        return a;
+    }
+
+    public SimpleMatrix getB() {
+        return b;
+    }
+
+    public SimpleMatrix getC() {
+        return c;
+    }
 
     public void setA(SimpleMatrix a) {
-		this.a = a;
-	}
+        this.a = a;
+    }
 
-	public void setB(SimpleMatrix b) {
-		this.b = b;
-	}
+    public void setB(SimpleMatrix b) {
+        this.b = b;
+    }
 
-	public void setC(SimpleMatrix c) {
-		this.c = c;
-	}
+    public void setC(SimpleMatrix c) {
+        this.c = c;
+    }
 
-	public List<Integer> getBasis() {
-		return basis;
-	}
+    public List<Integer> getBasis() {
+        return basis;
+    }
 
 }

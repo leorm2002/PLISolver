@@ -80,8 +80,10 @@ function calcola(link) {
     let funzioneObb = getFo(tipo, coeff)
     let payload = {
         "funzioneObbiettivo": funzioneObb,
-        "vincoli": vincoliRichiesta
+        "vincoli": vincoliRichiesta,
+        "parameters": getParameters()
     }
+
 
     inviaRichiesta(payload, link)
 }
@@ -129,12 +131,46 @@ function populateTableau(data, tableauId) {
 }
 
 function testL() {
-    let test = { "funzioneObbiettivo": { "tipo": "MIN", "c": ["1", "0", "1"] }, "vincoli": [{ "vincolo": ["1", "2", "0", "5"], "verso": "LE" }, { "vincolo": ["0", "1", "2", "6"], "verso": "E" }] }
+    console.log(getParameters())
+    let test =
+    {
+        "funzioneObbiettivo": {
+            "tipo": "MIN",
+            "c": [
+                "1",
+                "0",
+                "1"
+            ]
+        },
+        "vincoli": [
+            {
+                "vincolo": [
+                    "1",
+                    "2",
+                    "0",
+                    "5"
+                ],
+                "verso": "LE"
+            },
+            {
+                "vincolo": [
+                    "0",
+                    "1",
+                    "2",
+                    "6"
+                ],
+                "verso": "E"
+            }
+        ],
+        "parameters": getParameters()
+    }
+
     inviaRichiesta(test, linear)
 }
 
 function testLI() {
     let test = { "funzioneObbiettivo": { "tipo": "MIN", "c": ["0", "-1"] }, "vincoli": [{ "vincolo": ["3", "2", "6"], "verso": "LE" }, { "vincolo": ["-3", "2", "0"], "verso": "LE" }] }
+    test["parameters"] = getParameters()
     inviaRichiesta(test, linearI)
 }
 async function mostraTempo(time) {
@@ -375,3 +411,32 @@ function downloadJSON() {
 
 // Aggiungi un event listener al bottone
 document.getElementById('downloadButton').addEventListener('click', downloadJSON);
+
+function getParameters() {
+    console.log("Ionon");
+    let numeroMassimo = 1000;
+    let fp = false;
+    let int = true;
+    // if document.getElementById('max-iterations') is numeric
+    if (document.getElementById('max-iterations') != null) {
+        console.log("Io");
+        if (document.getElementById('max-iterations').value !== "") {
+            numeroMassimo = document.getElementById('max-iterations').value;
+        }
+    }
+    if (document.getElementById('fp') != null) {
+        fp = document.getElementById('fp').checked;
+        console.log(fp)
+    }
+
+    if (document.getElementById('intermedi') != null) {
+        int = document.getElementById('intermedi').checked;
+    }
+
+
+    return {
+        'maxIterazioni': numeroMassimo,
+        'passaggiIntermedi': int,
+        'floatingPoint': fp
+    }
+}
