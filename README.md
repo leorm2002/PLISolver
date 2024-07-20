@@ -35,9 +35,134 @@ This project is a solver for linear and integer linear optimization problems usi
 
     ```sh
     cd service
-    ./mvnw quarkus:dev
+    ./mvnw quarkus:dev -DdebugHost=0.0.0.0
     ```
 
 ## Usage
 
-The solver can be used via the command line or integrated as a library in your Java application.
+The solver can be used either via a web gui or used via rest api
+
+
+## Endpoints
+
+### 1. Solve Linear Integer Problem
+
+- **URL:** `/solveLinearInteger`
+- **Method:** `POST`
+- **Tags:** `Service`
+- **Request Body:**
+  - **Content Type:** `application/json`
+  - **Schema:** `PublicProblem`
+- **Responses:**
+  - **200 OK:**
+    - **Content Type:** `application/json`
+    - **Schema:** `Response`
+
+### 2. Solve Linear Simplex Problem
+
+- **URL:** `/solveLinearSimplex`
+- **Method:** `POST`
+- **Tags:** `Service`
+- **Request Body:**
+  - **Content Type:** `application/json`
+  - **Schema:** `PublicProblem`
+- **Responses:**
+  - **200 OK:**
+    - **Content Type:** `application/json`
+    - **Schema:** `Response`
+
+## Components
+
+### Schemas
+
+#### 1. FunzioneObbiettivo
+
+- **Type:** `object`
+- **Properties:**
+  - `tipo`:
+    - **$ref:** `#/components/schemas/Tipo`
+  - `c`:
+    - **Type:** `array`
+    - **Items:**
+      - **Type:** `number`
+      - **Format:** `double`
+
+#### 2. Message
+
+- **Type:** `object`
+- **Properties:**
+  - `message`:
+    - **Type:** `string`
+  - `tableau`:
+    - **Type:** `array`
+    - **Items:**
+      - **Type:** `array`
+      - **Items:**
+        - **Type:** `string`
+  - `passaggiIntermedi`:
+    - **Type:** `array`
+    - **Items:**
+      - **$ref:** `#/components/schemas/Message`
+
+#### 3. Parameters
+
+- **Type:** `object`
+- **Properties:**
+  - `maxIterazioni`:
+    - **Type:** `integer`
+    - **Format:** `int32`
+  - `passaggiIntermedi`:
+    - **Type:** `boolean`
+
+#### 4. PublicProblem
+
+- **Type:** `object`
+- **Properties:**
+  - `funzioneObbiettivo`:
+    - **$ref:** `#/components/schemas/FunzioneObbiettivo`
+  - `vincoli`:
+    - **Type:** `array`
+    - **Items:**
+      - **$ref:** `#/components/schemas/Vincolo`
+  - `parameters`:
+    - **$ref:** `#/components/schemas/Parameters`
+
+#### 5. Response
+
+- **Type:** `object`
+- **Properties:**
+  - `tableau`:
+    - **Type:** `array`
+    - **Items:**
+      - **Type:** `array`
+      - **Items:**
+        - **Type:** `string`
+  - `passaggiIntermedi`:
+    - **Type:** `array`
+    - **Items:**
+      - **$ref:** `#/components/schemas/Message`
+
+## Usage
+
+To use these endpoints, send a POST request to the respective URL with the appropriate request body in JSON format. The request body should conform to the specified schema. The response will also be in JSON format, conforming to the response schema.
+
+### Example Request
+
+```json
+{
+  "funzioneObbiettivo": {
+    "tipo": "MAX",
+    "c": [1.0, 2.0]
+  },
+  "vincoli": [
+    {
+      "vincolo": [1.0, 1.0, 2.0],
+      "verso": "LE",
+    }
+  ],
+  "parameters": {
+    "maxIterazioni": 100,
+    "passaggiIntermedi": true
+  }
+}
+```
