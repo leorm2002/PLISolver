@@ -1,20 +1,32 @@
 package it.naddeil.ro.simplexsolver;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import it.naddeil.ro.common.ProblemTransformer;
 import it.naddeil.ro.common.SimplexSolver;
 import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.api.PublicProblem;
+import it.naddeil.ro.common.api.Tipo;
 import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Problema;
-import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.common.utils.TableauUtils;
+import it.naddeil.ro.common.utils.Value;
 
 
-public class ConcreteSimplexSolver implements SimplexSolver{
+public class ConcreteSimplexSolver implements SimplexSolver {
+    
+    Value[][] postProcess(Value[][] tableau, PublicProblem problem) {
+        // Se il problema è di minimizzazione nega la prima riga
+        if (Tipo.MIN.equals(problem.getFunzioneObbiettivo().getTipo())) {
+            for (int i = 0; i < tableau[0].length; i++) {
+                tableau[0][i] = tableau[0][i].negate();
+            }
+        }
+        return tableau;
+    }
+
     public FracResult solve(PublicProblem problem) {
         // Il metodo due fasi prende in input un tableau della forma
         // min c^T x
