@@ -27,11 +27,11 @@
     </properties>
 
     <modules>
-        <module>Common</module>
-        <module>GomorySolver</module>
-        <module>Service</module>
-        <module>DualSimplexSolver</module>
-        <module>SimplexSolver</module>
+        <module>common</module>
+        <module>gomorysolver</module>
+        <module>service</module>
+        <module>dualsimplexsolver</module>
+        <module>simplexsolver</module>
     </modules>
 
 
