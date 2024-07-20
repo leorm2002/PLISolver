@@ -6,7 +6,6 @@ import java.util.List;
 
 import it.naddeil.ro.common.SimplexSolver;
 import it.naddeil.ro.common.api.Message;
-import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.exceptions.ExceptionUtils;
 import it.naddeil.ro.common.exceptions.NumeroMassimoIterazioni;
@@ -125,14 +124,18 @@ public class GomorySolver {
         System.out.println();
     }
 
-    public FracResult solve(PublicProblem problem, Parameters parameters) {
-        int maxIter = 300;
+    public FracResult solve(PublicProblem problem) {
+        final int maxIter = problem.getParameters().getMaxIterazioni();
+        final boolean passaggiIntermedi = Boolean.TRUE.equals(problem.getParameters().getPassaggiIntermedi());
         out.add(Message.messaggioSemplice("Inizio risoluzione problema, numero massimo iterazioni:" + maxIter));
         out.add(Message.messaggioSemplice("Risolvo il rilassamento continuo con il metodo del simplesso"));
 
         FracResult rs = ExceptionUtils.catchAndRetrow(() -> simplexSolver.solve(problem), out);
-        out.add(Message.conPassaggiIntermedi(rs.getOut()));
-        out.add(Message.messaggioConTableau("Soluzione del rilassamento continuo", rs.getTableau()));
+        if (passaggiIntermedi) {
+            out.add(Message.conPassaggiIntermedi(rs.getOut()));
+            out.add(Message.messaggioConTableau("Soluzione del rilassamento continuo", rs.getTableau()));
+        }
+
         int i = 0;
         while (true) {
             if (!isSolved(rs)) {
@@ -145,7 +148,9 @@ public class GomorySolver {
                 Value[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
                 out.add(Message.messaggioConTableau("Tableau ottimo rilassamento continuo dopo aggiunta taglio", newA));
                 rs = ExceptionUtils.catchAndRetrow(() -> dualSimplexSolver.riottimizza(newA), out);
-                out.add(Message.conPassaggiIntermedi(rs.getOut()));
+                if( passaggiIntermedi){
+                    out.add(Message.conPassaggiIntermedi(rs.getOut()));
+                }
                 out.add(Message.messaggioConRisultato("Risulato dell'ottimizzazione del nuovo tableau", rs));
                 if (isSolved(rs)) {
                     out.add(Message.messaggioSemplice("Soluzione intera trovata"));

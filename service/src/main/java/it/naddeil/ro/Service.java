@@ -1,9 +1,5 @@
 package it.naddeil.ro;
 
-
-import java.util.List;
-
-import it.naddeil.ro.common.api.Parameters;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Response;
 import it.naddeil.ro.common.exceptions.BaseException;
@@ -19,39 +15,7 @@ import jakarta.ws.rs.core.MediaType;
 
 @Path("/")
 public class Service {
-
-    @POST
-    @Produces(MediaType.TEXT_PLAIN)
-    @Path("/solveLinearDual")
-    public List<Double> solveL(PublicProblem problema){
-        long startTime = System.currentTimeMillis();
-        //Result s = new DualSimplexSolver().solve(problema, new Parameters());
-        //SimpleMatrix sol = s.getSoluzione();
-        //System.out.println("Tempo impiegato: " + (System.currentTimeMillis() - startTime) + "ms");
-        //return IntStream.range(0, sol.getNumElements()).mapToObj(sol::get).toList();
-        return null;
-    }
-
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/solveLinearSimplex")
-    public Response solveLS(PublicProblem problema){
-        long startTime = System.currentTimeMillis();
-        
-        try {
-            FracResult s = new ConcreteSimplexSolver().solve(problema);
-            long time = System.currentTimeMillis() - startTime;
-            return convert(s, time);
-        } catch (BaseException e) {
-            long time = System.currentTimeMillis() - startTime;
-            return convert(e, time);
-        }
-        catch (Throwable e) {
-            throw e;
-        }
-    }
-
-    Response convert(FracResult r, long time){
+    Response convert(FracResult r, long time) {
         Response res = new Response();
         res.tableau = r.getTableauStr();
         res.time = time;
@@ -59,7 +23,8 @@ public class Service {
         res.passiRisoluzione = r.getOut();
         return res;
     }
-    Response convert(BaseException e, long time){
+
+    Response convert(BaseException e, long time) {
         Response res = new Response();
         res.time = time;
         res.passiRisoluzione = e.getState();
@@ -69,15 +34,36 @@ public class Service {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/solveLinearInteger")
-    public Response solveLI(PublicProblem problema){
+    @Path("/solveLinearSimplex")
+    public Response solveLS(PublicProblem problema) {
         long startTime = System.currentTimeMillis();
-        FracResult r = new GomorySolver(new ConcreteSimplexSolver(),new DualSimplexSolver()).solve(problema, new Parameters());
-        
-        FracResult s = FracResult.fromTableau(r.getTableau());
-        long time = System.currentTimeMillis() - startTime;
-        return convert(r, time);
+
+        try {
+            FracResult s = new ConcreteSimplexSolver().solve(problema);
+            long time = System.currentTimeMillis() - startTime;
+            return convert(s, time);
+        } catch (BaseException e) {
+            long time = System.currentTimeMillis() - startTime;
+            return convert(e, time);
+        } catch (Throwable e) {
+            throw e;
+        }
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/solveLinearInteger")
+    public Response solveLI(PublicProblem problema) {
+        long startTime = System.currentTimeMillis();
+        try {
+            FracResult r = new GomorySolver(new ConcreteSimplexSolver(), new DualSimplexSolver()).solve(problema);
+            long time = System.currentTimeMillis() - startTime;
+            return convert(r, time);
+        } catch (BaseException e) {
+            long time = System.currentTimeMillis() - startTime;
+            return convert(e, time);
+        } catch (Throwable e) {
+            throw e;
+        }
+    }
 }
-

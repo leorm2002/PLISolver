@@ -144,6 +144,7 @@ public class SimplexTableau {
 
         System.out.println();
         passaggi.addAll(portaInCanonica());
+
         while (canImprove()) {
             int pivotColumn = findPivotColumn();
             int pivotRow = findPivotRow(pivotColumn);
@@ -151,7 +152,7 @@ public class SimplexTableau {
                 passaggi.add(Message.messaggioSemplice("Il problema è illimitato"));
                 throw new ProblemaInizialeIllimitato(passaggi);
             }
-            passaggi.add(Message.messaggioConTableau(String.format("La soluzione può essere migliorata, faccio pivot su x%s r%s", pivotRow + 1, pivotColumn),
+            passaggi.add(Message.messaggioConTableau(String.format("La soluzione può essere migliorata, faccio pivot su x%s r%s", pivotColumn + 1, pivotRow),
                     tableau));
             pivot(pivotRow, pivotColumn);
             System.out.println("Tableau:");
@@ -165,7 +166,7 @@ public class SimplexTableau {
         if (fase1) {
             verificaW(tableau[0][tableau[0].length - 1]);
         }
-        if (!artificialBasis.isEmpty()) {
+        if (!artificialBasis.isEmpty() && fase1) {
             boolean degenere = false;
             List<Message> passiDeg = new ArrayList<>();
             passiDeg.add(Message.messaggioSemplice(

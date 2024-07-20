@@ -134,7 +134,7 @@ function testL() {
 }
 
 function testLI() {
-    let test = { "funzioneObbiettivo": { "tipo": "MAX", "c": ["0", "-1"] }, "vincoli": [{ "vincolo": ["3", "2", "6"], "verso": "LE" }, { "vincolo": ["-3", "2", "0"], "verso": "LE" }] }
+    let test = { "funzioneObbiettivo": { "tipo": "MIN", "c": ["0", "-1"] }, "vincoli": [{ "vincolo": ["3", "2", "6"], "verso": "LE" }, { "vincolo": ["-3", "2", "0"], "verso": "LE" }] }
     inviaRichiesta(test, linearI)
 }
 async function mostraTempo(time) {
