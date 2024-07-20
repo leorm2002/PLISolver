@@ -113,8 +113,11 @@ public class Fraction implements  Value {
 
     @Override
     public int compareTo(Value other) {
-        if(other instanceof Fraction f){
+        if (other instanceof Fraction f) {
             return this.compareTo(f);
+        }
+        else if (other instanceof FloatingPoint f) {
+            return Double.compare(this.doubleValue(), f.doubleValue());
         }
         throw new IllegalArgumentException("Not a Fraction");
     }
