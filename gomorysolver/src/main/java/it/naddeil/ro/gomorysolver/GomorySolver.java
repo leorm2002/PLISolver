@@ -9,8 +9,8 @@ import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.exceptions.ExceptionUtils;
 import it.naddeil.ro.common.exceptions.NumeroMassimoIterazioni;
-import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Pair;
+import it.naddeil.ro.common.models.Result;
 import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 
@@ -27,7 +27,7 @@ public class GomorySolver {
         this.out = new LinkedList<>();
     }
 
-    boolean isSolved(FracResult r) {
+    boolean isSolved(Result r) {
         Value[] s = r.getSoluzione();
         for (int i = 0; i < s.length; i++) {
             if (!s[i].isInteger()) {
@@ -124,13 +124,13 @@ public class GomorySolver {
         System.out.println();
     }
 
-    public FracResult solve(PublicProblem problem) {
+    public Result solve(PublicProblem problem) {
         final int maxIter = problem.getParameters().getMaxIterazioni();
         final boolean passaggiIntermedi = Boolean.TRUE.equals(problem.getParameters().getPassaggiIntermedi());
         out.add(Message.messaggioSemplice("Inizio risoluzione problema, numero massimo iterazioni:" + maxIter));
         out.add(Message.messaggioSemplice("Risolvo il rilassamento continuo con il metodo del simplesso"));
 
-        FracResult rs = ExceptionUtils.catchAndRetrow(() -> simplexSolver.solve(problem), out);
+        Result rs = ExceptionUtils.catchAndRetrow(() -> simplexSolver.solve(problem), out);
         if (passaggiIntermedi) {
             out.add(Message.conPassaggiIntermedi(rs.getOut()));
             out.add(Message.messaggioConTableau("Soluzione del rilassamento continuo", rs.getTableau()));
@@ -148,7 +148,7 @@ public class GomorySolver {
                 Value[][] newA = aggiungiVincolo(rs.getTableau(), taglio, rs.getSoluzione(), rs.getZ());
                 out.add(Message.messaggioConTableau("Tableau ottimo rilassamento continuo dopo aggiunta taglio", newA));
                 rs = ExceptionUtils.catchAndRetrow(() -> dualSimplexSolver.riottimizza(newA), out);
-                if( passaggiIntermedi){
+                if (passaggiIntermedi) {
                     out.add(Message.conPassaggiIntermedi(rs.getOut()));
                 }
                 out.add(Message.messaggioConRisultato("Risulato dell'ottimizzazione del nuovo tableau", rs));

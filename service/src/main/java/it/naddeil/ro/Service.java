@@ -3,7 +3,7 @@ package it.naddeil.ro;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Response;
 import it.naddeil.ro.common.exceptions.BaseException;
-import it.naddeil.ro.common.models.FracResult;
+import it.naddeil.ro.common.models.Result;
 import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
 import it.naddeil.ro.gomorysolver.GomorySolver;
@@ -15,7 +15,7 @@ import jakarta.ws.rs.core.MediaType;
 
 @Path("/")
 public class Service {
-    Response convert(FracResult r, long time) {
+    Response convert(Result r, long time) {
         Response res = new Response();
         res.tableau = r.getTableauStr();
         res.time = time;
@@ -39,7 +39,7 @@ public class Service {
         long startTime = System.currentTimeMillis();
 
         try {
-            FracResult s = new ConcreteSimplexSolver().solve(problema);
+            Result s = new ConcreteSimplexSolver().solve(problema);
             long time = System.currentTimeMillis() - startTime;
             return convert(s, time);
         } catch (BaseException e) {
@@ -56,7 +56,7 @@ public class Service {
     public Response solveLI(PublicProblem problema) {
         long startTime = System.currentTimeMillis();
         try {
-            FracResult r = new GomorySolver(new ConcreteSimplexSolver(), new DualSimplexSolver()).solve(problema);
+            Result r = new GomorySolver(new ConcreteSimplexSolver(), new DualSimplexSolver()).solve(problema);
             long time = System.currentTimeMillis() - startTime;
             return convert(r, time);
         } catch (BaseException e) {

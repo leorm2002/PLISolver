@@ -1,10 +1,10 @@
 package it.naddeil.ro.common;
 
 import it.naddeil.ro.common.api.PublicProblem;
-import it.naddeil.ro.common.models.FracResult;
+import it.naddeil.ro.common.models.Result;
 
 public interface SimplexSolver {
 
-    FracResult solve(PublicProblem problem);
+    Result solve(PublicProblem problem);
 
 }

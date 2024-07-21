@@ -11,7 +11,7 @@ import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Tipo;
 import it.naddeil.ro.common.api.Verso;
 import it.naddeil.ro.common.api.Vincolo;
-import it.naddeil.ro.common.models.FracResult;
+import it.naddeil.ro.common.models.Result;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.common.utils.Value;
 import it.naddeil.ro.dualsimplexsolver.DualSimplexSolver;
@@ -22,17 +22,17 @@ class GomorySolverTest {
     void test1() {
         ConcreteSimplexSolver ss = new ConcreteSimplexSolver() {
             @Override
-            public FracResult solve(PublicProblem problem) {
+            public Result solve(PublicProblem problem) {
                 Fraction[][] tableauu = { { new Fraction(0), new Fraction(0), new Fraction(-1, 4), new Fraction(-1, 4), new Fraction(-3, 2) },
                         { Value.ONE, Value.ZERO, new Fraction(1, 6), new Fraction(-1, 6), Value.ONE },
                         { Value.ZERO, Value.ONE, new Fraction(1, 4), new Fraction(1, 4), new Fraction(3, 2) } };
-                return FracResult.fromTableau(tableauu);
+                return Result.fromTableau(tableauu);
             }
         };
 
         DualSimplexSolver ds = new DualSimplexSolver();
         GomorySolver gs = new GomorySolver(ss, ds);
-        FracResult result = gs.solve(new PublicProblem());
+        Result result = gs.solve(new PublicProblem());
         assertEquals(new Fraction(-1), result.getZ());
     }
 
@@ -40,19 +40,19 @@ class GomorySolverTest {
     void test2() {
         ConcreteSimplexSolver ss = new ConcreteSimplexSolver() {
             @Override
-            public FracResult solve(PublicProblem problem) {
+            public Result solve(PublicProblem problem) {
                 Fraction[][] tableauu = {
                         { Value.ZERO, new Fraction(-7), Value.ZERO, new Fraction(-8, 10), Value.ZERO, new Fraction(-12, 10), new Fraction(-4, 10) },
                         { Value.ONE, Value.ZERO, Value.ZERO, new Fraction(2, 10), Value.ZERO, new Fraction(-2, 10), new Fraction(6, 10) },
                         { Value.ZERO, new Fraction(-15, 10), Value.ZERO, new Fraction(-3, 10), Value.ONE, new Fraction(8, 10), new Fraction(16, 10) },
                         { Value.ZERO, new Fraction(-5, 10), Value.ONE, new Fraction(-1, 10), Value.ZERO, new Fraction(-4, 10), new Fraction(2, 10) }, };
-                return FracResult.fromTableau(tableauu);
+                return Result.fromTableau(tableauu);
             }
         };
 
         DualSimplexSolver ds = new DualSimplexSolver();
         GomorySolver gs = new GomorySolver(ss, ds);
-        FracResult result = gs.solve(new PublicProblem());
+        Result result = gs.solve(new PublicProblem());
         assertEquals(new Fraction(2), result.getZ());
     }
 
@@ -117,7 +117,7 @@ class GomorySolverTest {
 
         p.setFunzioneObbiettivo(f);
 
-        FracResult out = solver.solve(p);
+        Result out = solver.solve(p);
         Value[][] tableau = out.getTableau();
 
         Value[][] expected = new Value[][] { { Value.ZERO, Value.ZERO, Value.ZERO, Value.ZERO, Value.ONE, Value.ZERO, Value.ONE },

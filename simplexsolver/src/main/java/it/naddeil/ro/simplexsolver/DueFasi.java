@@ -1,30 +1,21 @@
 package it.naddeil.ro.simplexsolver;
 
-
-
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.ejml.interfaces.linsol.LinearSolver;
-
 import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.exceptions.ExceptionUtils;
-import it.naddeil.ro.common.models.Pair;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.common.utils.Value;
 
-import java.util.ArrayList;
-
 public class DueFasi {
-    /**
-     * InnerDueFasi
-     */
     public record InnerDueFasi(Value[][] tableau, Value[][] identity, boolean needed, List<Message> passaggi) {
     }
 
-    static Value[][] getIdentity(int n){
+    static Value[][] getIdentity(int n) {
         Value[][] identity = new Fraction[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -34,19 +25,19 @@ public class DueFasi {
         return identity;
     }
 
-    static Value[][] transpose(Value[][] matrix){
+    static Value[][] transpose(Value[][] matrix) {
         int n = matrix.length;
         int m = matrix[0].length;
         Value[][] transposed = new Value[m][n];
         for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++){
+            for (int j = 0; j < m; j++) {
                 transposed[j][i] = matrix[i][j];
             }
         }
         return transposed;
     }
 
-    static Value[] getExtendedObjective(Value[] objectiveFunction, int numConstraints){
+    static Value[] getExtendedObjective(Value[] objectiveFunction, int numConstraints) {
         int numVariables = objectiveFunction.length;
         Value[] extendedObjective = new Value[numVariables + numConstraints];
         for (int i = 0; i < numVariables - 1; i++) {
@@ -59,7 +50,7 @@ public class DueFasi {
         return extendedObjective;
     }
 
-    static boolean equalsFrac(Value[] a, Value[] b){
+    static boolean equalsFrac(Value[] a, Value[] b) {
         for (int i = 0; i < a.length; i++) {
             if (!a[i].equals(b[i])) {
                 return false;
@@ -68,16 +59,16 @@ public class DueFasi {
         return true;
     }
 
-    static boolean contains(List<Value[]> list, Value[] element){
+    static boolean contains(List<Value[]> list, Value[] element) {
         for (Value[] fractions : list) {
-            if (equalsFrac(fractions,element)) {
+            if (equalsFrac(fractions, element)) {
                 return true;
             }
         }
         return false;
     }
 
-    static Value[][] getAdditionalBasis(int numConstraints, List<Value[]> basiCorrenti){
+    static Value[][] getAdditionalBasis(int numConstraints, List<Value[]> basiCorrenti) {
         Value[][] identity = getIdentity(numConstraints);
 
         Value[][] iT = transpose(identity);
@@ -85,7 +76,7 @@ public class DueFasi {
         Value[][] out = new Value[numConstraints - basiCorrenti.size()][numConstraints];
         int i = 0;
         for (Value[] fractions : iT) {
-            if (!contains(basiCorrenti,fractions)) {
+            if (!contains(basiCorrenti, fractions)) {
                 out[i] = fractions;
                 i += 1;
             }
@@ -94,24 +85,24 @@ public class DueFasi {
         return transpose(out);
     }
 
-    static List<Value[]> removeDup(List<Value[]> list){
+    static List<Value[]> removeDup(List<Value[]> list) {
         List<Value[]> ret = new ArrayList<>();
 
         for (Value[] base : list) {
-            if (!contains(ret,base)) {
+            if (!contains(ret, base)) {
                 ret.add(base);
             }
         }
-    
+
         return ret;
     }
 
-    static InnerDueFasi aggiungiVariabiliSintetiche(Value[][] tableau){
+    static InnerDueFasi aggiungiVariabiliSintetiche(Value[][] tableau) {
         int numConstraints = tableau.length - 1;
         int numVariables = tableau[0].length - 1;
         List<Value[]> basiCorrenti = removeDup(SimplexTableau.getBasis(tableau, numVariables, numConstraints));
         int nbasi = basiCorrenti.size();
-        if(numConstraints == nbasi ){
+        if (numConstraints == nbasi) {
             return new InnerDueFasi(null, null, false, Collections.emptyList());
         }
         int nuovoNumeroVariabili = numVariables + numConstraints - basiCorrenti.size();
@@ -138,11 +129,10 @@ public class DueFasi {
         Message msg2 = Message.messaggioConTableau("Tableau prima dell'aggiunta", tableau);
         Message msg3 = Message.messaggioConTableau("Tableau dopo aggiunta", nuovoTableau);
 
-
         return new InnerDueFasi(nuovoTableau, identity, true, List.of(msg, msg2, msg3));
     }
 
-    static Value[][] pulisciTableau(Value[][] ottimo, Value[] fObbOrig){
+    static Value[][] pulisciTableau(Value[][] ottimo, Value[] fObbOrig) {
         int numeroVariabiliOriginali = fObbOrig.length - 1;
         Value[][] nuovoTableau = new Value[ottimo.length][numeroVariabiliOriginali + 1];
         for (int i = 0; i < ottimo.length; i++) {
@@ -161,7 +151,7 @@ public class DueFasi {
         return nuovoTableau;
     }
 
-    static Value[] sub(Value[] a, Value[] b){
+    static Value[] sub(Value[] a, Value[] b) {
         Value[] c = new Value[a.length];
         for (int i = 0; i < a.length; i++) {
             c[i] = a[i].subtract(b[i]);
@@ -169,7 +159,7 @@ public class DueFasi {
         return c;
     }
 
-    static boolean contains(Value[] a, Value b){
+    static boolean contains(Value[] a, Value b) {
         for (Value fraction : a) {
             if (fraction.equals(b)) {
                 return true;
@@ -177,43 +167,47 @@ public class DueFasi {
         }
         return false;
     }
-    static void primaOperazione(Value[][] tableau, Value[][] basiSintetiche){
+
+    static void primaOperazione(Value[][] tableau, Value[][] basiSintetiche) {
         List<Integer> righeDaSottrarre = new ArrayList<>();
-        for(int i= 0; i < basiSintetiche.length; i++){
+        for (int i = 0; i < basiSintetiche.length; i++) {
             if (contains(basiSintetiche[i], Value.ONE)) {
                 righeDaSottrarre.add(i);
             }
         }
         for (Integer i : righeDaSottrarre) {
-            tableau[0] = sub(tableau[0], tableau[i +1]);
+            tableau[0] = sub(tableau[0], tableau[i + 1]);
         }
     }
 
-    static List<Integer> getAVIndexes(Value[][] row, int numberOfVariables){
-        if(row.length == 0) return new ArrayList<>();
+    static List<Integer> getAVIndexes(Value[][] row, int numberOfVariables) {
+        if (row.length == 0)
+            return new ArrayList<>();
 
         return IntStream.range(0, row[0].length).map(i -> i + numberOfVariables).boxed().collect(Collectors.toList());
     }
 
-    static Value[][] applicaMetodoDueFasi(Value[][] tableau, List<Integer> numeroVariabiliSlack){
+    static Value[][] applicaMetodoDueFasi(Value[][] tableau, List<Integer> numeroVariabiliSlack) {
         return applicaMetodoDueFasi(tableau, numeroVariabiliSlack, new ArrayList<>());
     }
-    static Value[][] applicaMetodoDueFasi(Value[][] tableau, List<Integer> numeroVariabiliSlack, List<Message> passaggi){
+
+    static Value[][] applicaMetodoDueFasi(Value[][] tableau, List<Integer> numeroVariabiliSlack, List<Message> passaggi) {
         InnerDueFasi nuovoTableau = aggiungiVariabiliSintetiche(tableau);
         final Value[][] tab;
         passaggi.addAll(nuovoTableau.passaggi);
-        if(nuovoTableau.needed){
-            passaggi.add(Message.messaggioSemplice("Risolvo il problema con le variabili sintetiche, vado ad azzerare i costi ridotti delle variabili sintetiche"));
+        if (nuovoTableau.needed) {
+            passaggi.add(
+                    Message.messaggioSemplice("Risolvo il problema con le variabili sintetiche, vado ad azzerare i costi ridotti delle variabili sintetiche"));
             primaOperazione(nuovoTableau.tableau, nuovoTableau.identity);
             passaggi.add(Message.messaggioConTableau("Tableau una volta effettuato azzeramento", nuovoTableau.tableau));
             SimplexTableau st = new SimplexTableau(nuovoTableau.tableau);
-            ExceptionUtils.catchAndRetrow(() -> st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1),true), passaggi);
+            ExceptionUtils.catchAndRetrow(() -> st.solve(getAVIndexes(nuovoTableau.identity, tableau[0].length - 1), true), passaggi);
             passaggi.addAll(st.getPassaggi());
             passaggi.add(Message.messaggioConTableau("Tableu ottimo della fase 1", st.getTableau()));
 
             tab = pulisciTableau(st.getTableau(), tableau[0]);
             passaggi.add(Message.messaggioConTableau("Tableu ottimo finale della fase 1 con variabili rimosse, riolvo con il simplesso", tab));
-        }else{
+        } else {
             tab = tableau;
         }
 

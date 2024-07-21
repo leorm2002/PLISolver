@@ -112,11 +112,7 @@ public class Problema implements Serializable {
     }
 
     public Value[][] toTableauForm(Parameters p) {
-        if (Boolean.TRUE.equals(p.getFloatingPoint())) {
-            return toFPTableauFormProblem();
-        } else {
-            return toFractionTableauFormProblem();
-        }
+        return Boolean.TRUE.equals(p.getFloatingPoint()) ? toFPTableauFormProblem() : toFractionTableauFormProblem();
     }
 
     public FunzioneObbiettivo getFunzioneObbiettivo() {

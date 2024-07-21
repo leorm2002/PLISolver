@@ -9,8 +9,8 @@ import it.naddeil.ro.common.SimplexSolver;
 import it.naddeil.ro.common.api.Message;
 import it.naddeil.ro.common.api.PublicProblem;
 import it.naddeil.ro.common.api.Tipo;
-import it.naddeil.ro.common.models.FracResult;
 import it.naddeil.ro.common.models.Problema;
+import it.naddeil.ro.common.models.Result;
 import it.naddeil.ro.common.utils.TableauUtils;
 import it.naddeil.ro.common.utils.Value;
 
@@ -25,7 +25,7 @@ public class ConcreteSimplexSolver implements SimplexSolver {
         }
     }
 
-    public FracResult solve(PublicProblem problem) {
+    public Result solve(PublicProblem problem) {
         // Il metodo due fasi prende in input un tableau della forma
         // min c^T x
         // Ax = b
@@ -40,6 +40,6 @@ public class ConcreteSimplexSolver implements SimplexSolver {
         passaggi.add(Message.messaggioConTableau("Problema iniziale:", tableau));
         Value[][] result = DueFasi.applicaMetodoDueFasi(tableau, indiciSlack, passaggi);
         postProcess(tableau, problem);
-        return FracResult.fromTableau(result).setOut(passaggi);
+        return Result.fromTableau(result).setOut(passaggi);
     }
 }
