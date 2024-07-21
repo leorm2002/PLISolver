@@ -1,13 +1,14 @@
 package it.naddeil.ro.dualsimplexsolver;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import it.naddeil.ro.common.api.Message;
+import it.naddeil.ro.common.exceptions.DualeIllimitato;
 import it.naddeil.ro.common.utils.Fraction;
 import it.naddeil.ro.common.utils.Value;
 
-
-public class SimplessoDualeFrazionario {
+public class SimplessoDuale {
     private Value[][] tableau;
     private List<Message> passaggi = new ArrayList<>();
 
@@ -15,21 +16,18 @@ public class SimplessoDualeFrazionario {
         return passaggi;
     }
 
-
     public Value[][] getTableau() {
-		return tableau;
-	}
+        return tableau;
+    }
 
-
-	private int numVariables;
+    private int numVariables;
     private int numConstraints;
 
-    public SimplessoDualeFrazionario(Value[][] initialTableau) {
+    public SimplessoDuale(Value[][] initialTableau) {
         this.tableau = initialTableau;
         this.numConstraints = tableau.length - 1;
         this.numVariables = tableau[0].length - 1;
     }
-
 
     public void solve() {
         passaggi.add(Message.messaggioConTableau("Inizio risoluzione del tableau con il metodo del simplesso duale", tableau));
@@ -45,8 +43,7 @@ public class SimplessoDualeFrazionario {
             int k = determineColumnK(r);
             if (k == -1) {
                 System.out.println("Il duale è illimitato, la soluzione ammissibile del primale non esiste.");
-                passaggi.add(Message.messaggioSemplice("Il duale è illimitato, la soluzione ammissibile del primale non esiste."));
-                return;
+                throw new DualeIllimitato(passaggi);
             }
             pivot(r, k);
             passaggi.add(Message.messaggioConTableau(String.format("Eseguo pivotaggio su X%s R%s, tableau dopo operazione:", k + 1, r), tableau));
@@ -71,7 +68,7 @@ public class SimplessoDualeFrazionario {
         for (int j = 0; j < numVariables; j++) {
             if (tableau[r][j].compareTo(Value.ZERO) < 0) {
                 Value ratio = tableau[0][j].divide(tableau[r][j]).abs();
-                if (ratio.compareTo(minRatio) < 0 || (ratio.equals(minRatio) && j < k)) {  // Regola di Bland
+                if (ratio.compareTo(minRatio) < 0 || (ratio.equals(minRatio) && j < k)) { // Regola di Bland
                     minRatio = ratio;
                     k = j;
                 }
@@ -139,19 +136,15 @@ public class SimplessoDualeFrazionario {
         System.out.println();
     }
 
-    
-        public static void main(String[] args) {
-            Fraction[][] tableau = {
-                {new Fraction(-2), new Fraction(-3), new Fraction(-4), Value.ZERO, Value.ZERO, Value.ZERO},
-                {new Fraction(-1), new Fraction(-2), new Fraction(-1), Value.ONE, Value.ZERO, new Fraction(-3)},
-                {new Fraction(-2), Value.ONE, new Fraction(-3), Value.ZERO, Value.ONE, new Fraction(-4)}
-            };
+    public static void main(String[] args) {
+        Fraction[][] tableau = { { new Fraction(-2), new Fraction(-3), new Fraction(-4), Value.ZERO, Value.ZERO, Value.ZERO },
+                { new Fraction(-1), new Fraction(-2), new Fraction(-1), Value.ONE, Value.ZERO, new Fraction(-3) },
+                { new Fraction(-2), Value.ONE, new Fraction(-3), Value.ZERO, Value.ONE, new Fraction(-4) } };
 
-          
-            SimplessoDualeFrazionario simplesso = new SimplessoDualeFrazionario(tableau);
-            System.out.println("Tableau iniziale:");
-            simplesso.printTableau();
-            simplesso.solve();
-        }
-    
+        SimplessoDuale simplesso = new SimplessoDuale(tableau);
+        System.out.println("Tableau iniziale:");
+        simplesso.printTableau();
+        simplesso.solve();
     }
+
+}

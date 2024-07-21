@@ -6,7 +6,7 @@ import it.naddeil.ro.common.utils.Value;
 public class DualSimplexSolver {
 
     public Result riottimizza(Value[][] tableau) {
-        SimplessoDualeFrazionario dualSimplex = new SimplessoDualeFrazionario(tableau);
+        SimplessoDuale dualSimplex = new SimplessoDuale(tableau);
         dualSimplex.solve();
         return Result.fromTableau(dualSimplex.getTableau()).setOut(dualSimplex.getPassaggi());
     }
