@@ -44,7 +44,8 @@ This project is a solver for linear and integer linear optimization problems usi
     ```
 ## Usage
 
-The solver can be used either via a web gui or used via rest api
+The solver can be used either via a web gui or used via rest api.
+The solver default port is 8080, the web interface can be reched via 127.0.0.1:8080
 
 
 ## Endpoints
