@@ -120,7 +120,9 @@ class GomorySolverTest {
         Result out = solver.solve(p);
         Value[][] tableau = out.getTableau();
 
-        Value[][] expected = new Value[][] { { Value.ZERO, Value.ZERO, Value.ZERO, Value.ZERO, Value.ONE, Value.ZERO, Value.ONE },
+        Value[][] expected = new Value[][] {
+                //
+                { Value.ZERO, Value.ZERO, Value.ZERO, Value.ZERO, Value.ONE, Value.ZERO, Value.ONE },
                 { Value.ONE, Value.ZERO, Value.ZERO, Value.ZERO, Value.ONE, Fraction.of(-1, 2), Value.ONE },
                 { Value.ZERO, Value.ONE, Value.ZERO, Value.ZERO, Value.ONE, Value.ZERO, Value.ONE },
                 { Value.ZERO, Value.ZERO, Value.ONE, Value.ZERO, Fraction.of(-5), Fraction.of(3, 2), Value.ONE },

@@ -1,7 +1,6 @@
 package it.naddeil.ro.common.utils;
 
-
-public class Fraction implements  Value {
+public class Fraction implements Value {
     public static Value of(long numerator, long denominator) {
         return new Fraction(numerator, denominator);
     }
@@ -10,7 +9,7 @@ public class Fraction implements  Value {
         return new Fraction(numerator);
     }
 
-    public static Fraction of(double value){
+    public static Fraction of(double value) {
         boolean invert = value < 0;
         if (invert) {
             value = value * -1;
@@ -20,14 +19,16 @@ public class Fraction implements  Value {
             value *= 10;
             denominator *= 10;
         }
-        if(invert){
+        if (invert) {
             value = value * -1;
         }
-        return new Fraction((long)value, denominator);
+        return new Fraction((long) value, denominator);
     }
+
     private static long gcd(long a, long b) {
         return b == 0 ? a : gcd(b, a % b);
     }
+
     private final long numerator;
     private final long denominator;
 
@@ -45,12 +46,13 @@ public class Fraction implements  Value {
     }
 
     @Override
-    public Fraction floor(){
+    public Fraction floor() {
         if (numerator >= 0) {
             return new Fraction(numerator / denominator);
-        }else{
+        } else {
             return new Fraction(numerator / denominator - 1);
-        }}
+        }
+    }
 
     public Value add(Fraction other) {
         long newNumerator = this.numerator * other.denominator + other.numerator * this.denominator;
@@ -88,26 +90,35 @@ public class Fraction implements  Value {
     }
 
     @Override
-    public double doubleValue(){
-        return ((double)numerator)/denominator;
+    public double doubleValue() {
+        return ((double) numerator) / denominator;
     }
+
     public int compareTo(Fraction other) {
         long difference = this.numerator * other.denominator - other.numerator * this.denominator;
         return Long.compare(difference, 0);
     }
 
-    
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Fraction)) return false;
-        Fraction other = (Fraction) obj;
-        return this.numerator == other.numerator && this.denominator == other.denominator;
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Value)) {
+            return false;
+        }
+        if (obj instanceof Fraction f) {
+            return this.numerator == f.numerator && this.denominator == f.denominator;
+        }
+        if (obj instanceof FloatingPoint f) {
+            return this.doubleValue() == f.doubleValue();
+        }
+        return false;
     }
 
     @Override
     public String toString() {
-        if (denominator == 1) return Long.toString(numerator);
+        if (denominator == 1)
+            return Long.toString(numerator);
         return numerator + "/" + denominator;
     }
 
@@ -115,8 +126,7 @@ public class Fraction implements  Value {
     public int compareTo(Value other) {
         if (other instanceof Fraction f) {
             return this.compareTo(f);
-        }
-        else if (other instanceof FloatingPoint f) {
+        } else if (other instanceof FloatingPoint f) {
             return Double.compare(this.doubleValue(), f.doubleValue());
         }
         throw new IllegalArgumentException("Not a Fraction");
@@ -124,7 +134,7 @@ public class Fraction implements  Value {
 
     @Override
     public Value add(Value other) {
-        if(other instanceof Fraction f){
+        if (other instanceof Fraction f) {
             return this.add(f);
         }
         return other.add(this);
@@ -132,7 +142,7 @@ public class Fraction implements  Value {
 
     @Override
     public Value subtract(Value other) {
-        if(other instanceof Fraction f){
+        if (other instanceof Fraction f) {
             return this.subtract(f);
         }
         return other.subtract(this).negate();
@@ -140,7 +150,7 @@ public class Fraction implements  Value {
 
     @Override
     public Value multiply(Value other) {
-        if(other instanceof Fraction f){
+        if (other instanceof Fraction f) {
             return this.multiply(f);
         }
         return other.multiply(this);
@@ -148,7 +158,7 @@ public class Fraction implements  Value {
 
     @Override
     public Value divide(Value other) {
-        if(other instanceof Fraction f){
+        if (other instanceof Fraction f) {
             return this.divide(f);
         }
         return other.divide(this);
