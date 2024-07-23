@@ -216,7 +216,6 @@ function updateTable() {
         // Show the table section
         document.getElementById('table-section').style.display = 'block';
         document.getElementById('objective-function').style.display = 'block';
-        document.getElementById('parameters-section').style.display = 'block';
 
         // Generate table headers
         const tableHeader = document.getElementById('table-header');
@@ -293,7 +292,6 @@ function updateTable() {
         // Hide the table section if either dropdown is not selected
         document.getElementById('table-section').style.display = 'none';
         document.getElementById('objective-function').style.display = 'none';
-        document.getElementById('parameters-section').style.display = 'none';
     }
 
 }

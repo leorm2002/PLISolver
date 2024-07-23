@@ -154,3 +154,10 @@ th{
 hr{
     border: 2px solid var(--sec)!important;
 }
+
+.check-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
