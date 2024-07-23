@@ -121,12 +121,19 @@ public class SimplexTableau {
         List<Message> passaggi = new ArrayList<>();
         boolean shouldReturn = false;
         // Potrebbe essere necessario portare in forma canonica
+        System.out.println("Tableau prima pivoting:");
+        printTableau();
         passaggi.add(Message.messaggioSemplice("Porto il tableau in forma canonica"));
         var basis = getCostoRidottoDaAggiornare();
+        System.out.println("Riga: " + basis.getFirst() + " Colonna: " + basis.getSecond());
         while (basis.getFirst() != -1) {
             pivot(basis.getFirst(), basis.getSecond());
+            printTableau();
+
             passaggi.add(Message.messaggioSemplice(String.format("Pivot su X%s R%s", basis.getSecond() + 1, basis.getFirst())));
             basis = getCostoRidottoDaAggiornare();
+            System.out.println("Riga: " + basis.getFirst() + " Colonna: " + basis.getSecond());
+
             passaggi.add(Message.messaggioConTableau(
                     String.format("Esiste base con costi ridotti positivi (tableu non in forma canonica), pivot su X%s R%s, tableau dopo pivotaggio:",
                             basis.getFirst() + 1, basis.getSecond()),
@@ -324,6 +331,7 @@ public class SimplexTableau {
     }
 
     public Pair<Integer, Integer> getCostoRidottoDaAggiornare() {
+        int numberOfBasis = 0;
         for (int column = 0; column < numVariables; column++) {
             boolean basicVariable = true;
             int basicRow = -1;
@@ -337,6 +345,12 @@ public class SimplexTableau {
                     }
                 } else if (!tableau[row][column].equals(Value.ZERO)) {
                     basicVariable = false;
+                    break;
+                }
+            }
+            if (basicVariable) {
+                numberOfBasis++;
+                if (numberOfBasis >= tableau.length) {
                     break;
                 }
             }
