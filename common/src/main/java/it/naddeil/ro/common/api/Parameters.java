@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Parameters implements Serializable {
     private Integer maxIterazioni = 30;
-    private Boolean passaggiIntermedi = true;
+    private Boolean passaggiIntermedi = false;
     private Boolean floatingPoint = false;
 
     public Boolean getPassaggiIntermedi() {
