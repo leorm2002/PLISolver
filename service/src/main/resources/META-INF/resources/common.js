@@ -1,5 +1,5 @@
-let linear = 'http://localhost:8080/solveLinearSimplex'
-let linearI = 'http://localhost:8080/solveLinearInteger'
+let linear = '/solveLinearSimplex'
+let linearI = '/solveLinearInteger'
 function calcolaL() {
     calcola(linear)
 }
