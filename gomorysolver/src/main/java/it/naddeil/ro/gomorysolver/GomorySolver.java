@@ -157,7 +157,7 @@ public class GomorySolver {
                     return rs.setOut(out);
                 }
                 i++;
-                if (i > maxIter) {
+                if (i >= maxIter) {
                     out.add(Message.messaggioSemplice("Numero massimo iterazioni raggiunto"));
                     throw new NumeroMassimoIterazioni(out);
                 }
